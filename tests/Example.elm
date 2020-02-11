@@ -8,6 +8,6 @@ import Test exposing (..)
 suite : Test
 suite =
     test "a simple test" <|
-    \_ ->
-        1
-        |> Expect.equal 1
+        \_ ->
+            1
+                |> Expect.equal 1

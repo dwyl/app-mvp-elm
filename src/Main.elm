@@ -1,4 +1,4 @@
-module Main exposing (main)
+module Main exposing (main, Page(..), routeParser)
 
 import Browser
 import Browser.Navigation as Nav
@@ -65,16 +65,17 @@ update msg model =
             parseUrl url model
 
 
+routeParser : Parser.Parser (Page -> a) a
+routeParser =
+    Parser.oneOf
+        [ Parser.map Home Parser.top
+        , Parser.map Login (Parser.s "login")
+        ]
+
+
 parseUrl : Url.Url -> Model -> ( Model, Cmd Msg )
 parseUrl url model =
-    let
-        parser =
-            Parser.oneOf
-                [ Parser.map Home Parser.top
-                , Parser.map Login (Parser.s "login")
-                ]
-    in
-    case Parser.parse parser url of
+    case Parser.parse routeParser url of
         Just page ->
             ( { model | page = page }, Cmd.none )
 

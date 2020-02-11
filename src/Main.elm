@@ -1,4 +1,4 @@
-module Main exposing (main, Page(..), routeParser)
+module Main exposing (Page(..), main, routeParser)
 
 import Browser
 import Browser.Navigation as Nav

@@ -1,5 +1,6 @@
 module Main exposing (Page(..), main, routeParser)
 
+import Asset
 import Browser
 import Browser.Navigation as Nav
 import Html exposing (..)
@@ -94,15 +95,18 @@ view model =
     , body =
         case model.page of
             Home ->
-                [ a [ href "/auth" ] [ text "login/signup" ]
-                , h1 [] [ text "Dwyl application" ]
+                [ a [ href "/" ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+                , h1 [ class "tc" ] [ text "Dwyl application" ]
+                , a [ href "/auth", class "tc db" ] [ text "login/signup" ]
                 ]
 
             Auth ->
-                [ a [ href "/" ] [ text "home" ]
-                , h1 [] [ text "login page" ]
+                [ a [ href "/" ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+                , h1 [ class "tc" ] [ text "login page" ]
                 ]
 
             NotFound ->
-                [ h1 [] [ text "page not found" ] ]
+                [ a [ href "/" ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+                , h1 [ class "tc" ] [ text "page not found" ]
+                ]
     }

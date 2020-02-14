@@ -6013,7 +6013,6 @@ var $author$project$Main$update = F2(
 		}
 	});
 var $elm$html$Html$a = _VirtualDom_node('a');
-var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
@@ -6022,11 +6021,31 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			key,
 			$elm$json$Json$Encode$string(string));
 	});
+var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
+var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$html$Html$Attributes$href = function (url) {
 	return A2(
 		$elm$html$Html$Attributes$stringProperty,
 		'href',
 		_VirtualDom_noJavaScriptUri(url));
+};
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $author$project$Asset$Image = function (a) {
+	return {$: 'Image', a: a};
+};
+var $author$project$Asset$image = function (filename) {
+	return $author$project$Asset$Image('/assets/images/' + filename);
+};
+var $author$project$Asset$logo = $author$project$Asset$image('dwyl.png');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $author$project$Asset$src = function (_v0) {
+	var url = _v0.a;
+	return $elm$html$Html$Attributes$src(url);
 };
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
@@ -6042,18 +6061,39 @@ var $author$project$Main$view = function (model) {
 							$elm$html$Html$a,
 							_List_fromArray(
 								[
-									$elm$html$Html$Attributes$href('/auth')
+									$elm$html$Html$Attributes$href('/')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$img,
+									_List_fromArray(
+										[
+											$author$project$Asset$src($author$project$Asset$logo),
+											$elm$html$Html$Attributes$class('center db pt2')
+										]),
+									_List_Nil)
+								])),
+							A2(
+							$elm$html$Html$h1,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('tc')
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Dwyl application')
+								])),
+							A2(
+							$elm$html$Html$a,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$href('/auth'),
+									$elm$html$Html$Attributes$class('tc db')
 								]),
 							_List_fromArray(
 								[
 									$elm$html$Html$text('login/signup')
-								])),
-							A2(
-							$elm$html$Html$h1,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Dwyl application')
 								]))
 						]);
 				case 'Auth':
@@ -6067,11 +6107,21 @@ var $author$project$Main$view = function (model) {
 								]),
 							_List_fromArray(
 								[
-									$elm$html$Html$text('home')
+									A2(
+									$elm$html$Html$img,
+									_List_fromArray(
+										[
+											$author$project$Asset$src($author$project$Asset$logo),
+											$elm$html$Html$Attributes$class('center db pt2')
+										]),
+									_List_Nil)
 								])),
 							A2(
 							$elm$html$Html$h1,
-							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('tc')
+								]),
 							_List_fromArray(
 								[
 									$elm$html$Html$text('login page')
@@ -6081,8 +6131,28 @@ var $author$project$Main$view = function (model) {
 					return _List_fromArray(
 						[
 							A2(
+							$elm$html$Html$a,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$href('/')
+								]),
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$img,
+									_List_fromArray(
+										[
+											$author$project$Asset$src($author$project$Asset$logo),
+											$elm$html$Html$Attributes$class('center db pt2')
+										]),
+									_List_Nil)
+								])),
+							A2(
 							$elm$html$Html$h1,
-							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$class('tc')
+								]),
 							_List_fromArray(
 								[
 									$elm$html$Html$text('page not found')

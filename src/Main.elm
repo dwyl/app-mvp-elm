@@ -26,7 +26,7 @@ main =
 
 type Page
     = Home
-    | Login
+    | Auth
     | NotFound
 
 
@@ -69,7 +69,7 @@ routeParser : Parser.Parser (Page -> a) a
 routeParser =
     Parser.oneOf
         [ Parser.map Home Parser.top
-        , Parser.map Login (Parser.s "login")
+        , Parser.map Auth (Parser.s "auth")
         ]
 
 
@@ -98,7 +98,7 @@ view model =
                 , h1 [] [ text "Dwyl application" ]
                 ]
 
-            Login ->
+            Auth ->
                 [ a [ href "/" ] [ text "home" ]
                 , h1 [] [ text "login page" ]
                 ]

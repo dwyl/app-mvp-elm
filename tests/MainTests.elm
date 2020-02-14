@@ -45,7 +45,6 @@ suite =
                 in
                 Parser.parse routeParser url
                     |> Expect.equal (Just (Auth Nothing))
-
         , test "Test auth page with jwt" <|
             \_ ->
                 let

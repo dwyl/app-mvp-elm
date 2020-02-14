@@ -5808,8 +5808,8 @@ var $elm$url$Url$Parser$parse = F2(
 					url.fragment,
 					$elm$core$Basics$identity)));
 	});
+var $author$project$Main$Auth = {$: 'Auth'};
 var $author$project$Main$Home = {$: 'Home'};
-var $author$project$Main$Login = {$: 'Login'};
 var $elm$url$Url$Parser$Parser = function (a) {
 	return {$: 'Parser', a: a};
 };
@@ -5910,8 +5910,8 @@ var $author$project$Main$routeParser = $elm$url$Url$Parser$oneOf(
 			A2($elm$url$Url$Parser$map, $author$project$Main$Home, $elm$url$Url$Parser$top),
 			A2(
 			$elm$url$Url$Parser$map,
-			$author$project$Main$Login,
-			$elm$url$Url$Parser$s('login'))
+			$author$project$Main$Auth,
+			$elm$url$Url$Parser$s('auth'))
 		]));
 var $author$project$Main$parseUrl = F2(
 	function (url, model) {
@@ -6042,7 +6042,7 @@ var $author$project$Main$view = function (model) {
 							$elm$html$Html$a,
 							_List_fromArray(
 								[
-									$elm$html$Html$Attributes$href('/login')
+									$elm$html$Html$Attributes$href('/auth')
 								]),
 							_List_fromArray(
 								[
@@ -6056,7 +6056,7 @@ var $author$project$Main$view = function (model) {
 									$elm$html$Html$text('Dwyl application')
 								]))
 						]);
-				case 'Login':
+				case 'Auth':
 					return _List_fromArray(
 						[
 							A2(

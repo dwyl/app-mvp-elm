@@ -94,7 +94,7 @@ view model =
     , body =
         case model.page of
             Home ->
-                [ a [ href "/login" ] [ text "login/signup" ]
+                [ a [ href "/auth" ] [ text "login/signup" ]
                 , h1 [] [ text "Dwyl application" ]
                 ]
 

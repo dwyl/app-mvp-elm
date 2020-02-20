@@ -44,7 +44,24 @@ suite =
                         Maybe.withDefault defaultUrl (Url.fromString "http://locahost/auth")
                 in
                 Parser.parse routeParser url
-                    |> Expect.equal (Just Auth)
+                    |> Expect.equal (Just (Auth Nothing))
+        , test "Test auth page with jwt" <|
+            \_ ->
+                let
+                    defaultUrl =
+                        { protocol = Url.Https
+                        , host = "dwyl.com"
+                        , port_ = Just 443
+                        , path = "/"
+                        , query = Nothing
+                        , fragment = Nothing
+                        }
+
+                    url =
+                        Maybe.withDefault defaultUrl (Url.fromString "http://locahost/auth?jwt=aaa.bbb.ccc")
+                in
+                Parser.parse routeParser url
+                    |> Expect.equal (Just (Auth (Just "aaa.bbb.ccc")))
         , test "Test 404 page" <|
             \_ ->
                 let

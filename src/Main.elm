@@ -107,7 +107,6 @@ loadRoute maybeRoute model =
             ( { model | page = NotFound }, Cmd.none )
 
         Just Route.Home ->
-            -- refactor this let in into a function that we can apply on all route and updates
             let
                 ( subModel, subMsg ) =
                     Home.init

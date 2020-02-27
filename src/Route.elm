@@ -1,4 +1,4 @@
-module Route exposing (fromUrl, Route(..))
+module Route exposing (fromUrl, Route(..), routeParser)
 
 {-| Parse a url to a Route type
 see <https://guide.elm-lang.org/webapps/url_parsing.html>

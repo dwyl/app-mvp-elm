@@ -1,11 +1,11 @@
-module MainTests exposing (suite)
+module RouteTests exposing (suite)
 
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
-import Main exposing (..)
 import Test exposing (..)
 import Url
 import Url.Parser as Parser
+import Route
 
 
 suite : Test
@@ -26,8 +26,8 @@ suite =
                     url =
                         Maybe.withDefault defaultUrl (Url.fromString "http://localhost/")
                 in
-                Parser.parse routeParser url
-                    |> Expect.equal (Just Home)
+                Parser.parse Route.routeParser url
+                    |> Expect.equal (Just Route.Home)
         , test "Test auth page" <|
             \_ ->
                 let
@@ -43,8 +43,8 @@ suite =
                     url =
                         Maybe.withDefault defaultUrl (Url.fromString "http://locahost/auth")
                 in
-                Parser.parse routeParser url
-                    |> Expect.equal (Just (Auth Nothing))
+                Parser.parse Route.routeParser url
+                    |> Expect.equal (Just (Route.Auth Nothing))
         , test "Test auth page with jwt" <|
             \_ ->
                 let
@@ -60,8 +60,8 @@ suite =
                     url =
                         Maybe.withDefault defaultUrl (Url.fromString "http://locahost/auth?jwt=aaa.bbb.ccc")
                 in
-                Parser.parse routeParser url
-                    |> Expect.equal (Just (Auth (Just "aaa.bbb.ccc")))
+                Parser.parse Route.routeParser url
+                    |> Expect.equal (Just (Route.Auth (Just "aaa.bbb.ccc")))
         , test "Test 404 page" <|
             \_ ->
                 let
@@ -77,6 +77,6 @@ suite =
                     url =
                         Maybe.withDefault defaultUrl (Url.fromString "http://locahost/wrong-page")
                 in
-                Parser.parse routeParser url
+                Parser.parse Route.routeParser url
                     |> Expect.equal Nothing
         ]

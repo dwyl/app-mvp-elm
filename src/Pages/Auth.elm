@@ -6,6 +6,7 @@ import Html.Attributes exposing (..)
 import Http
 import Json.Decode as JD
 import Page
+import Route
 import Session exposing (..)
 
 
@@ -63,7 +64,7 @@ view : Model -> Page.PageStructure Msg
 view model =
     { title = "Auth"
     , content =
-        [ a [ href "/" ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+        [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
         , div [] <| List.map (\url -> showAuthUrl url) model.urls
         ]
     }

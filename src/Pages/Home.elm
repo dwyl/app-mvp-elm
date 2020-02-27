@@ -4,6 +4,7 @@ import Asset
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Page
+import Route
 import Session exposing (..)
 
 
@@ -43,15 +44,14 @@ view : Model -> Page.PageStructure Msg
 view model =
     { title = "Home"
     , content =
-        [ a [ href "/" ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+        [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
         , h1 [ class "tc" ] [ text "Dwyl application" ]
+        , case model of
+            Session.Guest ->
+                a [ Route.href (Route.Auth Nothing), class "tc db" ] [ text "login/signup" ]
 
-        -- check session to know if login
-        , if String.isEmpty "" then
-            a [ href "/auth", class "tc db" ] [ text "login/signup" ]
-
-          else
-            span [ class "tc db" ] [ text <| "logged in with token: " ++ "token value" ]
+            Session.Session person ->
+                span [ class "tc db" ] [ text <| "logged in with token: " ++ person.email ]
         ]
     }
 

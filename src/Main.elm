@@ -8,6 +8,7 @@ import Html.Attributes exposing (..)
 import Page
 import Pages.Auth as Auth
 import Pages.Home as Home
+import Pages.Session as PagesSession
 import Route
 import Session
 import Url
@@ -32,6 +33,7 @@ main =
 type Page
     = Home Home.Model
     | Auth Auth.Model
+    | Session PagesSession.Model
     | NotFound Session.Session
 
 
@@ -69,6 +71,7 @@ type Msg
     | LinkClicked Browser.UrlRequest
     | GotHomeMsg Home.Msg
     | GotAuthMsg Auth.Msg
+    | GotPagesSessionMsg PagesSession.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -98,6 +101,13 @@ update msg model =
                     Auth.update authMsg authModel
             in
             ( { model | page = Auth subModel }, Cmd.map GotAuthMsg subMsg )
+
+        ( GotPagesSessionMsg sessionMsg, Session sessionModel ) ->
+            let
+                ( subModel, subMsg ) =
+                    PagesSession.update sessionMsg sessionModel
+            in
+            ( { model | page = Session subModel }, Cmd.map GotPagesSessionMsg subMsg )
 
         -- combining the msg and the model.page allow us to filter out
         -- messages coming from the wrong page
@@ -133,8 +143,12 @@ loadRoute maybeRoute model =
             in
             ( { model | page = Auth subModel }, Cmd.map GotAuthMsg subMsg )
 
-        Just (Route.Auth _) ->
-            ( model, Cmd.none )
+        Just (Route.Auth (Just jwt)) ->
+            let
+                ( subModel, subMsg ) =
+                    PagesSession.init session jwt
+            in
+            ( { model | page = Session subModel }, Cmd.map GotPagesSessionMsg subMsg )
 
 
 subscriptions : Model -> Sub Msg
@@ -150,6 +164,9 @@ view model =
 
         Auth authModel ->
             Page.view GotAuthMsg (Auth.view authModel)
+
+        Session sessionModel ->
+            Page.view GotPagesSessionMsg (PagesSession.view sessionModel)
 
         NotFound _ ->
             { title = "Not Found"
@@ -171,3 +188,6 @@ toSession page =
 
         Auth m ->
             Auth.toSession m
+
+        Session m ->
+            PagesSession.toSession m

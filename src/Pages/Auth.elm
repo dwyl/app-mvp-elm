@@ -1,4 +1,4 @@
-module Pages.Auth exposing (..)
+module Pages.Auth exposing (Model, Msg(..), TypeUrl(..), Url, authUrlsDecoder, getAuthUrls, init, showAuthUrl, update, urlDecoder, urlTypeDecoder, view)
 
 import Asset exposing (..)
 import Html exposing (..)
@@ -12,7 +12,9 @@ import Page
 -- Model
 
 
-type alias Model = List Url
+type alias Model =
+    List Url
+
 
 type alias Url =
     { url : String
@@ -24,8 +26,12 @@ type TypeUrl
     = Google
     | Github
 
-init : (Model, Cmd Msg)
-init = ([], getAuthUrls)
+
+init : ( Model, Cmd Msg )
+init =
+    ( [], getAuthUrls )
+
+
 
 -- Update
 

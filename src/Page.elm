@@ -1,4 +1,4 @@
-module Page exposing (..)
+module Page exposing (PageStructure, view)
 
 {-| Define the structure of a page
 This module can contain the future header and footer content

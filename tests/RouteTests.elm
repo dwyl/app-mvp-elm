@@ -2,10 +2,10 @@ module RouteTests exposing (suite)
 
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
+import Route
 import Test exposing (..)
 import Url
 import Url.Parser as Parser
-import Route
 
 
 suite : Test

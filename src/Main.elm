@@ -1,15 +1,15 @@
-module Main exposing (Page(..), main, routeParser)
+module Main exposing (Page(..), main)
 
 import Asset
 import Browser
 import Browser.Navigation as Nav
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Http
-import Json.Decode as JD
+import Page
+import Pages.Auth as Auth
+import Pages.Home as Home
+import Route
 import Url
-import Url.Parser as Parser exposing ((<?>))
-import Url.Parser.Query as Query
 
 
 main : Program () Model Msg
@@ -29,22 +29,27 @@ main =
 
 
 type Page
-    = Home
-    | Auth (Maybe String)
+    = Home Home.Model
+    | Auth Auth.Model
     | NotFound
 
 
 type alias Model =
     { key : Nav.Key
     , page : Page
-    , authUrls : List Url
-    , token : String
+
+    --    , token : String
     }
+
+
+
+-- flags will contain the session from local storage
+-- init look at the url, parse it and load the Page (ie Home, Auth...)
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init _ url key =
-    parseUrl url (Model key NotFound [] "")
+    loadRoute (Route.fromUrl url) (Model key NotFound)
 
 
 
@@ -54,13 +59,14 @@ init _ url key =
 type Msg
     = UrlChanged Url.Url
     | LinkClicked Browser.UrlRequest
-    | GotAuthUrls (Result Http.Error (List Url))
+    | GotHomeMsg Home.Msg
+    | GotAuthMsg Auth.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        LinkClicked link ->
+    case ( msg, model.page ) of
+        ( LinkClicked link, _ ) ->
             case link of
                 Browser.Internal urlRequested ->
                     ( model, Nav.pushUrl model.key (Url.toString urlRequested) )
@@ -68,43 +74,55 @@ update msg model =
                 Browser.External href ->
                     ( model, Nav.load href )
 
-        UrlChanged url ->
-            parseUrl url model
+        ( UrlChanged url, _ ) ->
+            loadRoute (Route.fromUrl url) model
 
-        GotAuthUrls result ->
-            case result of
-                Ok urls ->
-                    ( { model | authUrls = urls }, Cmd.none )
+        ( GotHomeMsg homeMsg, Home homeModel ) ->
+            let
+                ( subModel, subMsg ) =
+                    Home.update homeMsg homeModel
+            in
+            ( { model | page = Home subModel }, Cmd.map GotHomeMsg subMsg )
 
-                Err _ ->
-                    ( model, Cmd.none )
+        ( GotAuthMsg authMsg, Auth authModel ) ->
+            let
+                ( subModel, subMsg ) =
+                    Auth.update authMsg authModel
+            in
+            ( { model | page = Auth subModel }, Cmd.map GotAuthMsg subMsg )
+
+        -- combining the msg and the model.page allow us to filter out
+        -- messages coming from the wrong page
+        ( _, _ ) ->
+            ( model, Cmd.none )
 
 
-routeParser : Parser.Parser (Page -> a) a
-routeParser =
-    Parser.oneOf
-        [ Parser.map Home Parser.top
-        , Parser.map Auth (Parser.s "auth" <?> Query.string "jwt")
-        ]
-
-
-parseUrl : Url.Url -> Model -> ( Model, Cmd Msg )
-parseUrl url model =
-    case Parser.parse routeParser url of
-        Just page ->
-            case page of
-                Auth Nothing ->
-                    ( { model | page = page }, getAuthUrls )
-
-                Auth (Just jwt) ->
-                    ( { model | token = jwt }, Nav.pushUrl model.key "/" )
-
-                -- redirect to home page
-                _ ->
-                    ( { model | page = page }, Cmd.none )
-
+loadRoute : Maybe Route.Route -> Model -> ( Model, Cmd Msg )
+loadRoute maybeRoute model =
+    case maybeRoute of
+        -- no matching route so 404 page is selected
+        -- could we create an Error module which will manage this kind of pages
+        -- see package elm app
         Nothing ->
             ( { model | page = NotFound }, Cmd.none )
+
+        Just Route.Home ->
+            -- refactor this let in into a function that we can apply on all route and updates
+            let
+                ( subModel, subMsg ) =
+                    Home.init
+            in
+            ( { model | page = Home subModel }, Cmd.map GotHomeMsg subMsg )
+
+        Just (Route.Auth Nothing) ->
+            let
+                ( subModel, subMsg ) =
+                    Auth.init
+            in
+            ( { model | page = Auth subModel }, Cmd.map GotAuthMsg subMsg )
+
+        Just (Route.Auth _) ->
+            ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg
@@ -114,95 +132,17 @@ subscriptions _ =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "DWYL App"
-    , body =
-        case model.page of
-            Home ->
-                [ a [ href "/" ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
-                , h1 [ class "tc" ] [ text "Dwyl application" ]
-                , if String.isEmpty model.token then
-                    a [ href "/auth", class "tc db" ] [ text "login/signup" ]
+    case model.page of
+        Home home ->
+            Page.view GotHomeMsg (Home.view home)
 
-                  else
-                    span [ class "tc db" ] [ text <| "logged in with token: " ++ model.token ]
-                ]
+        Auth authModel ->
+            Page.view GotAuthMsg (Auth.view authModel)
 
-            Auth _ ->
-                [ a [ href "/" ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
-                , div [] <| List.map (\url -> showAuthUrl url) model.authUrls
-                ]
-
-            NotFound ->
+        NotFound ->
+            { title = "Not Found"
+            , body =
                 [ a [ href "/" ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
                 , h1 [ class "tc" ] [ text "page not found" ]
                 ]
-    }
-
-
-
--- OAuth urls
--- convert oauth login urls (github, google) to Elm Url type
-
-
-type alias Url =
-    { url : String
-    , typeUrl : TypeUrl
-    }
-
-
-type TypeUrl
-    = Google
-    | Github
-
-
-getAuthUrls : Cmd Msg
-getAuthUrls =
-    Http.get
-        { url = "https://appapispike.herokuapp.com/api/auth/urls"
-        , expect = Http.expectJson GotAuthUrls authUrlsDecoder
-        }
-
-
-authUrlsDecoder : JD.Decoder (List Url)
-authUrlsDecoder =
-    JD.field "data" (JD.list urlDecoder)
-
-
-urlDecoder : JD.Decoder Url
-urlDecoder =
-    JD.map2 Url
-        (JD.field "url" JD.string)
-        (JD.field "type" urlTypeDecoder)
-
-
-urlTypeDecoder : JD.Decoder TypeUrl
-urlTypeDecoder =
-    JD.string
-        |> JD.andThen
-            (\str ->
-                case str of
-                    "google" ->
-                        JD.succeed Google
-
-                    "github" ->
-                        JD.succeed Github
-
-                    _ ->
-                        JD.fail "unkown type url"
-            )
-
-
-showAuthUrl : Url -> Html Msg
-showAuthUrl url =
-    let
-        imgSrc =
-            case url.typeUrl of
-                Google ->
-                    Asset.src Asset.signinGoogle
-
-                Github ->
-                    Asset.src Asset.signinGithub
-    in
-    div [ class "tc pa2" ]
-        [ a [ href url.url ] [ img [ imgSrc ] [] ]
-        ]
+            }

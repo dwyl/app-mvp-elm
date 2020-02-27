@@ -1,9 +1,10 @@
-module Pages.Home exposing (Model, Msg(..), init, update, view)
+module Pages.Home exposing (Model, Msg(..), init, update, view, toSession)
 
 import Asset
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Page
+import Session exposing (..)
 
 
 
@@ -11,12 +12,12 @@ import Page
 
 
 type alias Model =
-    String
+    Session
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( "", Cmd.none )
+init : Session -> ( Model, Cmd Msg )
+init session =
+    ( session, Cmd.none )
 
 
 
@@ -53,3 +54,7 @@ view model =
             span [ class "tc db" ] [ text <| "logged in with token: " ++ "token value" ]
         ]
     }
+
+
+toSession: Model -> Session
+toSession model = model

@@ -9,10 +9,11 @@ import Page
 import Pages.Auth as Auth
 import Pages.Home as Home
 import Route
+import Session
 import Url
 
 
-main : Program () Model Msg
+main : Program (Maybe String) Model Msg
 main =
     Browser.application
         { init = init
@@ -31,14 +32,12 @@ main =
 type Page
     = Home Home.Model
     | Auth Auth.Model
-    | NotFound
+    | NotFound Session.Session
 
 
 type alias Model =
     { key : Nav.Key
     , page : Page
-
-    --    , token : String
     }
 
 
@@ -47,9 +46,18 @@ type alias Model =
 -- init look at the url, parse it and load the Page (ie Home, Auth...)
 
 
-init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init _ url key =
-    loadRoute (Route.fromUrl url) (Model key NotFound)
+init : Maybe String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url key =
+    let
+        session =
+            case flags of
+                Nothing ->
+                    Session.Guest
+
+                Just str ->
+                    Session.decode str
+    in
+    loadRoute (Route.fromUrl url) (Model key (NotFound session))
 
 
 
@@ -99,24 +107,29 @@ update msg model =
 
 loadRoute : Maybe Route.Route -> Model -> ( Model, Cmd Msg )
 loadRoute maybeRoute model =
+    -- get session from the current page model
+    let
+       session = toSession model.page
+    in
+    
     case maybeRoute of
         -- no matching route so 404 page is selected
         -- could we create an Error module which will manage this kind of pages
         -- see package elm app
         Nothing ->
-            ( { model | page = NotFound }, Cmd.none )
+            ( { model | page = NotFound session }, Cmd.none )
 
         Just Route.Home ->
             let
                 ( subModel, subMsg ) =
-                    Home.init
+                    Home.init session
             in
             ( { model | page = Home subModel }, Cmd.map GotHomeMsg subMsg )
 
         Just (Route.Auth Nothing) ->
             let
                 ( subModel, subMsg ) =
-                    Auth.init
+                    Auth.init session
             in
             ( { model | page = Auth subModel }, Cmd.map GotAuthMsg subMsg )
 
@@ -138,10 +151,20 @@ view model =
         Auth authModel ->
             Page.view GotAuthMsg (Auth.view authModel)
 
-        NotFound ->
+        NotFound _ ->
             { title = "Not Found"
             , body =
                 [ a [ href "/" ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
                 , h1 [ class "tc" ] [ text "page not found" ]
                 ]
             }
+
+
+toSession : Page -> Session.Session
+toSession page =
+    case page of
+       NotFound session -> session
+
+       Home m -> Home.toSession m
+
+       Auth m -> Auth.toSession m

@@ -1,4 +1,4 @@
-module Pages.Auth exposing (Model, Msg(..), TypeUrl(..), Url, authUrlsDecoder, getAuthUrls, init, showAuthUrl, update, urlDecoder, urlTypeDecoder, view)
+module Pages.Auth exposing (Model, Msg(..), TypeUrl(..), Url, authUrlsDecoder, getAuthUrls, init, showAuthUrl, toSession, update, urlDecoder, urlTypeDecoder, view)
 
 import Asset exposing (..)
 import Html exposing (..)
@@ -6,6 +6,7 @@ import Html.Attributes exposing (..)
 import Http
 import Json.Decode as JD
 import Page
+import Session exposing (..)
 
 
 
@@ -13,7 +14,9 @@ import Page
 
 
 type alias Model =
-    List Url
+    { session : Session
+    , urls : List Url
+    }
 
 
 type alias Url =
@@ -27,9 +30,9 @@ type TypeUrl
     | Github
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( [], getAuthUrls )
+init : Session -> ( Model, Cmd Msg )
+init session =
+    ( Model session [], getAuthUrls )
 
 
 
@@ -46,7 +49,7 @@ update msg model =
         GotAuthUrls result ->
             case result of
                 Ok urls ->
-                    ( urls, Cmd.none )
+                    ( { model | urls = urls }, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
@@ -61,7 +64,7 @@ view model =
     { title = "Auth"
     , content =
         [ a [ href "/" ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
-        , div [] <| List.map (\url -> showAuthUrl url) model
+        , div [] <| List.map (\url -> showAuthUrl url) model.urls
         ]
     }
 
@@ -117,3 +120,8 @@ showAuthUrl url =
     div [ class "tc pa2" ]
         [ a [ href url.url ] [ img [ imgSrc ] [] ]
         ]
+
+
+toSession : Model -> Session
+toSession model =
+    model.session

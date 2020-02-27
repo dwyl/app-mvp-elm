@@ -109,9 +109,9 @@ loadRoute : Maybe Route.Route -> Model -> ( Model, Cmd Msg )
 loadRoute maybeRoute model =
     -- get session from the current page model
     let
-       session = toSession model.page
+        session =
+            toSession model.page
     in
-    
     case maybeRoute of
         -- no matching route so 404 page is selected
         -- could we create an Error module which will manage this kind of pages
@@ -163,8 +163,11 @@ view model =
 toSession : Page -> Session.Session
 toSession page =
     case page of
-       NotFound session -> session
+        NotFound session ->
+            session
 
-       Home m -> Home.toSession m
+        Home m ->
+            Home.toSession m
 
-       Auth m -> Auth.toSession m
+        Auth m ->
+            Auth.toSession m

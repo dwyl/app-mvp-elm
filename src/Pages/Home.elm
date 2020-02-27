@@ -1,4 +1,4 @@
-module Pages.Home exposing (Model, Msg(..), init, update, view, toSession)
+module Pages.Home exposing (Model, Msg(..), init, toSession, update, view)
 
 import Asset
 import Html exposing (..)
@@ -56,5 +56,6 @@ view model =
     }
 
 
-toSession: Model -> Session
-toSession model = model
+toSession : Model -> Session
+toSession model =
+    model

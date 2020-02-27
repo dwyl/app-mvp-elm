@@ -1,4 +1,4 @@
-module Session exposing (..)
+module Session exposing (Person, Session(..), decode)
 
 {-| Represent the current user
 -}

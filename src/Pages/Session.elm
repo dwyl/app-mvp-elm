@@ -54,7 +54,7 @@ getPersonInfo =
     -- make sure to update the backend app endpoint to return a user info
     -- need to pass the jwt as a header in the request
     Http.get
-        { url = "https://appapispike.herokuapp.com/api/person/info"
+        { url = "https://dwyl-app-api.herokuapp.com/api/person/info"
         , expect = Http.expectJson GotPersonInfo personDecoder
         }
 

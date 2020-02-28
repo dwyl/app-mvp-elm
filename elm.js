@@ -6511,7 +6511,7 @@ var $elm$http$Http$get = function (r) {
 var $author$project$Pages$Auth$getAuthUrls = $elm$http$Http$get(
 	{
 		ba: A2($elm$http$Http$expectJson, $elm$core$Basics$identity, $author$project$Pages$Auth$authUrlsDecoder),
-		ab: 'https://appapispike.herokuapp.com/api/auth/urls'
+		ab: 'https://dwyl-app-api.herokuapp.com/api/login'
 	});
 var $author$project$Pages$Auth$init = function (session) {
 	return _Utils_Tuple2(

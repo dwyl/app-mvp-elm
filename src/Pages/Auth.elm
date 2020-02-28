@@ -73,7 +73,7 @@ view model =
 getAuthUrls : Cmd Msg
 getAuthUrls =
     Http.get
-        { url = "https://appapispike.herokuapp.com/api/auth/urls"
+        { url = "https://dwyl-app-api.herokuapp.com/api/login"
         , expect = Http.expectJson GotAuthUrls authUrlsDecoder
         }
 

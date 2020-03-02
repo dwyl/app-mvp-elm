@@ -1,6 +1,7 @@
 module Pages.Auth exposing (Model, Msg(..), TypeUrl(..), Url, authUrlsDecoder, getAuthUrls, init, showAuthUrl, toSession, update, urlDecoder, urlTypeDecoder, view)
 
 import Asset exposing (..)
+import Endpoint
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
@@ -73,7 +74,7 @@ view model =
 getAuthUrls : Cmd Msg
 getAuthUrls =
     Http.get
-        { url = "https://dwyl-app-api.herokuapp.com/api/login"
+        { url = Endpoint.toString Endpoint.authUrls
         , expect = Http.expectJson GotAuthUrls authUrlsDecoder
         }
 

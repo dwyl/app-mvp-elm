@@ -1,6 +1,7 @@
 module Pages.Session exposing (Model, Msg(..), Person, getPersonInfo, init, personDecoder, subscriptions, toSession, update, view)
 
 import Asset
+import Endpoint
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
@@ -24,7 +25,7 @@ type alias Person =
 init : Session -> String -> ( Model, Cmd Msg )
 init session token =
     -- insstead of Cmd.none, get user info
-    ( Model session token, Cmd.none )
+    ( Model session token, getPersonInfo token )
 
 
 
@@ -42,28 +43,43 @@ update msg model =
             case result of
                 Ok person ->
                     -- instead of Cmd.none, call a store cache command
+                    let
+                        _ =
+                            Debug.log "Person" person
+                    in
                     ( model, Cmd.none )
 
                 -- if a 401 redirect to 401 page not authorised
-                Err _ ->
+                Err e ->
+                    let
+                        _ =
+                            Debug.log "Error" e
+                    in
                     ( model, Cmd.none )
 
 
-getPersonInfo : Cmd Msg
-getPersonInfo =
+getPersonInfo : String -> Cmd Msg
+getPersonInfo token =
     -- make sure to update the backend app endpoint to return a user info
     -- need to pass the jwt as a header in the request
-    Http.get
-        { url = "https://dwyl-app-api.herokuapp.com/api/person/info"
+    Http.request
+        { method = "GET"
+        , headers = [ Http.header "authorization" ("Bearer " ++ token) ]
+        , url = Endpoint.toString Endpoint.personInfo
+        , body = Http.emptyBody
         , expect = Http.expectJson GotPersonInfo personDecoder
+        , timeout = Nothing
+        , tracker = Nothing
         }
 
 
 personDecoder : JD.Decoder Person
 personDecoder =
-    JD.map2 Person
-        (JD.field "email" JD.string)
-        (JD.field "name" JD.string)
+    JD.field "data"
+        (JD.map2 Person
+            (JD.field "email" JD.string)
+            (JD.field "name" JD.string)
+        )
 
 
 

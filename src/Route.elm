@@ -1,9 +1,10 @@
-module Route exposing (Route(..), fromUrl, href, routeParser)
+module Route exposing (Route(..), fromUrl, href, replaceUrl, routeParser)
 
 {-| Parse a url to a Route type
 see <https://guide.elm-lang.org/webapps/url_parsing.html>
 -}
 
+import Browser.Navigation as Nav
 import Html exposing (Attribute)
 import Html.Attributes as Attr
 import Url exposing (Url)
@@ -45,3 +46,8 @@ routeToString route =
 
         Auth (Just jwt) ->
             "/auth?jwt=" ++ jwt
+
+
+replaceUrl : Nav.Key -> Route -> Cmd msg
+replaceUrl key route =
+    Nav.replaceUrl key (routeToString route)

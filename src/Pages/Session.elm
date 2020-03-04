@@ -7,6 +7,7 @@ import Html.Attributes exposing (..)
 import Http
 import Json.Decode as JD
 import Page
+import Route
 import Session exposing (..)
 
 
@@ -24,7 +25,6 @@ type alias Person =
 
 init : Session -> String -> ( Model, Cmd Msg )
 init session token =
-    -- insstead of Cmd.none, get user info
     ( Model session token, getPersonInfo token )
 
 
@@ -47,7 +47,7 @@ update msg model =
                         _ =
                             Debug.log "Person" person
                     in
-                    ( model, Cmd.none )
+                    ( model, Route.replaceUrl (navKey model.session) Route.Home )
 
                 -- if a 401 redirect to 401 page not authorised
                 Err e ->
@@ -61,7 +61,6 @@ update msg model =
 getPersonInfo : String -> Cmd Msg
 getPersonInfo token =
     -- make sure to update the backend app endpoint to return a user info
-    -- need to pass the jwt as a header in the request
     Http.request
         { method = "GET"
         , headers = [ Http.header "authorization" ("Bearer " ++ token) ]
@@ -108,3 +107,12 @@ subscriptions model =
 toSession : Model -> Session
 toSession model =
     model.session
+
+
+
+-- create port module
+-- create storeSession
+-- in html.js store the session
+-- create subscriptions to listen to new change in store and trigger the GotSession session message
+-- redirect to Home page with the new session
+-- Create a redirect function in Route module

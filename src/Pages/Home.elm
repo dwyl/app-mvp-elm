@@ -47,10 +47,10 @@ view model =
         [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
         , h1 [ class "tc" ] [ text "Dwyl application" ]
         , case model of
-            Session.Guest ->
+            Session.Guest _ ->
                 a [ Route.href (Route.Auth Nothing), class "tc db" ] [ text "login/signup" ]
 
-            Session.Session person ->
+            Session.Session _ person ->
                 span [ class "tc db" ] [ text <| "logged in with token: " ++ person.email ]
         ]
     }

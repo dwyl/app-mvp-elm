@@ -1,4 +1,4 @@
-module Main exposing (Page(..), main)
+module Main exposing (main)
 
 import Asset
 import Browser
@@ -30,17 +30,11 @@ main =
 -- Model
 
 
-type Page
+type Model
     = Home Home.Model
     | Auth Auth.Model
     | Session PagesSession.Model
     | NotFound Session.Session
-
-
-type alias Model =
-    { key : Nav.Key
-    , page : Page
-    }
 
 
 
@@ -49,17 +43,17 @@ type alias Model =
 
 
 init : Maybe String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init flags url key =
+init flags url navKey =
     let
         session =
             case flags of
                 Nothing ->
-                    Session.Guest
+                    Session.Guest navKey
 
                 Just str ->
-                    Session.decode str
+                    Session.decode navKey str
     in
-    loadRoute (Route.fromUrl url) (Model key (NotFound session))
+    loadRoute (Route.fromUrl url) (NotFound session)
 
 
 
@@ -76,11 +70,11 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case ( msg, model.page ) of
+    case ( msg, model ) of
         ( LinkClicked link, _ ) ->
             case link of
                 Browser.Internal urlRequested ->
-                    ( model, Nav.pushUrl model.key (Url.toString urlRequested) )
+                    ( model, Nav.pushUrl (toNavKey model) (Url.toString urlRequested) )
 
                 Browser.External href ->
                     ( model, Nav.load href )
@@ -93,21 +87,21 @@ update msg model =
                 ( subModel, subMsg ) =
                     Home.update homeMsg homeModel
             in
-            ( { model | page = Home subModel }, Cmd.map GotHomeMsg subMsg )
+            ( Home subModel, Cmd.map GotHomeMsg subMsg )
 
         ( GotAuthMsg authMsg, Auth authModel ) ->
             let
                 ( subModel, subMsg ) =
                     Auth.update authMsg authModel
             in
-            ( { model | page = Auth subModel }, Cmd.map GotAuthMsg subMsg )
+            ( Auth subModel, Cmd.map GotAuthMsg subMsg )
 
         ( GotPagesSessionMsg sessionMsg, Session sessionModel ) ->
             let
                 ( subModel, subMsg ) =
                     PagesSession.update sessionMsg sessionModel
             in
-            ( { model | page = Session subModel }, Cmd.map GotPagesSessionMsg subMsg )
+            ( Session subModel, Cmd.map GotPagesSessionMsg subMsg )
 
         -- combining the msg and the model.page allow us to filter out
         -- messages coming from the wrong page
@@ -120,35 +114,35 @@ loadRoute maybeRoute model =
     -- get session from the current page model
     let
         session =
-            toSession model.page
+            toSession model
     in
     case maybeRoute of
         -- no matching route so 404 page is selected
         -- could we create an Error module which will manage this kind of pages
         -- see package elm app
         Nothing ->
-            ( { model | page = NotFound session }, Cmd.none )
+            ( NotFound session, Cmd.none )
 
         Just Route.Home ->
             let
                 ( subModel, subMsg ) =
                     Home.init session
             in
-            ( { model | page = Home subModel }, Cmd.map GotHomeMsg subMsg )
+            ( Home subModel, Cmd.map GotHomeMsg subMsg )
 
         Just (Route.Auth Nothing) ->
             let
                 ( subModel, subMsg ) =
                     Auth.init session
             in
-            ( { model | page = Auth subModel }, Cmd.map GotAuthMsg subMsg )
+            ( Auth subModel, Cmd.map GotAuthMsg subMsg )
 
         Just (Route.Auth (Just jwt)) ->
             let
                 ( subModel, subMsg ) =
                     PagesSession.init session jwt
             in
-            ( { model | page = Session subModel }, Cmd.map GotPagesSessionMsg subMsg )
+            ( Session subModel, Cmd.map GotPagesSessionMsg subMsg )
 
 
 subscriptions : Model -> Sub Msg
@@ -158,7 +152,7 @@ subscriptions _ =
 
 view : Model -> Browser.Document Msg
 view model =
-    case model.page of
+    case model of
         Home home ->
             Page.view GotHomeMsg (Home.view home)
 
@@ -177,7 +171,7 @@ view model =
             }
 
 
-toSession : Page -> Session.Session
+toSession : Model -> Session.Session
 toSession page =
     case page of
         NotFound session ->
@@ -191,3 +185,8 @@ toSession page =
 
         Session m ->
             PagesSession.toSession m
+
+
+toNavKey : Model -> Nav.Key
+toNavKey model =
+    Session.navKey (toSession model)

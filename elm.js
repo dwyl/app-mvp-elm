@@ -5342,11 +5342,9 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$application = _Browser_application;
-var $author$project$Session$Guest = {$: 'Guest'};
-var $author$project$Main$Model = F2(
-	function (key, page) {
-		return {key: key, page: page};
-	});
+var $author$project$Session$Guest = function (a) {
+	return {$: 'Guest', a: a};
+};
 var $author$project$Main$NotFound = function (a) {
 	return {$: 'NotFound', a: a};
 };
@@ -5354,28 +5352,30 @@ var $author$project$Session$Person = F2(
 	function (email, token) {
 		return {email: email, token: token};
 	});
-var $author$project$Session$Session = function (a) {
-	return {$: 'Session', a: a};
-};
+var $author$project$Session$Session = F2(
+	function (a, b) {
+		return {$: 'Session', a: a, b: b};
+	});
 var $elm$json$Json$Decode$decodeString = _Json_runOnString;
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$string = _Json_decodeString;
-var $author$project$Session$decode = function (str) {
-	var _v0 = A2(
-		$elm$json$Json$Decode$decodeString,
-		A3(
-			$elm$json$Json$Decode$map2,
-			$author$project$Session$Person,
-			A2($elm$json$Json$Decode$field, 'email', $elm$json$Json$Decode$string),
-			A2($elm$json$Json$Decode$field, 'token', $elm$json$Json$Decode$string)),
-		str);
-	if (_v0.$ === 'Ok') {
-		var p = _v0.a;
-		return $author$project$Session$Session(p);
-	} else {
-		return $author$project$Session$Guest;
-	}
-};
+var $author$project$Session$decode = F2(
+	function (key, str) {
+		var _v0 = A2(
+			$elm$json$Json$Decode$decodeString,
+			A3(
+				$elm$json$Json$Decode$map2,
+				$author$project$Session$Person,
+				A2($elm$json$Json$Decode$field, 'email', $elm$json$Json$Decode$string),
+				A2($elm$json$Json$Decode$field, 'token', $elm$json$Json$Decode$string)),
+			str);
+		if (_v0.$ === 'Ok') {
+			var p = _v0.a;
+			return A2($author$project$Session$Session, key, p);
+		} else {
+			return $author$project$Session$Guest(key);
+		}
+	});
 var $elm$url$Url$Parser$State = F5(
 	function (visited, unvisited, params, frag, value) {
 		return {frag: frag, params: params, unvisited: unvisited, value: value, visited: visited};
@@ -6656,14 +6656,10 @@ var $author$project$Main$toSession = function (page) {
 };
 var $author$project$Main$loadRoute = F2(
 	function (maybeRoute, model) {
-		var session = $author$project$Main$toSession(model.page);
+		var session = $author$project$Main$toSession(model);
 		if (maybeRoute.$ === 'Nothing') {
 			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{
-						page: $author$project$Main$NotFound(session)
-					}),
+				$author$project$Main$NotFound(session),
 				$elm$core$Platform$Cmd$none);
 		} else {
 			if (maybeRoute.a.$ === 'Home') {
@@ -6672,11 +6668,7 @@ var $author$project$Main$loadRoute = F2(
 				var subModel = _v2.a;
 				var subMsg = _v2.b;
 				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							page: $author$project$Main$Home(subModel)
-						}),
+					$author$project$Main$Home(subModel),
 					A2($elm$core$Platform$Cmd$map, $author$project$Main$GotHomeMsg, subMsg));
 			} else {
 				if (maybeRoute.a.a.$ === 'Nothing') {
@@ -6685,11 +6677,7 @@ var $author$project$Main$loadRoute = F2(
 					var subModel = _v4.a;
 					var subMsg = _v4.b;
 					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								page: $author$project$Main$Auth(subModel)
-							}),
+						$author$project$Main$Auth(subModel),
 						A2($elm$core$Platform$Cmd$map, $author$project$Main$GotAuthMsg, subMsg));
 				} else {
 					var jwt = maybeRoute.a.a.a;
@@ -6697,33 +6685,26 @@ var $author$project$Main$loadRoute = F2(
 					var subModel = _v5.a;
 					var subMsg = _v5.b;
 					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								page: $author$project$Main$Session(subModel)
-							}),
+						$author$project$Main$Session(subModel),
 						A2($elm$core$Platform$Cmd$map, $author$project$Main$GotPagesSessionMsg, subMsg));
 				}
 			}
 		}
 	});
 var $author$project$Main$init = F3(
-	function (flags, url, key) {
+	function (flags, url, navKey) {
 		var session = function () {
 			if (flags.$ === 'Nothing') {
-				return $author$project$Session$Guest;
+				return $author$project$Session$Guest(navKey);
 			} else {
 				var str = flags.a;
-				return $author$project$Session$decode(str);
+				return A2($author$project$Session$decode, navKey, str);
 			}
 		}();
 		return A2(
 			$author$project$Main$loadRoute,
 			$author$project$Route$fromUrl(url),
-			A2(
-				$author$project$Main$Model,
-				key,
-				$author$project$Main$NotFound(session)));
+			$author$project$Main$NotFound(session));
 	});
 var $elm$json$Json$Decode$null = _Json_decodeNull;
 var $elm$json$Json$Decode$oneOf = _Json_oneOf;
@@ -6734,6 +6715,19 @@ var $author$project$Main$subscriptions = function (_v0) {
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
 var $elm$browser$Browser$Navigation$pushUrl = _Browser_pushUrl;
+var $author$project$Session$navKey = function (session) {
+	if (session.$ === 'Guest') {
+		var key = session.a;
+		return key;
+	} else {
+		var key = session.a;
+		return key;
+	}
+};
+var $author$project$Main$toNavKey = function (model) {
+	return $author$project$Session$navKey(
+		$author$project$Main$toSession(model));
+};
 var $elm$url$Url$addPort = F2(
 	function (maybePort, starter) {
 		if (maybePort.$ === 'Nothing') {
@@ -6797,13 +6791,39 @@ var $author$project$Pages$Home$update = F2(
 		return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 	});
 var $elm$core$Debug$log = _Debug_log;
+var $elm$browser$Browser$Navigation$replaceUrl = _Browser_replaceUrl;
+var $author$project$Route$routeToString = function (route) {
+	if (route.$ === 'Home') {
+		return '/';
+	} else {
+		if (route.a.$ === 'Nothing') {
+			var _v1 = route.a;
+			return '/auth';
+		} else {
+			var jwt = route.a.a;
+			return '/auth?jwt=' + jwt;
+		}
+	}
+};
+var $author$project$Route$replaceUrl = F2(
+	function (key, route) {
+		return A2(
+			$elm$browser$Browser$Navigation$replaceUrl,
+			key,
+			$author$project$Route$routeToString(route));
+	});
 var $author$project$Pages$Session$update = F2(
 	function (msg, model) {
 		var result = msg.a;
 		if (result.$ === 'Ok') {
 			var person = result.a;
 			var _v2 = A2($elm$core$Debug$log, 'Person', person);
-			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			return _Utils_Tuple2(
+				model,
+				A2(
+					$author$project$Route$replaceUrl,
+					$author$project$Session$navKey(model.session),
+					$author$project$Route$Home));
 		} else {
 			var e = result.a;
 			var _v3 = A2($elm$core$Debug$log, 'Error', e);
@@ -6812,7 +6832,7 @@ var $author$project$Pages$Session$update = F2(
 	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
-		var _v0 = _Utils_Tuple2(msg, model.page);
+		var _v0 = _Utils_Tuple2(msg, model);
 		_v0$5:
 		while (true) {
 			switch (_v0.a.$) {
@@ -6824,7 +6844,7 @@ var $author$project$Main$update = F2(
 							model,
 							A2(
 								$elm$browser$Browser$Navigation$pushUrl,
-								model.key,
+								$author$project$Main$toNavKey(model),
 								$elm$url$Url$toString(urlRequested)));
 					} else {
 						var href = link.a;
@@ -6846,11 +6866,7 @@ var $author$project$Main$update = F2(
 						var subModel = _v2.a;
 						var subMsg = _v2.b;
 						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									page: $author$project$Main$Home(subModel)
-								}),
+							$author$project$Main$Home(subModel),
 							A2($elm$core$Platform$Cmd$map, $author$project$Main$GotHomeMsg, subMsg));
 					} else {
 						break _v0$5;
@@ -6863,11 +6879,7 @@ var $author$project$Main$update = F2(
 						var subModel = _v3.a;
 						var subMsg = _v3.b;
 						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									page: $author$project$Main$Auth(subModel)
-								}),
+							$author$project$Main$Auth(subModel),
 							A2($elm$core$Platform$Cmd$map, $author$project$Main$GotAuthMsg, subMsg));
 					} else {
 						break _v0$5;
@@ -6880,11 +6892,7 @@ var $author$project$Main$update = F2(
 						var subModel = _v4.a;
 						var subMsg = _v4.b;
 						return _Utils_Tuple2(
-							_Utils_update(
-								model,
-								{
-									page: $author$project$Main$Session(subModel)
-								}),
+							$author$project$Main$Session(subModel),
 							A2($elm$core$Platform$Cmd$map, $author$project$Main$GotPagesSessionMsg, subMsg));
 					} else {
 						break _v0$5;
@@ -6943,19 +6951,6 @@ var $author$project$Page$view = F2(
 		};
 	});
 var $elm$html$Html$div = _VirtualDom_node('div');
-var $author$project$Route$routeToString = function (route) {
-	if (route.$ === 'Home') {
-		return '/';
-	} else {
-		if (route.a.$ === 'Nothing') {
-			var _v1 = route.a;
-			return '/auth';
-		} else {
-			var jwt = route.a.a;
-			return '/auth?jwt=' + jwt;
-		}
-	}
-};
 var $author$project$Route$href = function (targetRoute) {
 	return $elm$html$Html$Attributes$href(
 		$author$project$Route$routeToString(targetRoute));
@@ -7076,7 +7071,7 @@ var $author$project$Pages$Home$view = function (model) {
 								$elm$html$Html$text('login/signup')
 							]));
 				} else {
-					var person = model.a;
+					var person = model.b;
 					return A2(
 						$elm$html$Html$span,
 						_List_fromArray(
@@ -7121,22 +7116,21 @@ var $author$project$Pages$Session$view = function (model) {
 	};
 };
 var $author$project$Main$view = function (model) {
-	var _v0 = model.page;
-	switch (_v0.$) {
+	switch (model.$) {
 		case 'Home':
-			var home = _v0.a;
+			var home = model.a;
 			return A2(
 				$author$project$Page$view,
 				$author$project$Main$GotHomeMsg,
 				$author$project$Pages$Home$view(home));
 		case 'Auth':
-			var authModel = _v0.a;
+			var authModel = model.a;
 			return A2(
 				$author$project$Page$view,
 				$author$project$Main$GotAuthMsg,
 				$author$project$Pages$Auth$view(authModel));
 		case 'Session':
-			var sessionModel = _v0.a;
+			var sessionModel = model.a;
 			return A2(
 				$author$project$Page$view,
 				$author$project$Main$GotPagesSessionMsg,

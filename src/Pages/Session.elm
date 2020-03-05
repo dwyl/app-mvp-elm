@@ -14,6 +14,7 @@ import Session exposing (Session)
 type alias Model =
     { session : Session
     , token : String
+    , error : String
     }
 
 
@@ -25,7 +26,7 @@ type alias PersonInfo =
 
 init : Session -> String -> ( Model, Cmd Msg )
 init session token =
-    ( Model session token, getPersonInfo token )
+    ( Model session token "", getPersonInfo token )
 
 
 
@@ -49,9 +50,16 @@ update msg model =
                     in
                     ( model, Session.storeSession (Just <| Session.encode session) )
 
-                -- if a 401 redirect to 401 page not authorised
-                Err e ->
-                    ( model, Cmd.none )
+                Err httpError ->
+                    case httpError of
+                        Http.BadStatus 401 ->
+                            ( { model | error = "Access not authorised" }, Cmd.none )
+
+                        Http.BadStatus 404 ->
+                            ( { model | error = "User information can't be retrieved" }, Cmd.none )
+
+                        _ ->
+                            ( { model | error = "Error on authentication" }, Cmd.none )
 
         GotSession session ->
             ( { model | session = session }
@@ -87,11 +95,15 @@ personDecoder =
 
 
 view : Model -> Page.PageStructure Msg
-view _ =
+view model =
     { title = "Auth"
     , content =
-        [ img [ Asset.src Asset.logo, class "center db pt2" ] []
-        , p [ class "tc" ] [ text "Creating session..." ]
+        [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+        , if String.isEmpty model.error then
+            p [ class "tc" ] [ text "Creating session..." ]
+
+          else
+            p [ class "red tc" ] [ text model.error ]
         ]
     }
 

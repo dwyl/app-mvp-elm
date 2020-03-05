@@ -117,9 +117,6 @@ loadRoute maybeRoute model =
             toSession model
     in
     case maybeRoute of
-        -- no matching route so 404 page is selected
-        -- could we create an Error module which will manage this kind of pages
-        -- see package elm app
         Nothing ->
             ( NotFound session, Cmd.none )
 
@@ -179,7 +176,7 @@ view model =
         NotFound _ ->
             { title = "Not Found"
             , body =
-                [ a [ href "/" ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+                [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
                 , h1 [ class "tc" ] [ text "page not found" ]
                 ]
             }

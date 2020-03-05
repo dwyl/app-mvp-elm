@@ -1,6 +1,7 @@
 port module Session exposing (Person, Session(..), changeSession, decode, encode, logout, navKey, onSessionChange, storeSession)
 
 {-| Represent the current user
+The user can be authenticated or a guest
 -}
 
 import Browser.Navigation as Nav
@@ -53,11 +54,6 @@ port storeSession : Maybe JD.Value -> Cmd msg
 port onSessionChange : (JE.Value -> msg) -> Sub msg
 
 
-
--- create function which use onSessionChange: pass transform value to maybe person
--- create change function which transform a maybe person to session
-
-
 changeSession : (Session -> msg) -> Nav.Key -> Sub msg
 changeSession toMsg key =
     changePerson (\maybePerson -> toMsg (sessionFromPerson maybePerson key))
@@ -89,6 +85,10 @@ decodeFromChange : JD.Decoder Person -> JD.Value -> Maybe Person
 decodeFromChange decoder val =
     JD.decodeValue decoder val
         |> Result.toMaybe
+
+
+
+-- set value in localStorage to null
 
 
 logout : Cmd msg

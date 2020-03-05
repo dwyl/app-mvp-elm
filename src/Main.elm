@@ -35,6 +35,7 @@ type Model
     | Auth Auth.Model
     | Session PagesSession.Model
     | NotFound Session.Session
+    | Logout Session.Session
 
 
 
@@ -142,7 +143,12 @@ loadRoute maybeRoute model =
             ( Session subModel, Cmd.map GotPagesSessionMsg subMsg )
 
         Just Route.Logout ->
-            ( model, Session.logout )
+            ( Logout session
+            , Cmd.batch
+                [ Session.logout
+                , Route.replaceUrl (Session.navKey session) Route.Home
+                ]
+            )
 
 
 subscriptions : Model -> Sub Msg
@@ -158,6 +164,9 @@ subscriptions model =
             Sub.map GotPagesSessionMsg (PagesSession.subscriptions sessionModel)
 
         NotFound _ ->
+            Sub.none
+
+        Logout _ ->
             Sub.none
 
 
@@ -181,6 +190,14 @@ view model =
                 ]
             }
 
+        Logout _ ->
+            { title = "Logout"
+            , body =
+                [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+                , h1 [ class "tc" ] [ text "Logout" ]
+                ]
+            }
+
 
 toSession : Model -> Session.Session
 toSession page =
@@ -196,6 +213,9 @@ toSession page =
 
         Session m ->
             PagesSession.toSession m
+
+        Logout session ->
+            session
 
 
 toNavKey : Model -> Nav.Key

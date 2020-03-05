@@ -1,4 +1,4 @@
-module Main exposing (Page(..), main)
+module Main exposing (main)
 
 import Asset
 import Browser
@@ -8,11 +8,13 @@ import Html.Attributes exposing (..)
 import Page
 import Pages.Auth as Auth
 import Pages.Home as Home
+import Pages.Session as PagesSession
 import Route
+import Session
 import Url
 
 
-main : Program () Model Msg
+main : Program (Maybe String) Model Msg
 main =
     Browser.application
         { init = init
@@ -28,18 +30,12 @@ main =
 -- Model
 
 
-type Page
+type Model
     = Home Home.Model
     | Auth Auth.Model
-    | NotFound
-
-
-type alias Model =
-    { key : Nav.Key
-    , page : Page
-
-    --    , token : String
-    }
+    | Session PagesSession.Model
+    | NotFound Session.Session
+    | Logout Session.Session
 
 
 
@@ -47,9 +43,18 @@ type alias Model =
 -- init look at the url, parse it and load the Page (ie Home, Auth...)
 
 
-init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init _ url key =
-    loadRoute (Route.fromUrl url) (Model key NotFound)
+init : Maybe String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url navKey =
+    let
+        session =
+            case flags of
+                Nothing ->
+                    Session.Guest navKey
+
+                Just str ->
+                    Session.decode navKey str
+    in
+    loadRoute (Route.fromUrl url) (NotFound session)
 
 
 
@@ -61,15 +66,16 @@ type Msg
     | LinkClicked Browser.UrlRequest
     | GotHomeMsg Home.Msg
     | GotAuthMsg Auth.Msg
+    | GotPagesSessionMsg PagesSession.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case ( msg, model.page ) of
+    case ( msg, model ) of
         ( LinkClicked link, _ ) ->
             case link of
                 Browser.Internal urlRequested ->
-                    ( model, Nav.pushUrl model.key (Url.toString urlRequested) )
+                    ( model, Nav.pushUrl (toNavKey model) (Url.toString urlRequested) )
 
                 Browser.External href ->
                     ( model, Nav.load href )
@@ -82,14 +88,21 @@ update msg model =
                 ( subModel, subMsg ) =
                     Home.update homeMsg homeModel
             in
-            ( { model | page = Home subModel }, Cmd.map GotHomeMsg subMsg )
+            ( Home subModel, Cmd.map GotHomeMsg subMsg )
 
         ( GotAuthMsg authMsg, Auth authModel ) ->
             let
                 ( subModel, subMsg ) =
                     Auth.update authMsg authModel
             in
-            ( { model | page = Auth subModel }, Cmd.map GotAuthMsg subMsg )
+            ( Auth subModel, Cmd.map GotAuthMsg subMsg )
+
+        ( GotPagesSessionMsg sessionMsg, Session sessionModel ) ->
+            let
+                ( subModel, subMsg ) =
+                    PagesSession.update sessionMsg sessionModel
+            in
+            ( Session subModel, Cmd.map GotPagesSessionMsg subMsg )
 
         -- combining the msg and the model.page allow us to filter out
         -- messages coming from the wrong page
@@ -99,49 +112,112 @@ update msg model =
 
 loadRoute : Maybe Route.Route -> Model -> ( Model, Cmd Msg )
 loadRoute maybeRoute model =
+    -- get session from the current page model
+    let
+        session =
+            toSession model
+    in
     case maybeRoute of
-        -- no matching route so 404 page is selected
-        -- could we create an Error module which will manage this kind of pages
-        -- see package elm app
         Nothing ->
-            ( { model | page = NotFound }, Cmd.none )
+            ( NotFound session, Cmd.none )
 
         Just Route.Home ->
             let
                 ( subModel, subMsg ) =
-                    Home.init
+                    Home.init session
             in
-            ( { model | page = Home subModel }, Cmd.map GotHomeMsg subMsg )
+            ( Home subModel, Cmd.map GotHomeMsg subMsg )
 
         Just (Route.Auth Nothing) ->
             let
                 ( subModel, subMsg ) =
-                    Auth.init
+                    Auth.init session
             in
-            ( { model | page = Auth subModel }, Cmd.map GotAuthMsg subMsg )
+            ( Auth subModel, Cmd.map GotAuthMsg subMsg )
 
-        Just (Route.Auth _) ->
-            ( model, Cmd.none )
+        Just (Route.Auth (Just jwt)) ->
+            let
+                ( subModel, subMsg ) =
+                    PagesSession.init session jwt
+            in
+            ( Session subModel, Cmd.map GotPagesSessionMsg subMsg )
+
+        Just Route.Logout ->
+            ( Logout session
+            , Cmd.batch
+                [ Session.logout
+                , Route.replaceUrl (Session.navKey session) Route.Home
+                ]
+            )
 
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.none
+subscriptions model =
+    case model of
+        Home home ->
+            Sub.map GotHomeMsg (Home.subscriptions home)
+
+        Auth authModel ->
+            Sub.map GotAuthMsg (Auth.subscriptions authModel)
+
+        Session sessionModel ->
+            Sub.map GotPagesSessionMsg (PagesSession.subscriptions sessionModel)
+
+        NotFound _ ->
+            Sub.none
+
+        Logout _ ->
+            Sub.none
 
 
 view : Model -> Browser.Document Msg
 view model =
-    case model.page of
+    case model of
         Home home ->
             Page.view GotHomeMsg (Home.view home)
 
         Auth authModel ->
             Page.view GotAuthMsg (Auth.view authModel)
 
-        NotFound ->
+        Session sessionModel ->
+            Page.view GotPagesSessionMsg (PagesSession.view sessionModel)
+
+        NotFound _ ->
             { title = "Not Found"
             , body =
-                [ a [ href "/" ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+                [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
                 , h1 [ class "tc" ] [ text "page not found" ]
                 ]
             }
+
+        Logout _ ->
+            { title = "Logout"
+            , body =
+                [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+                , h1 [ class "tc" ] [ text "Logout" ]
+                ]
+            }
+
+
+toSession : Model -> Session.Session
+toSession page =
+    case page of
+        NotFound session ->
+            session
+
+        Home m ->
+            Home.toSession m
+
+        Auth m ->
+            Auth.toSession m
+
+        Session m ->
+            PagesSession.toSession m
+
+        Logout session ->
+            session
+
+
+toNavKey : Model -> Nav.Key
+toNavKey model =
+    Session.navKey (toSession model)

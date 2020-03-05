@@ -79,4 +79,21 @@ suite =
                 in
                 Parser.parse Route.routeParser url
                     |> Expect.equal Nothing
+        , test "Test logout route" <|
+            \_ ->
+                let
+                    defaultUrl =
+                        { protocol = Url.Https
+                        , host = "dwyl.com"
+                        , port_ = Just 443
+                        , path = "/"
+                        , query = Nothing
+                        , fragment = Nothing
+                        }
+
+                    url =
+                        Maybe.withDefault defaultUrl (Url.fromString "http://locahost/logout")
+                in
+                Parser.parse Route.routeParser url
+                    |> Expect.equal (Just Route.Logout)
         ]

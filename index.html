@@ -1,20 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Dwyl Application</title>
-        <script src="./elm.js"></script>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="Description" content="DWYL application, built with Elm!">
-        <link rel="canonical" href="https://app-mvp-elm.herokuapp.com"/>
-        <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css"/>
-    </head>
 
-    <body>
-        <noscript>
-            <span>This website is using Elm, so it needs js enabled</span>
-        </noscript>        
-       <script>
-            Elm.Main.init();
-        </script>
-    </body>
+<head>
+    <title>Dwyl Application</title>
+    <script src="./elm.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="Description" content="DWYL application, built with Elm!">
+    <link rel="canonical" href="https://app-mvp-elm.herokuapp.com" />
+    <link rel="stylesheet" href="https://unpkg.com/tachyons@4.10.0/css/tachyons.min.css" />
+</head>
+
+<body>
+    <noscript>
+        <span>This website is using Elm, so it needs js enabled</span>
+    </noscript>
+    <script>
+        var flags = localStorage.getItem('store'); // get the person session from the local storage
+        var app = Elm.Main.init({ flags: flags });
+
+        // store new session, see Session module 
+        app.ports.storeSession.subscribe(function (val) {
+
+            if (val === null) { // logout
+                localStorage.removeItem('store');
+            } else {
+                localStorage.setItem('store', JSON.stringify(val));
+            }
+
+            // send message to Elm to notify session has been saved
+            // https://stackoverflow.com/questions/779379/why-is-settimeoutfn-0-sometimes-useful
+            setTimeout(function () { app.ports.onSessionChange.send(val); }, 0);
+        });
+
+        // Listen for localStorage changes
+        window.addEventListener("storage", function (event) {
+            if (event.storageArea === localStorage && event.key === 'store') {
+                app.ports.onSessionChange.send(JSON.parse(event.newValue));
+            }
+        }, false);
+    </script>
+</body>
+
 </html>

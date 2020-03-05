@@ -1,11 +1,14 @@
-module Pages.Auth exposing (Model, Msg(..), TypeUrl(..), Url, authUrlsDecoder, getAuthUrls, init, showAuthUrl, update, urlDecoder, urlTypeDecoder, view)
+module Pages.Auth exposing (Model, Msg(..), TypeUrl(..), Url, authUrlsDecoder, getAuthUrls, init, showAuthUrl, subscriptions, toSession, update, urlDecoder, urlTypeDecoder, view)
 
 import Asset exposing (..)
+import Endpoint
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Http
 import Json.Decode as JD
 import Page
+import Route
+import Session exposing (..)
 
 
 
@@ -13,7 +16,9 @@ import Page
 
 
 type alias Model =
-    List Url
+    { session : Session
+    , urls : List Url
+    }
 
 
 type alias Url =
@@ -27,9 +32,9 @@ type TypeUrl
     | Github
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( [], getAuthUrls )
+init : Session -> ( Model, Cmd Msg )
+init session =
+    ( Model session [], getAuthUrls )
 
 
 
@@ -38,6 +43,7 @@ init =
 
 type Msg
     = GotAuthUrls (Result Http.Error (List Url))
+    | GotSession Session
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -46,10 +52,15 @@ update msg model =
         GotAuthUrls result ->
             case result of
                 Ok urls ->
-                    ( urls, Cmd.none )
+                    ( { model | urls = urls }, Cmd.none )
 
                 Err _ ->
                     ( model, Cmd.none )
+
+        GotSession session ->
+            ( { model | session = session }
+            , Route.replaceUrl (Session.navKey model.session) Route.Home
+            )
 
 
 
@@ -60,8 +71,8 @@ view : Model -> Page.PageStructure Msg
 view model =
     { title = "Auth"
     , content =
-        [ a [ href "/" ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
-        , div [] <| List.map (\url -> showAuthUrl url) model
+        [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+        , div [] <| List.map (\url -> showAuthUrl url) model.urls
         ]
     }
 
@@ -69,7 +80,7 @@ view model =
 getAuthUrls : Cmd Msg
 getAuthUrls =
     Http.get
-        { url = "https://appapispike.herokuapp.com/api/auth/urls"
+        { url = Endpoint.toString Endpoint.authUrls
         , expect = Http.expectJson GotAuthUrls authUrlsDecoder
         }
 
@@ -117,3 +128,13 @@ showAuthUrl url =
     div [ class "tc pa2" ]
         [ a [ href url.url ] [ img [ imgSrc ] [] ]
         ]
+
+
+toSession : Model -> Session
+toSession model =
+    model.session
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Session.changeSession GotSession (Session.navKey model.session)

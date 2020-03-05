@@ -1,10 +1,11 @@
-module Session exposing (Person, Session(..), decode, navKey)
+port module Session exposing (Person, Session(..), changeSession, decode, encode, logout, navKey, onSessionChange, storeSession)
 
 {-| Represent the current user
 -}
 
 import Browser.Navigation as Nav
-import Json.Decode exposing (..)
+import Json.Decode as JD
+import Json.Encode as JE
 
 
 type Session
@@ -20,12 +21,20 @@ type alias Person =
 
 decode : Nav.Key -> String -> Session
 decode key str =
-    case decodeString (map2 Person (field "email" string) (field "token" string)) str of
+    case JD.decodeString (JD.map2 Person (JD.field "email" JD.string) (JD.field "token" JD.string)) str of
         Ok p ->
             Session key p
 
         _ ->
             Guest key
+
+
+encode : Person -> JE.Value
+encode person =
+    JE.object
+        [ ( "email", JE.string person.email )
+        , ( "token", JE.string person.token )
+        ]
 
 
 navKey : Session -> Nav.Key
@@ -36,3 +45,52 @@ navKey session =
 
         Session key _ ->
             key
+
+
+port storeSession : Maybe JD.Value -> Cmd msg
+
+
+port onSessionChange : (JE.Value -> msg) -> Sub msg
+
+
+
+-- create function which use onSessionChange: pass transform value to maybe person
+-- create change function which transform a maybe person to session
+
+
+changeSession : (Session -> msg) -> Nav.Key -> Sub msg
+changeSession toMsg key =
+    changePerson (\maybePerson -> toMsg (sessionFromPerson maybePerson key))
+
+
+changePerson : (Maybe Person -> msg) -> Sub msg
+changePerson toMsg =
+    onSessionChange (\value -> toMsg (decodeFromChange personDecoder value))
+
+
+sessionFromPerson : Maybe Person -> Nav.Key -> Session
+sessionFromPerson maybePerson key =
+    case maybePerson of
+        Just person ->
+            Session key person
+
+        Nothing ->
+            Guest key
+
+
+personDecoder : JD.Decoder Person
+personDecoder =
+    JD.map2 Person
+        (JD.field "email" JD.string)
+        (JD.field "token" JD.string)
+
+
+decodeFromChange : JD.Decoder Person -> JD.Value -> Maybe Person
+decodeFromChange decoder val =
+    JD.decodeValue decoder val
+        |> Result.toMaybe
+
+
+logout : Cmd msg
+logout =
+    storeSession Nothing

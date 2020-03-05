@@ -15,6 +15,7 @@ import Url.Parser.Query as Query
 type Route
     = Home
     | Auth (Maybe String)
+    | Logout
 
 
 routeParser : Parser.Parser (Route -> a) a
@@ -22,6 +23,7 @@ routeParser =
     Parser.oneOf
         [ Parser.map Home Parser.top
         , Parser.map Auth (Parser.s "auth" <?> Query.string "jwt")
+        , Parser.map Logout (Parser.s "logout")
         ]
 
 
@@ -46,6 +48,9 @@ routeToString route =
 
         Auth (Just jwt) ->
             "/auth?jwt=" ++ jwt
+
+        Logout ->
+            "/logout"
 
 
 replaceUrl : Nav.Key -> Route -> Cmd msg

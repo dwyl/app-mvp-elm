@@ -1,4 +1,4 @@
-module Pages.Session exposing (Model, Msg(..), Person, getPersonInfo, init, personDecoder, subscriptions, toSession, update, view)
+module Pages.Session exposing (Model, Msg(..), PersonInfo, getPersonInfo, init, personDecoder, subscriptions, toSession, update, view)
 
 import Asset
 import Endpoint
@@ -8,7 +8,7 @@ import Http
 import Json.Decode as JD
 import Page
 import Route
-import Session exposing (..)
+import Session exposing (Session)
 
 
 type alias Model =
@@ -17,7 +17,7 @@ type alias Model =
     }
 
 
-type alias Person =
+type alias PersonInfo =
     { email : String
     , name : String
     }
@@ -33,7 +33,8 @@ init session token =
 
 
 type Msg
-    = GotPersonInfo (Result Http.Error Person)
+    = GotPersonInfo (Result Http.Error PersonInfo)
+    | GotSession Session
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -42,20 +43,20 @@ update msg model =
         GotPersonInfo result ->
             case result of
                 Ok person ->
-                    -- instead of Cmd.none, call a store cache command
                     let
-                        _ =
-                            Debug.log "Person" person
+                        session =
+                            { email = person.email, token = model.token }
                     in
-                    ( model, Route.replaceUrl (navKey model.session) Route.Home )
+                    ( model, Session.storeSession (Just <| Session.encode session) )
 
                 -- if a 401 redirect to 401 page not authorised
                 Err e ->
-                    let
-                        _ =
-                            Debug.log "Error" e
-                    in
                     ( model, Cmd.none )
+
+        GotSession session ->
+            ( { model | session = session }
+            , Route.replaceUrl (Session.navKey model.session) Route.Home
+            )
 
 
 getPersonInfo : String -> Cmd Msg
@@ -72,10 +73,10 @@ getPersonInfo token =
         }
 
 
-personDecoder : JD.Decoder Person
+personDecoder : JD.Decoder PersonInfo
 personDecoder =
     JD.field "data"
-        (JD.map2 Person
+        (JD.map2 PersonInfo
             (JD.field "email" JD.string)
             (JD.field "name" JD.string)
         )
@@ -86,7 +87,7 @@ personDecoder =
 
 
 view : Model -> Page.PageStructure Msg
-view model =
+view _ =
     { title = "Auth"
     , content =
         [ img [ Asset.src Asset.logo, class "center db pt2" ] []
@@ -101,18 +102,9 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Session.changeSession GotSession (Session.navKey model.session)
 
 
 toSession : Model -> Session
 toSession model =
     model.session
-
-
-
--- create port module
--- create storeSession
--- in html.js store the session
--- create subscriptions to listen to new change in store and trigger the GotSession session message
--- redirect to Home page with the new session
--- Create a redirect function in Route module

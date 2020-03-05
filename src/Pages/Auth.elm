@@ -1,4 +1,4 @@
-module Pages.Auth exposing (Model, Msg(..), TypeUrl(..), Url, authUrlsDecoder, getAuthUrls, init, showAuthUrl, toSession, update, urlDecoder, urlTypeDecoder, view)
+module Pages.Auth exposing (Model, Msg(..), TypeUrl(..), Url, authUrlsDecoder, getAuthUrls, init, showAuthUrl, subscriptions, toSession, update, urlDecoder, urlTypeDecoder, view)
 
 import Asset exposing (..)
 import Endpoint
@@ -43,6 +43,7 @@ init session =
 
 type Msg
     = GotAuthUrls (Result Http.Error (List Url))
+    | GotSession Session
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -55,6 +56,11 @@ update msg model =
 
                 Err _ ->
                     ( model, Cmd.none )
+
+        GotSession session ->
+            ( { model | session = session }
+            , Route.replaceUrl (Session.navKey model.session) Route.Home
+            )
 
 
 
@@ -127,3 +133,8 @@ showAuthUrl url =
 toSession : Model -> Session
 toSession model =
     model.session
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Session.changeSession GotSession (Session.navKey model.session)

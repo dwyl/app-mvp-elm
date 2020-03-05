@@ -144,10 +144,24 @@ loadRoute maybeRoute model =
             in
             ( Session subModel, Cmd.map GotPagesSessionMsg subMsg )
 
+        Just Route.Logout ->
+            ( model, Session.logout )
+
 
 subscriptions : Model -> Sub Msg
-subscriptions _ =
-    Sub.none
+subscriptions model =
+    case model of
+        Home home ->
+            Sub.map GotHomeMsg (Home.subscriptions home)
+
+        Auth authModel ->
+            Sub.map GotAuthMsg (Auth.subscriptions authModel)
+
+        Session sessionModel ->
+            Sub.map GotPagesSessionMsg (PagesSession.subscriptions sessionModel)
+
+        NotFound _ ->
+            Sub.none
 
 
 view : Model -> Browser.Document Msg

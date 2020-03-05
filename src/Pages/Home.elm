@@ -1,4 +1,4 @@
-module Pages.Home exposing (Model, Msg(..), init, toSession, update, view)
+module Pages.Home exposing (Model, Msg(..), init, subscriptions, toSession, update, view)
 
 import Asset
 import Html exposing (..)
@@ -26,14 +26,16 @@ init session =
 
 
 type Msg
-    = None
+    = GotSession Session
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        None ->
-            ( model, Cmd.none )
+        GotSession session ->
+            ( session
+            , Route.replaceUrl (Session.navKey model) Route.Home
+            )
 
 
 
@@ -51,7 +53,10 @@ view model =
                 a [ Route.href (Route.Auth Nothing), class "tc db" ] [ text "login/signup" ]
 
             Session.Session _ person ->
-                span [ class "tc db" ] [ text <| "logged in with token: " ++ person.email ]
+                div []
+                    [ span [ class "tc db" ] [ text <| "logged in with: " ++ person.email ]
+                    , a [ Route.href Route.Logout, class "tc db" ] [ text "logout" ]
+                    ]
         ]
     }
 
@@ -59,3 +64,8 @@ view model =
 toSession : Model -> Session
 toSession model =
     model
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Session.changeSession GotSession (Session.navKey model)

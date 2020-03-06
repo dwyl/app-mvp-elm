@@ -4,8 +4,10 @@ import Asset
 import Endpoint
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode as JD
+import Json.Encode as JE
 import Page
 import Route
 import Session exposing (..)
@@ -18,6 +20,7 @@ import Session exposing (..)
 type alias Model =
     { session : Session
     , captures : List Capture
+    , newCapture : Capture
     , error : String
     }
 
@@ -28,9 +31,14 @@ type alias Capture =
     }
 
 
+initCapture : Capture
+initCapture =
+    Capture "" False
+
+
 init : Session -> ( Model, Cmd Msg )
 init session =
-    ( Model session [] "", getCaptures (token session) )
+    ( Model session [] initCapture "", getCaptures (token session) )
 
 
 
@@ -40,6 +48,9 @@ init session =
 type Msg
     = GotSession Session
     | GotCaptures (Result Http.Error (List Capture))
+    | CaptureSaved (Result Http.Error Capture)
+    | UpdateNewCapture String
+    | AddCapture
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -64,7 +75,34 @@ update msg model =
                             ( { model | error = "User information can't be retrieved" }, Cmd.none )
 
                         _ ->
-                            ( { model | error = "Error on authentication" }, Cmd.none )
+                            ( { model | error = "Error while getting the captures" }, Cmd.none )
+
+        CaptureSaved result ->
+            case result of
+                Ok _ ->
+                    ( { model | error = "" }, getCaptures (token model.session) )
+
+                Err httpError ->
+                    case httpError of
+                        Http.BadStatus 401 ->
+                            ( { model | error = "Access not authorised" }, Cmd.none )
+
+                        Http.BadStatus 404 ->
+                            ( { model | error = "create capture endpoint not found" }, Cmd.none )
+
+                        _ ->
+                            ( { model | error = "Error while creating the capture" }, Cmd.none )
+
+        UpdateNewCapture text ->
+            let
+                newCapture =
+                    { text = text, completed = False }
+            in
+            ( { model | newCapture = newCapture }, Cmd.none )
+
+        -- save capture in database
+        AddCapture ->
+            ( { model | newCapture = initCapture }, saveCapture (token model.session) model.newCapture )
 
 
 
@@ -84,7 +122,13 @@ view model =
             Session.Session _ _ ->
                 div []
                     [ if String.isEmpty model.error then
-                        div [ class "w-50 center" ] <| List.map (\capture -> showCapture capture) model.captures
+                        div []
+                            [ div [ class "w-60 center tc" ]
+                                [ input [ class "w-80 mr2", value model.newCapture.text, onInput UpdateNewCapture ] []
+                                , button [ class "pointer", onClick AddCapture ] [ text "Add Capture" ]
+                                ]
+                            , div [ class "w-50 center" ] <| List.map (\capture -> showCapture capture) model.captures
+                            ]
 
                       else
                         p [ class "red tc" ] [ text model.error ]
@@ -120,6 +164,19 @@ getCaptures token =
         }
 
 
+saveCapture : String -> Capture -> Cmd Msg
+saveCapture token capture =
+    Http.request
+        { method = "POST"
+        , headers = [ Http.header "authorization" ("Bearer " ++ token) ]
+        , url = Endpoint.toString Endpoint.captures
+        , body = Http.jsonBody <| captureEncode capture
+        , expect = Http.expectJson CaptureSaved savedCaptureDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
 
 -- captures decoder
 
@@ -129,11 +186,22 @@ capturesDecoder =
     JD.field "data" (JD.list captureDecoder)
 
 
+savedCaptureDecoder : JD.Decoder Capture
+savedCaptureDecoder =
+    JD.field "data" captureDecoder
+
+
 captureDecoder : JD.Decoder Capture
 captureDecoder =
     JD.map2 Capture
         (JD.field "text" JD.string)
         (JD.field "completed" JD.bool)
+
+
+captureEncode : Capture -> JD.Value
+captureEncode capture =
+    JE.object
+        [ ( "text", JE.string capture.text ) ]
 
 
 

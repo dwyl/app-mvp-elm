@@ -16,6 +16,7 @@ type Route
     = Home
     | Auth (Maybe String)
     | Logout
+    | Capture
 
 
 routeParser : Parser.Parser (Route -> a) a
@@ -24,6 +25,7 @@ routeParser =
         [ Parser.map Home Parser.top
         , Parser.map Auth (Parser.s "auth" <?> Query.string "jwt")
         , Parser.map Logout (Parser.s "logout")
+        , Parser.map Capture (Parser.s "capture")
         ]
 
 
@@ -51,6 +53,9 @@ routeToString route =
 
         Logout ->
             "/logout"
+
+        Capture ->
+            "/capture"
 
 
 replaceUrl : Nav.Key -> Route -> Cmd msg

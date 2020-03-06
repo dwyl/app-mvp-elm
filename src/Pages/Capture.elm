@@ -1,4 +1,4 @@
-module Pages.Home exposing (Model, Msg(..), init, subscriptions, toSession, update, view)
+module Pages.Capture exposing (Model, Msg(..), init, subscriptions, toSession, update, view)
 
 import Asset
 import Html exposing (..)
@@ -13,12 +13,20 @@ import Session exposing (..)
 
 
 type alias Model =
-    Session
+    { session : Session
+    , captures : List Capture
+    }
+
+
+type alias Capture =
+    { text : String }
 
 
 init : Session -> ( Model, Cmd Msg )
 init session =
-    ( session, Cmd.none )
+    -- load captures, create command wich fetch the list of captures for the user
+    -- create new endpoint in Endpoint
+    ( Model session [], Cmd.none )
 
 
 
@@ -33,8 +41,8 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GotSession session ->
-            ( session
-            , Route.replaceUrl (Session.navKey model) Route.Home
+            ( { model | session = session }
+            , Route.replaceUrl (Session.navKey model.session) Route.Home
             )
 
 
@@ -44,19 +52,17 @@ update msg model =
 
 view : Model -> Page.PageStructure Msg
 view model =
-    { title = "Home"
+    { title = "Capture"
     , content =
         [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
         , h1 [ class "tc" ] [ text "Dwyl application" ]
-        , case model of
+        , case model.session of
             Session.Guest _ ->
-                a [ Route.href (Route.Auth Nothing), class "tc db" ] [ text "login/signup" ]
+                a [ Route.href Route.Home, class "tc db" ] [ text "Not logged in yet!" ]
 
             Session.Session _ person ->
                 div []
-                    [ span [ class "tc db" ] [ text <| "logged in with: " ++ person.email ]
-                    , a [ Route.href Route.Capture, class "tc db" ] [ text "capture" ]
-                    , a [ Route.href Route.Logout, class "tc db" ] [ text "logout" ]
+                    [ h1 [] [ text "list of captures" ]
                     ]
         ]
     }
@@ -64,9 +70,9 @@ view model =
 
 toSession : Model -> Session
 toSession model =
-    model
+    model.session
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Session.changeSession GotSession (Session.navKey model)
+    Session.changeSession GotSession (Session.navKey model.session)

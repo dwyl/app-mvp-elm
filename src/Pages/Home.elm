@@ -55,6 +55,7 @@ view model =
             Session.Session _ person ->
                 div []
                     [ span [ class "tc db" ] [ text <| "logged in with: " ++ person.email ]
+                    , a [ Route.href Route.Capture, class "tc db" ] [ text "capture" ]
                     , a [ Route.href Route.Logout, class "tc db" ] [ text "logout" ]
                     ]
         ]

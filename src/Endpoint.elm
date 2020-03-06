@@ -1,4 +1,4 @@
-module Endpoint exposing (Endpoint, authUrls, personInfo, toString, url)
+module Endpoint exposing (Endpoint, authUrls, captures, personInfo, toString, url)
 
 import Url.Builder exposing (QueryParameter)
 
@@ -36,3 +36,8 @@ authUrls =
 personInfo : Endpoint
 personInfo =
     url [ "api", "person", "info" ] []
+
+
+captures : Endpoint
+captures =
+    url [ "api", "capture" ] []

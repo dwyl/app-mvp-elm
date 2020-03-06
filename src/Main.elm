@@ -7,6 +7,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Page
 import Pages.Auth as Auth
+import Pages.Capture as Capture
 import Pages.Home as Home
 import Pages.Session as PagesSession
 import Route
@@ -36,6 +37,7 @@ type Model
     | Session PagesSession.Model
     | NotFound Session.Session
     | Logout Session.Session
+    | Capture Capture.Model
 
 
 
@@ -67,6 +69,7 @@ type Msg
     | GotHomeMsg Home.Msg
     | GotAuthMsg Auth.Msg
     | GotPagesSessionMsg PagesSession.Msg
+    | GotCaptureMsg Capture.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -103,6 +106,13 @@ update msg model =
                     PagesSession.update sessionMsg sessionModel
             in
             ( Session subModel, Cmd.map GotPagesSessionMsg subMsg )
+
+        ( GotCaptureMsg captureMsg, Capture captureModel ) ->
+            let
+                ( subModel, subMsg ) =
+                    Capture.update captureMsg captureModel
+            in
+            ( Capture subModel, Cmd.map GotCaptureMsg subMsg )
 
         -- combining the msg and the model.page allow us to filter out
         -- messages coming from the wrong page
@@ -150,6 +160,13 @@ loadRoute maybeRoute model =
                 ]
             )
 
+        Just Route.Capture ->
+            let
+                ( subModel, subMsg ) =
+                    Capture.init session
+            in
+            ( Capture subModel, Cmd.map GotCaptureMsg subMsg )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -168,6 +185,9 @@ subscriptions model =
 
         Logout _ ->
             Sub.none
+
+        Capture captureModel ->
+            Sub.map GotCaptureMsg (Capture.subscriptions captureModel)
 
 
 view : Model -> Browser.Document Msg
@@ -198,6 +218,9 @@ view model =
                 ]
             }
 
+        Capture captureModel ->
+            Page.view GotCaptureMsg (Capture.view captureModel)
+
 
 toSession : Model -> Session.Session
 toSession page =
@@ -216,6 +239,9 @@ toSession page =
 
         Logout session ->
             session
+
+        Capture m ->
+            Capture.toSession m
 
 
 toNavKey : Model -> Nav.Key

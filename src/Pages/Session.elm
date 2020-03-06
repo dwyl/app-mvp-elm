@@ -69,7 +69,6 @@ update msg model =
 
 getPersonInfo : String -> Cmd Msg
 getPersonInfo token =
-    -- make sure to update the backend app endpoint to return a user info
     Http.request
         { method = "GET"
         , headers = [ Http.header "authorization" ("Bearer " ++ token) ]

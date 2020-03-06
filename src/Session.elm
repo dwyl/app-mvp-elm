@@ -1,4 +1,4 @@
-port module Session exposing (Person, Session(..), changeSession, decode, encode, logout, navKey, onSessionChange, storeSession)
+port module Session exposing (Person, Session(..), changeSession, decode, encode, logout, navKey, onSessionChange, storeSession, token)
 
 {-| Represent the current user
 The user can be authenticated or a guest
@@ -46,6 +46,16 @@ navKey session =
 
         Session key _ ->
             key
+
+
+token : Session -> String
+token session =
+    case session of
+        Guest _ ->
+            ""
+
+        Session _ person ->
+            person.token
 
 
 port storeSession : Maybe JD.Value -> Cmd msg

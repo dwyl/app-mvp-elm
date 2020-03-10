@@ -26,14 +26,16 @@ type alias Model =
 
 
 type alias Capture =
-    { text : String
+    { idCapture : Int
+    , text : String
     , completed : Bool
+    , disabled : Bool
     }
 
 
 initCapture : Capture
 initCapture =
-    Capture "" False
+    Capture 0 "" False False
 
 
 init : Session -> ( Model, Cmd Msg )
@@ -51,6 +53,7 @@ type Msg
     | CaptureSaved (Result Http.Error Capture)
     | UpdateNewCapture String
     | AddCapture
+    | StartTimer Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -95,14 +98,32 @@ update msg model =
 
         UpdateNewCapture text ->
             let
+                capture =
+                    model.newCapture
+
                 newCapture =
-                    { text = text, completed = False }
+                    { capture | text = text }
             in
             ( { model | newCapture = newCapture }, Cmd.none )
 
         -- save capture in database
         AddCapture ->
             ( { model | newCapture = initCapture }, saveCapture (token model.session) model.newCapture )
+
+        StartTimer idCapture ->
+            let
+                captures =
+                    List.map
+                        (\c ->
+                            if c.idCapture == idCapture then
+                                { c | disabled = True }
+
+                            else
+                                c
+                        )
+                        model.captures
+            in
+            ( { model | captures = captures }, Cmd.none )
 
 
 
@@ -193,9 +214,11 @@ savedCaptureDecoder =
 
 captureDecoder : JD.Decoder Capture
 captureDecoder =
-    JD.map2 Capture
+    JD.map4 Capture
+        (JD.field "capture_id" JD.int)
         (JD.field "text" JD.string)
         (JD.field "completed" JD.bool)
+        (JD.succeed False)
 
 
 captureEncode : Capture -> JD.Value
@@ -213,8 +236,8 @@ showCapture capture =
     div [ class "pa2" ]
         [ label
             [ class "dib pa2" ]
-            [ input [ type_ "checkbox", checked capture.completed, class "mr2" ] []
-            , text capture.text
+            [ input [ type_ "checkbox", checked capture.completed, disabled capture.disabled, class "mr2" ] []
+            , text <| capture.text
             ]
-        , button [ class "fr" ] [ text "Start" ]
+        , button [ disabled capture.disabled, class "fr", classList [ ( "pointer", not capture.disabled ) ], onClick (StartTimer capture.idCapture) ] [ text "Start" ]
         ]

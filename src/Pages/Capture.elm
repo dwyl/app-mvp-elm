@@ -1,16 +1,16 @@
 module Pages.Capture exposing (Model, Msg(..), init, subscriptions, toSession, update, view)
 
 import Asset
+import Capture exposing (..)
 import Endpoint
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
 import Http
-import Json.Decode as JD
-import Json.Encode as JE
 import Page
 import Route
 import Session exposing (..)
+import Timer exposing (..)
 
 
 
@@ -23,19 +23,6 @@ type alias Model =
     , newCapture : Capture
     , error : String
     }
-
-
-type alias Capture =
-    { idCapture : Int
-    , text : String
-    , completed : Bool
-    , disabled : Bool
-    }
-
-
-initCapture : Capture
-initCapture =
-    Capture 0 "" False False
 
 
 init : Session -> ( Model, Cmd Msg )
@@ -54,11 +41,17 @@ type Msg
     | UpdateNewCapture String
     | AddCapture
     | StartTimer Int
+    | StopTimer Int Int
+    | TimerUpdated CaptureStatus (Result Http.Error Timer)
+    | None
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        None ->
+            ( model, Cmd.none )
+
         GotSession session ->
             ( { model | session = session }
             , Route.replaceUrl (Session.navKey model.session) Route.Home
@@ -67,6 +60,10 @@ update msg model =
         GotCaptures result ->
             case result of
                 Ok captures ->
+                    let
+                        _ =
+                            Debug.log "captures" captures
+                    in
                     ( { model | captures = captures, error = "" }, Cmd.none )
 
                 Err httpError ->
@@ -113,17 +110,28 @@ update msg model =
         StartTimer idCapture ->
             let
                 captures =
-                    List.map
-                        (\c ->
-                            if c.idCapture == idCapture then
-                                { c | disabled = True }
-
-                            else
-                                c
-                        )
-                        model.captures
+                    updateCapture Disabled idCapture model.captures
             in
-            ( { model | captures = captures }, Cmd.none )
+            ( { model | captures = captures }, startTimer (token model.session) idCapture )
+
+        StopTimer idTimer idCapture ->
+            ( model, stopTimer (token model.session) idTimer idCapture )
+
+        TimerUpdated _ result ->
+            case result of
+                Ok _ ->
+                    ( { model | error = "" }, getCaptures (token model.session) )
+
+                Err httpError ->
+                    case httpError of
+                        Http.BadStatus 401 ->
+                            ( { model | error = "Access not authorised" }, Cmd.none )
+
+                        Http.BadStatus 404 ->
+                            ( { model | error = "create timer endpoint not found" }, Cmd.none )
+
+                        _ ->
+                            ( { model | error = "Error while starting the timer" }, Cmd.none )
 
 
 
@@ -172,6 +180,78 @@ subscriptions model =
 -- captures
 
 
+startTimer : String -> Int -> Cmd Msg
+startTimer token idCapture =
+    Http.request
+        { method = "POST"
+        , headers = [ Http.header "authorization" ("Bearer " ++ token) ]
+        , url = Endpoint.toString (Endpoint.startTimer idCapture)
+        , body = Http.emptyBody
+        , expect = Http.expectJson (TimerUpdated InProgress) timerDataDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+stopTimer : String -> Int -> Int -> Cmd Msg
+stopTimer token idTimer idCapture =
+    Http.request
+        { method = "PUT"
+        , headers = [ Http.header "authorization" ("Bearer " ++ token) ]
+        , url = Endpoint.toString (Endpoint.stopTimer idTimer idCapture)
+        , body = Http.jsonBody <| actionTimerEncode "stop"
+        , expect = Http.expectJson (TimerUpdated ToDo) timerDataDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+showCapture : Capture -> Html Msg
+showCapture capture =
+    div [ class "pa2" ]
+        [ label
+            [ class "dib pa2" ]
+            [ input [ type_ "checkbox", checked False, disabled False, class "mr2" ] []
+            , text <| capture.text
+            ]
+        , case capture.status of
+            ToDo ->
+                showTimerButton "start" (StartTimer capture.idCapture)
+
+            InProgress ->
+                let
+                    timer =
+                        getTimer capture
+                in
+                case timer of
+                    Nothing ->
+                        showTimerButton "Error Timer" None
+
+                    Just t ->
+                        showTimerButton "stop" (StopTimer t.idTimer capture.idCapture)
+
+            Disabled ->
+                showTimerButton "..." None
+
+            Completed ->
+                showTimerButton "completed" None
+
+            Error e ->
+                showTimerButton e None
+        ]
+
+
+showTimerButton : String -> Msg -> Html Msg
+showTimerButton textButton msg =
+    button
+        [ disabled False
+        , class "fr"
+        , classList [ ( "pointer", True ) ]
+        , onClick msg
+        ]
+        [ text textButton ]
+
+
 getCaptures : String -> Cmd Msg
 getCaptures token =
     Http.request
@@ -198,46 +278,14 @@ saveCapture token capture =
         }
 
 
+updateCapture : CaptureStatus -> Int -> List Capture -> List Capture
+updateCapture status idCapture listCaptures =
+    List.map
+        (\c ->
+            if idCapture == c.idCapture then
+                { c | status = status }
 
--- captures decoder
-
-
-capturesDecoder : JD.Decoder (List Capture)
-capturesDecoder =
-    JD.field "data" (JD.list captureDecoder)
-
-
-savedCaptureDecoder : JD.Decoder Capture
-savedCaptureDecoder =
-    JD.field "data" captureDecoder
-
-
-captureDecoder : JD.Decoder Capture
-captureDecoder =
-    JD.map4 Capture
-        (JD.field "capture_id" JD.int)
-        (JD.field "text" JD.string)
-        (JD.field "completed" JD.bool)
-        (JD.succeed False)
-
-
-captureEncode : Capture -> JD.Value
-captureEncode capture =
-    JE.object
-        [ ( "text", JE.string capture.text ) ]
-
-
-
--- show capture
-
-
-showCapture : Capture -> Html Msg
-showCapture capture =
-    div [ class "pa2" ]
-        [ label
-            [ class "dib pa2" ]
-            [ input [ type_ "checkbox", checked capture.completed, disabled capture.disabled, class "mr2" ] []
-            , text <| capture.text
-            ]
-        , button [ disabled capture.disabled, class "fr", classList [ ( "pointer", not capture.disabled ) ], onClick (StartTimer capture.idCapture) ] [ text "Start" ]
-        ]
+            else
+                c
+        )
+        listCaptures

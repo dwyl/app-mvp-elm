@@ -2,13 +2,14 @@ module Timer exposing (Timer, actionTimerEncode, timerDataDecoder, timerDecoder)
 
 import Json.Decode as JD
 import Json.Encode as JE
-
+import Time
+import Iso8601
 
 type alias Timer =
     { idTimer : Int
     , idCapture : Int
-    , startedAt : String
-    , stoppedAt : Maybe String
+    , startedAt : Time.Posix
+    , stoppedAt : Maybe Time.Posix
     }
 
 
@@ -22,8 +23,8 @@ timerDecoder =
     JD.map4 Timer
         (JD.field "timer_id" JD.int)
         (JD.field "capture_id" JD.int)
-        (JD.field "started_at" JD.string)
-        (JD.maybe (JD.field "stopped_at" JD.string))
+        (JD.field "started_at" Iso8601.decoder)
+        (JD.maybe (JD.field "stopped_at" Iso8601.decoder))
 
 
 actionTimerEncode : String -> JD.Value

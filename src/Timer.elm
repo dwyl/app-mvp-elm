@@ -40,9 +40,11 @@ actionTimerEncode action =
    Nothing is returned if the stoppedAt value is not defined yet, ie Nothing.
 -}
 
+
 startedAtToMillis : Timer -> Int
 startedAtToMillis timer =
     Time.posixToMillis timer.startedAt
+
 
 timerToMillis : Timer -> Maybe Int
 timerToMillis timer =
@@ -66,6 +68,7 @@ timersToMillis timers =
             List.map timerToMillis timers
     in
     List.foldl (\a b -> Maybe.map2 (+) a b) (Just 0) millis
+
 
 millisToHMS : Int -> ( String, String, String )
 millisToHMS millis =

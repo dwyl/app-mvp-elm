@@ -1,4 +1,4 @@
-module Capture exposing (..)
+module Capture exposing (Capture, CaptureStatus(..), captureDecoder, captureEncode, captureStatusDecoder, capturesDecoder, completedToStatusDecoder, getCurrentTimer, getPreviousTimer, initCapture, savedCaptureDecoder, timersToStatusDecoder)
 
 import Json.Decode as JD
 import Json.Encode as JE

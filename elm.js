@@ -6463,7 +6463,7 @@ var $elm$url$Url$Builder$crossOrigin = F3(
 	});
 var $author$project$Endpoint$url = F2(
 	function (path, queryParams) {
-		return A3($elm$url$Url$Builder$crossOrigin, 'http://localhost:4000', path, queryParams);
+		return A3($elm$url$Url$Builder$crossOrigin, 'https://dwyl-app-api.herokuapp.com', path, queryParams);
 	});
 var $author$project$Endpoint$authUrls = A2(
 	$author$project$Endpoint$url,

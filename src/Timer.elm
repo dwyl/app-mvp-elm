@@ -41,11 +41,6 @@ actionTimerEncode action =
 -}
 
 
-startedAtToMillis : Timer -> Int
-startedAtToMillis timer =
-    Time.posixToMillis timer.startedAt
-
-
 timerToMillis : Timer -> Maybe Int
 timerToMillis timer =
     Maybe.map2

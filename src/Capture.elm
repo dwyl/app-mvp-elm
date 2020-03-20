@@ -92,6 +92,11 @@ captureEncode capture =
 As the API returns the list of timer in descending order from
 when they were created, the current timer is the head of the list of timers
 -}
-getTimer : Capture -> Maybe Timer
-getTimer capture =
-    List.head capture.timers
+getCurrentTimer : List Timer -> Maybe Timer
+getCurrentTimer timers =
+    List.head timers
+
+
+getPreviousTimer : List Timer -> Maybe (List Timer)
+getPreviousTimer timers =
+    List.tail timers

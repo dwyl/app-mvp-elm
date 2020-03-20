@@ -10,6 +10,8 @@ import Http
 import Page
 import Route
 import Session exposing (..)
+import Task
+import Time
 import Timer exposing (..)
 
 
@@ -21,13 +23,38 @@ type alias Model =
     { session : Session
     , captures : List Capture
     , newCapture : Capture
+    , timer : Clock
     , error : String
+    }
+
+
+type alias Clock =
+    { zone : Time.Zone
+    , posix : Time.Posix
+    }
+
+
+initModel : Session -> Model
+initModel session =
+    { session = session
+    , captures = []
+    , newCapture = initCapture
+    , timer =
+        { zone = Time.utc
+        , posix = Time.millisToPosix 0
+        }
+    , error = ""
     }
 
 
 init : Session -> ( Model, Cmd Msg )
 init session =
-    ( Model session [] initCapture "", getCaptures (token session) )
+    ( initModel session
+    , Cmd.batch
+        [ getCaptures (token session)
+        , Task.perform AdjustTimeZone Time.here
+        ]
+    )
 
 
 
@@ -44,6 +71,8 @@ type Msg
     | StopTimer Int Int
     | TimerUpdated CaptureStatus (Result Http.Error Timer)
     | None
+    | AdjustTimeZone Time.Zone
+    | Tick Time.Posix
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -51,6 +80,26 @@ update msg model =
     case msg of
         None ->
             ( model, Cmd.none )
+
+        AdjustTimeZone zone ->
+            let
+                timer =
+                    model.timer
+
+                newTimer =
+                    { timer | zone = zone }
+            in
+            ( { model | timer = newTimer }, Cmd.none )
+
+        Tick posix ->
+            let
+                timer =
+                    model.timer
+
+                newTimer =
+                    { timer | posix = posix }
+            in
+            ( { model | timer = newTimer }, Cmd.none )
 
         GotSession session ->
             ( { model | session = session }
@@ -60,10 +109,6 @@ update msg model =
         GotCaptures result ->
             case result of
                 Ok captures ->
-                    let
-                        _ =
-                            Debug.log "captures" captures
-                    in
                     ( { model | captures = captures, error = "" }, Cmd.none )
 
                 Err httpError ->
@@ -117,7 +162,7 @@ update msg model =
         StopTimer idTimer idCapture ->
             ( model, stopTimer (token model.session) idTimer idCapture )
 
-        TimerUpdated _ result ->
+        TimerUpdated s result ->
             case result of
                 Ok _ ->
                     ( { model | error = "" }, getCaptures (token model.session) )
@@ -144,6 +189,8 @@ view model =
     , content =
         [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
         , h1 [ class "tc" ] [ text "Dwyl application" ]
+
+        -- , showTime model.timer
         , case model.session of
             Session.Guest _ ->
                 a [ Route.href Route.Home, class "tc db" ] [ text "Not logged in yet!" ]
@@ -156,7 +203,7 @@ view model =
                                 [ input [ class "w-80 mr2", value model.newCapture.text, onInput UpdateNewCapture ] []
                                 , button [ class "pointer", onClick AddCapture ] [ text "Add Capture" ]
                                 ]
-                            , div [ class "w-50 center" ] <| List.map (\capture -> showCapture capture) model.captures
+                            , div [ class "w-50 center" ] <| List.map (\capture -> showCapture model.timer capture) model.captures
                             ]
 
                       else
@@ -173,7 +220,10 @@ toSession model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Session.changeSession GotSession (Session.navKey model.session)
+    Sub.batch
+        [ Time.every 1000 Tick
+        , Session.changeSession GotSession (Session.navKey model.session)
+        ]
 
 
 
@@ -206,8 +256,8 @@ stopTimer token idTimer idCapture =
         }
 
 
-showCapture : Capture -> Html Msg
-showCapture capture =
+showCapture : Clock -> Capture -> Html Msg
+showCapture clock capture =
     div [ class "pa2" ]
         [ label
             [ class "dib pa2" ]
@@ -221,7 +271,7 @@ showCapture capture =
             InProgress ->
                 let
                     timer =
-                        getTimer capture
+                        getCurrentTimer capture.timers
                 in
                 case timer of
                     Nothing ->
@@ -238,6 +288,7 @@ showCapture capture =
 
             Error e ->
                 showTimerButton e None
+        , showTime capture.status clock capture.timers
         ]
 
 
@@ -250,6 +301,50 @@ showTimerButton textButton msg =
         , onClick msg
         ]
         [ text textButton ]
+
+
+showTime : CaptureStatus -> Clock -> List Timer -> Html Msg
+showTime status clock timers =
+    case status of
+        InProgress ->
+            let
+                maybeStartedAtMillis =
+                    Maybe.map (\t -> Time.posixToMillis t.startedAt) (getCurrentTimer timers)
+
+                nowToMillis =
+                    Time.posixToMillis clock.posix
+
+                maybeNowMillis =
+                    Maybe.map ((-) nowToMillis) maybeStartedAtMillis
+
+                maybePreviousTimersMillis =
+                    getPreviousTimer timers
+                        |> Maybe.andThen timersToMillis
+
+                allTimes =
+                    Maybe.map2 (+) maybeNowMillis maybePreviousTimersMillis
+
+                ( hour, minute, second ) =
+                    case allTimes of
+                        Nothing ->
+                            ( "", "", "" )
+
+                        Just t ->
+                            millisToHMS t
+            in
+            p [ class "tc" ] [ text (hour ++ ":" ++ minute ++ ":" ++ second) ]
+
+        _ ->
+            let
+                ( hour, minute, second ) =
+                    case timersToMillis timers of
+                        Nothing ->
+                            ( "", "", "" )
+
+                        Just t ->
+                            millisToHMS t
+            in
+            p [ class "tc" ] [ text (hour ++ ":" ++ minute ++ ":" ++ second) ]
 
 
 getCaptures : String -> Cmd Msg

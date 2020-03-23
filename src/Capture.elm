@@ -90,7 +90,9 @@ timersToStatusDecoder =
 captureEncode : Capture -> JD.Value
 captureEncode capture =
     JE.object
-        [ ( "text", JE.string capture.text ) ]
+        [ ( "text", JE.string capture.text )
+        , ( "completed", JE.bool (capture.status == Completed) )
+        ]
 
 
 {-| Return the current timer linked to the capture

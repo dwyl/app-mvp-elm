@@ -51,7 +51,7 @@ init : Session -> ( Model, Cmd Msg )
 init session =
     ( initModel session
     , Cmd.batch
-        [ getCaptures (token session)
+        [ apiGetCaptures (token session)
         , Task.perform AdjustTimeZone Time.here
         ]
     )
@@ -73,6 +73,7 @@ type Msg
     | None
     | AdjustTimeZone Time.Zone
     | Tick Time.Posix
+    | ToggleCompleted Capture
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -125,7 +126,7 @@ update msg model =
         CaptureSaved result ->
             case result of
                 Ok _ ->
-                    ( { model | error = "" }, getCaptures (token model.session) )
+                    ( { model | error = "" }, apiGetCaptures (token model.session) )
 
                 Err httpError ->
                     case httpError of
@@ -150,7 +151,7 @@ update msg model =
 
         -- save capture in database
         AddCapture ->
-            ( { model | newCapture = initCapture }, saveCapture (token model.session) model.newCapture )
+            ( { model | newCapture = initCapture }, apiSaveCapture (token model.session) model.newCapture )
 
         StartTimer idCapture ->
             let
@@ -165,7 +166,7 @@ update msg model =
         TimerUpdated _ result ->
             case result of
                 Ok _ ->
-                    ( { model | error = "" }, getCaptures (token model.session) )
+                    ( { model | error = "" }, apiGetCaptures (token model.session) )
 
                 Err httpError ->
                     case httpError of
@@ -177,6 +178,20 @@ update msg model =
 
                         _ ->
                             ( { model | error = "Error while starting the timer" }, Cmd.none )
+
+        ToggleCompleted capture ->
+            let
+                captureStatus =
+                    if capture.status == Completed then
+                        ToDo
+
+                    else
+                        Completed
+
+                updatedCapture =
+                    { capture | status = captureStatus }
+            in
+            ( model, apiUpdateCapture (token model.session) updatedCapture )
 
 
 
@@ -256,10 +271,21 @@ stopTimer token idTimer idCapture =
 
 showCapture : Clock -> Capture -> Html Msg
 showCapture clock capture =
+    let
+        completed =
+            capture.status == Completed
+    in
     div [ class "pa2" ]
         [ label
             [ class "dib pa2" ]
-            [ input [ type_ "checkbox", checked False, disabled False, class "mr2" ] []
+            [ input
+                [ type_ "checkbox"
+                , checked completed
+                , disabled False
+                , class "mr2"
+                , onClick (ToggleCompleted capture)
+                ]
+                []
             , text <| capture.text
             ]
         , case capture.status of
@@ -345,8 +371,8 @@ showTime capture clock =
             a [ Route.href (Route.CaptureTimers capture.idCapture), class "tc db" ] [ text (hour ++ ":" ++ minute ++ ":" ++ second) ]
 
 
-getCaptures : String -> Cmd Msg
-getCaptures token =
+apiGetCaptures : String -> Cmd Msg
+apiGetCaptures token =
     Http.request
         { method = "GET"
         , headers = [ Http.header "authorization" ("Bearer " ++ token) ]
@@ -358,12 +384,25 @@ getCaptures token =
         }
 
 
-saveCapture : String -> Capture -> Cmd Msg
-saveCapture token capture =
+apiSaveCapture : String -> Capture -> Cmd Msg
+apiSaveCapture token capture =
     Http.request
         { method = "POST"
         , headers = [ Http.header "authorization" ("Bearer " ++ token) ]
         , url = Endpoint.toString Endpoint.captures
+        , body = Http.jsonBody <| captureEncode capture
+        , expect = Http.expectJson CaptureSaved savedCaptureDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }
+
+
+apiUpdateCapture : String -> Capture -> Cmd Msg
+apiUpdateCapture token capture =
+    Http.request
+        { method = "PUT"
+        , headers = [ Http.header "authorization" ("Bearer " ++ token) ]
+        , url = Endpoint.toString <| Endpoint.capture capture.idCapture
         , body = Http.jsonBody <| captureEncode capture
         , expect = Http.expectJson CaptureSaved savedCaptureDecoder
         , timeout = Nothing

@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.al.P === region.aD.P)
+	if (region.al.Q === region.aE.Q)
 	{
-		return 'on line ' + region.al.P;
+		return 'on line ' + region.al.Q;
 	}
-	return 'on lines ' + region.al.P + ' through ' + region.aD.P;
+	return 'on lines ' + region.al.Q + ' through ' + region.aE.Q;
 }
 
 
@@ -2705,7 +2705,7 @@ var _VirtualDom_mapEventRecord = F2(function(func, record)
 {
 	return {
 		A: func(record.A),
-		am: record.am,
+		an: record.an,
 		aj: record.aj
 	}
 });
@@ -2975,7 +2975,7 @@ function _VirtualDom_makeCallback(eventNode, initialHandler)
 
 		var value = result.a;
 		var message = !tag ? value : tag < 3 ? value.a : value.A;
-		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.am;
+		var stopPropagation = tag == 1 ? value.b : tag == 3 && value.an;
 		var currentEventNode = (
 			stopPropagation && event.stopPropagation(),
 			(tag == 2 ? value.b : tag == 3 && value.aj) && event.preventDefault(),
@@ -3977,7 +3977,7 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 			{
 				_VirtualDom_divertHrefToApp = divertHrefToApp;
 				var doc = view(model);
-				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.aw);
+				var nextNode = _VirtualDom_node('body')(_List_Nil)(doc.ax);
 				var patches = _VirtualDom_diff(currNode, nextNode);
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
@@ -4059,9 +4059,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.a1 === next.a1
-							&& curr.aM === next.aM
-							&& curr.aZ.a === next.aZ.a
+							&& curr.a2 === next.a2
+							&& curr.aN === next.aN
+							&& curr.a_.a === next.a_.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4232,12 +4232,12 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		bb: _Browser_getScene(),
+		bc: _Browser_getScene(),
 		bp: {
 			br: _Browser_window.pageXOffset,
 			bs: _Browser_window.pageYOffset,
 			bq: _Browser_doc.documentElement.clientWidth,
-			aK: _Browser_doc.documentElement.clientHeight
+			aL: _Browser_doc.documentElement.clientHeight
 		}
 	};
 }
@@ -4248,7 +4248,7 @@ function _Browser_getScene()
 	var elem = _Browser_doc.documentElement;
 	return {
 		bq: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
-		aK: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
+		aL: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
 
@@ -4271,15 +4271,15 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			bb: {
+			bc: {
 				bq: node.scrollWidth,
-				aK: node.scrollHeight
+				aL: node.scrollHeight
 			},
 			bp: {
 				br: node.scrollLeft,
 				bs: node.scrollTop,
 				bq: node.clientWidth,
-				aK: node.clientHeight
+				aL: node.clientHeight
 			}
 		};
 	});
@@ -4309,18 +4309,18 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			bb: _Browser_getScene(),
+			bc: _Browser_getScene(),
 			bp: {
 				br: x,
 				bs: y,
 				bq: _Browser_doc.documentElement.clientWidth,
-				aK: _Browser_doc.documentElement.clientHeight
+				aL: _Browser_doc.documentElement.clientHeight
 			},
 			bD: {
 				br: x + rect.left,
 				bs: y + rect.top,
 				bq: rect.width,
-				aK: rect.height
+				aL: rect.height
 			}
 		};
 	});
@@ -4389,18 +4389,18 @@ var _Http_toTask = F3(function(router, toTask, request)
 		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
 		xhr.addEventListener('load', function() { done(_Http_toResponse(request.bG.b, xhr)); });
-		$elm$core$Maybe$isJust(request.ae) && _Http_track(router, xhr, request.ae.a);
+		$elm$core$Maybe$isJust(request.Y) && _Http_track(router, xhr, request.Y.a);
 
 		try {
-			xhr.open(request.Z, request.aq, true);
+			xhr.open(request.R, request.ar, true);
 		} catch (e) {
-			return done($elm$http$Http$BadUrl_(request.aq));
+			return done($elm$http$Http$BadUrl_(request.ar));
 		}
 
 		_Http_configureRequest(xhr, request);
 
-		request.aw.a && xhr.setRequestHeader('Content-Type', request.aw.a);
-		xhr.send(request.aw.b);
+		request.ax.a && xhr.setRequestHeader('Content-Type', request.ax.a);
+		xhr.send(request.ax.b);
 
 		return function() { xhr.c = true; xhr.abort(); };
 	});
@@ -4411,11 +4411,11 @@ var _Http_toTask = F3(function(router, toTask, request)
 
 function _Http_configureRequest(xhr, request)
 {
-	for (var headers = request.X; headers.b; headers = headers.b) // WHILE_CONS
+	for (var headers = request.P; headers.b; headers = headers.b) // WHILE_CONS
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
-	xhr.timeout = request.ad.a || 0;
+	xhr.timeout = request.W.a || 0;
 	xhr.responseType = request.bG.d;
 	xhr.withCredentials = request.bv;
 }
@@ -4438,10 +4438,10 @@ function _Http_toResponse(toBody, xhr)
 function _Http_toMetadata(xhr)
 {
 	return {
-		aq: xhr.responseURL,
+		ar: xhr.responseURL,
 		b7: xhr.status,
 		b8: xhr.statusText,
-		X: _Http_parseHeaders(xhr.getAllResponseHeaders())
+		P: _Http_parseHeaders(xhr.getAllResponseHeaders())
 	};
 }
 
@@ -4537,14 +4537,14 @@ function _Http_track(router, xhr, tracker)
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Sending({
 			b5: event.loaded,
-			bd: event.total
+			be: event.total
 		}))));
 	});
 	xhr.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Receiving({
 			b2: event.loaded,
-			bd: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
+			be: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
 		}))));
 	});
 }
@@ -5270,7 +5270,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {aH: fragment, aM: host, aX: path, aZ: port_, a1: protocol, a2: query};
+		return {aI: fragment, aN: host, aY: path, a_: port_, a2: protocol, a3: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5557,7 +5557,7 @@ var $author$project$Main$NotFound = function (a) {
 };
 var $author$project$Session$Person = F2(
 	function (email, token) {
-		return {bE: email, ap: token};
+		return {bE: email, aq: token};
 	});
 var $author$project$Session$Session = F2(
 	function (a, b) {
@@ -6212,9 +6212,9 @@ var $elm$url$Url$Parser$parse = F2(
 				A5(
 					$elm$url$Url$Parser$State,
 					_List_Nil,
-					$elm$url$Url$Parser$preparePath(url.aX),
-					$elm$url$Url$Parser$prepareQuery(url.a2),
-					url.aH,
+					$elm$url$Url$Parser$preparePath(url.aY),
+					$elm$url$Url$Parser$prepareQuery(url.a3),
+					url.aI,
 					$elm$core$Basics$identity)));
 	});
 var $author$project$Route$Auth = function (a) {
@@ -6485,7 +6485,7 @@ var $author$project$Main$Session = function (a) {
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $author$project$Pages$Auth$Model = F2(
 	function (session, urls) {
-		return {S: session, ar: urls};
+		return {U: session, as: urls};
 	});
 var $author$project$Pages$Auth$GotAuthUrls = function (a) {
 	return {$: 0, a: a};
@@ -6512,7 +6512,7 @@ var $elm$url$Url$Builder$crossOrigin = F3(
 	});
 var $author$project$Endpoint$url = F2(
 	function (path, queryParams) {
-		return A3($elm$url$Url$Builder$crossOrigin, 'https://dwyl-app-api.herokuapp.com', path, queryParams);
+		return A3($elm$url$Url$Builder$crossOrigin, 'http://localhost:4000', path, queryParams);
 	});
 var $author$project$Endpoint$authUrls = A2(
 	$author$project$Endpoint$url,
@@ -6522,7 +6522,7 @@ var $author$project$Endpoint$authUrls = A2(
 var $elm$json$Json$Decode$list = _Json_decodeList;
 var $author$project$Pages$Auth$Url = F2(
 	function (url, typeUrl) {
-		return {bo: typeUrl, aq: url};
+		return {bo: typeUrl, ar: url};
 	});
 var $author$project$Pages$Auth$Github = 1;
 var $author$project$Pages$Auth$Google = 0;
@@ -6654,7 +6654,7 @@ var $elm$http$Http$Request = function (a) {
 };
 var $elm$http$Http$State = F2(
 	function (reqs, subs) {
-		return {a4: reqs, bj: subs};
+		return {a5: reqs, bj: subs};
 	});
 var $elm$http$Http$init = $elm$core$Task$succeed(
 	A2($elm$http$Http$State, $elm$core$Dict$empty, _List_Nil));
@@ -6698,7 +6698,7 @@ var $elm$http$Http$updateReqs = F3(
 					return A2(
 						$elm$core$Task$andThen,
 						function (pid) {
-							var _v4 = req.ae;
+							var _v4 = req.Y;
 							if (_v4.$ === 1) {
 								return A3($elm$http$Http$updateReqs, router, otherCmds, reqs);
 							} else {
@@ -6728,7 +6728,7 @@ var $elm$http$Http$onEffects = F4(
 				return $elm$core$Task$succeed(
 					A2($elm$http$Http$State, reqs, subs));
 			},
-			A3($elm$http$Http$updateReqs, router, cmds, state.a4));
+			A3($elm$http$Http$updateReqs, router, cmds, state.a5));
 	});
 var $elm$core$List$maybeCons = F3(
 	function (f, mx, xs) {
@@ -6786,13 +6786,13 @@ var $elm$http$Http$cmdMap = F2(
 			return $elm$http$Http$Request(
 				{
 					bv: r.bv,
-					aw: r.aw,
+					ax: r.ax,
 					bG: A2(_Http_mapExpect, func, r.bG),
-					X: r.X,
-					Z: r.Z,
-					ad: r.ad,
-					ae: r.ae,
-					aq: r.aq
+					P: r.P,
+					R: r.R,
+					W: r.W,
+					Y: r.Y,
+					ar: r.ar
 				});
 		}
 	});
@@ -6815,11 +6815,11 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{bv: false, aw: r.aw, bG: r.bG, X: r.X, Z: r.Z, ad: r.ad, ae: r.ae, aq: r.aq}));
+			{bv: false, ax: r.ax, bG: r.bG, P: r.P, R: r.R, W: r.W, Y: r.Y, ar: r.ar}));
 };
 var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
-		{aw: $elm$http$Http$emptyBody, bG: r.bG, X: _List_Nil, Z: 'GET', ad: $elm$core$Maybe$Nothing, ae: $elm$core$Maybe$Nothing, aq: r.aq});
+		{ax: $elm$http$Http$emptyBody, bG: r.bG, P: _List_Nil, R: 'GET', W: $elm$core$Maybe$Nothing, Y: $elm$core$Maybe$Nothing, ar: r.ar});
 };
 var $author$project$Endpoint$toString = function (_v0) {
 	var urlEndpoint = _v0;
@@ -6828,7 +6828,7 @@ var $author$project$Endpoint$toString = function (_v0) {
 var $author$project$Pages$Auth$getAuthUrls = $elm$http$Http$get(
 	{
 		bG: A2($elm$http$Http$expectJson, $author$project$Pages$Auth$GotAuthUrls, $author$project$Pages$Auth$authUrlsDecoder),
-		aq: $author$project$Endpoint$toString($author$project$Endpoint$authUrls)
+		ar: $author$project$Endpoint$toString($author$project$Endpoint$authUrls)
 	});
 var $author$project$Pages$Auth$init = function (session) {
 	return _Utils_Tuple2(
@@ -6848,7 +6848,7 @@ var $author$project$Endpoint$captures = A2(
 	_List_Nil);
 var $author$project$Capture$Capture = F4(
 	function (idCapture, text, timers, status) {
-		return {aN: idCapture, bg: status, ao: text, bl: timers};
+		return {aO: idCapture, am: status, ap: text, bl: timers};
 	});
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $author$project$Capture$Completed = {$: 1};
@@ -6866,7 +6866,7 @@ var $elm$core$List$head = function (list) {
 };
 var $author$project$Timer$Timer = F4(
 	function (idTimer, idCapture, startedAt, stoppedAt) {
-		return {aN: idCapture, bM: idTimer, b6: startedAt, b9: stoppedAt};
+		return {aO: idCapture, bM: idTimer, b6: startedAt, b9: stoppedAt};
 	});
 var $elm$parser$Parser$deadEndsToString = function (deadEnds) {
 	return 'TODO deadEndsToString';
@@ -6917,7 +6917,7 @@ var $elm$parser$Parser$Advanced$AddRight = F2(
 	});
 var $elm$parser$Parser$Advanced$DeadEnd = F4(
 	function (row, col, problem, contextStack) {
-		return {az: col, bA: contextStack, a_: problem, a8: row};
+		return {aA: col, bA: contextStack, a$: problem, a9: row};
 	});
 var $elm$parser$Parser$Advanced$Empty = {$: 0};
 var $elm$parser$Parser$Advanced$fromState = F2(
@@ -6925,7 +6925,7 @@ var $elm$parser$Parser$Advanced$fromState = F2(
 		return A2(
 			$elm$parser$Parser$Advanced$AddRight,
 			$elm$parser$Parser$Advanced$Empty,
-			A4($elm$parser$Parser$Advanced$DeadEnd, s.a8, s.az, x, s.c));
+			A4($elm$parser$Parser$Advanced$DeadEnd, s.a9, s.aA, x, s.c));
 	});
 var $elm$parser$Parser$Advanced$end = function (x) {
 	return function (s) {
@@ -6952,7 +6952,7 @@ var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
 					$elm$parser$Parser$Advanced$Good,
 					_Utils_cmp(s0.b, offset) < 0,
 					0,
-					{az: col, c: s0.c, d: s0.d, b: offset, a8: row, a: s0.a});
+					{aA: col, c: s0.c, d: s0.d, b: offset, a9: row, a: s0.a});
 			} else {
 				if (_Utils_eq(newOffset, -2)) {
 					var $temp$isGood = isGood,
@@ -6984,7 +6984,7 @@ var $elm$parser$Parser$Advanced$chompWhileHelp = F5(
 	});
 var $elm$parser$Parser$Advanced$chompWhile = function (isGood) {
 	return function (s) {
-		return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.b, s.a8, s.az, s);
+		return A5($elm$parser$Parser$Advanced$chompWhileHelp, isGood, s.b, s.a9, s.aA, s);
 	};
 };
 var $elm$parser$Parser$chompWhile = $elm$parser$Parser$Advanced$chompWhile;
@@ -7172,11 +7172,11 @@ var $elm$parser$Parser$Advanced$chompIf = F2(
 				$elm$parser$Parser$Advanced$Good,
 				true,
 				0,
-				{az: 1, c: s.c, d: s.d, b: s.b + 1, a8: s.a8 + 1, a: s.a}) : A3(
+				{aA: 1, c: s.c, d: s.d, b: s.b + 1, a9: s.a9 + 1, a: s.a}) : A3(
 				$elm$parser$Parser$Advanced$Good,
 				true,
 				0,
-				{az: s.az + 1, c: s.c, d: s.d, b: newOffset, a8: s.a8, a: s.a}));
+				{aA: s.aA + 1, c: s.c, d: s.d, b: newOffset, a9: s.a9, a: s.a}));
 		};
 	});
 var $elm$parser$Parser$chompIf = function (isGood) {
@@ -7312,7 +7312,7 @@ var $elm$parser$Parser$Advanced$token = function (_v0) {
 	var expecting = _v0.b;
 	var progress = !$elm$core$String$isEmpty(str);
 	return function (s) {
-		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, str, s.b, s.a8, s.az, s.a);
+		var _v1 = A5($elm$parser$Parser$Advanced$isSubString, str, s.b, s.a9, s.aA, s.a);
 		var newOffset = _v1.a;
 		var newRow = _v1.b;
 		var newCol = _v1.c;
@@ -7323,7 +7323,7 @@ var $elm$parser$Parser$Advanced$token = function (_v0) {
 			$elm$parser$Parser$Advanced$Good,
 			progress,
 			0,
-			{az: newCol, c: s.c, d: s.d, b: newOffset, a8: newRow, a: s.a});
+			{aA: newCol, c: s.c, d: s.d, b: newOffset, a9: newRow, a: s.a});
 	};
 };
 var $elm$parser$Parser$Advanced$symbol = $elm$parser$Parser$Advanced$token;
@@ -7562,10 +7562,10 @@ var $rtfeldman$elm_iso8601_date_strings$Iso8601$iso8601 = A2(
 	$rtfeldman$elm_iso8601_date_strings$Iso8601$monthYearDayInMs);
 var $elm$parser$Parser$DeadEnd = F3(
 	function (row, col, problem) {
-		return {az: col, a_: problem, a8: row};
+		return {aA: col, a$: problem, a9: row};
 	});
 var $elm$parser$Parser$problemToDeadEnd = function (p) {
-	return A3($elm$parser$Parser$DeadEnd, p.a8, p.az, p.a_);
+	return A3($elm$parser$Parser$DeadEnd, p.a9, p.aA, p.a$);
 };
 var $elm$parser$Parser$Advanced$bagToList = F2(
 	function (bag, list) {
@@ -7597,7 +7597,7 @@ var $elm$parser$Parser$Advanced$run = F2(
 	function (_v0, src) {
 		var parse = _v0;
 		var _v1 = parse(
-			{az: 1, c: _List_Nil, d: 1, b: 0, a8: 1, a: src});
+			{aA: 1, c: _List_Nil, d: 1, b: 0, a9: 1, a: src});
 		if (!_v1.$) {
 			var value = _v1.b;
 			return $elm$core$Result$Ok(value);
@@ -7700,19 +7700,19 @@ var $elm$http$Http$Header = F2(
 		return {$: 0, a: a, b: b};
 	});
 var $elm$http$Http$header = $elm$http$Http$Header;
-var $author$project$Pages$Capture$getCaptures = function (token) {
+var $author$project$Pages$Capture$apiGetCaptures = function (token) {
 	return $elm$http$Http$request(
 		{
-			aw: $elm$http$Http$emptyBody,
+			ax: $elm$http$Http$emptyBody,
 			bG: A2($elm$http$Http$expectJson, $author$project$Pages$Capture$GotCaptures, $author$project$Capture$capturesDataDecoder),
-			X: _List_fromArray(
+			P: _List_fromArray(
 				[
 					A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
 				]),
-			Z: 'GET',
-			ad: $elm$core$Maybe$Nothing,
-			ae: $elm$core$Maybe$Nothing,
-			aq: $author$project$Endpoint$toString($author$project$Endpoint$captures)
+			R: 'GET',
+			W: $elm$core$Maybe$Nothing,
+			Y: $elm$core$Maybe$Nothing,
+			ar: $author$project$Endpoint$toString($author$project$Endpoint$captures)
 		});
 };
 var $elm$time$Time$Name = function (a) {
@@ -7727,17 +7727,17 @@ var $elm$time$Time$Zone = F2(
 	});
 var $elm$time$Time$customZone = $elm$time$Time$Zone;
 var $elm$time$Time$here = _Time_here(0);
-var $author$project$Capture$initCapture = {aN: 0, bg: $author$project$Capture$ToDo, ao: '', bl: _List_Nil};
+var $author$project$Capture$initCapture = {aO: 0, am: $author$project$Capture$ToDo, ap: '', bl: _List_Nil};
 var $elm$time$Time$utc = A2($elm$time$Time$Zone, 0, _List_Nil);
 var $author$project$Pages$Capture$initModel = function (session) {
 	return {
 		J: _List_Nil,
 		k: '',
 		E: $author$project$Capture$initCapture,
-		S: session,
+		U: session,
 		H: {
-			aa: $elm$time$Time$millisToPosix(0),
-			as: $elm$time$Time$utc
+			ac: $elm$time$Time$millisToPosix(0),
+			at: $elm$time$Time$utc
 		}
 	};
 };
@@ -7746,7 +7746,7 @@ var $author$project$Session$token = function (session) {
 		return '';
 	} else {
 		var person = session.b;
-		return person.ap;
+		return person.aq;
 	}
 };
 var $author$project$Pages$Capture$init = function (session) {
@@ -7755,7 +7755,7 @@ var $author$project$Pages$Capture$init = function (session) {
 		$elm$core$Platform$Cmd$batch(
 			_List_fromArray(
 				[
-					$author$project$Pages$Capture$getCaptures(
+					$author$project$Pages$Capture$apiGetCaptures(
 					$author$project$Session$token(session)),
 					A2($elm$core$Task$perform, $author$project$Pages$Capture$AdjustTimeZone, $elm$time$Time$here)
 				])));
@@ -7782,21 +7782,21 @@ var $author$project$Pages$CaptureTimers$getCapture = F2(
 	function (token, idCapture) {
 		return $elm$http$Http$request(
 			{
-				aw: $elm$http$Http$emptyBody,
+				ax: $elm$http$Http$emptyBody,
 				bG: A2($elm$http$Http$expectJson, $author$project$Pages$CaptureTimers$GotCapture, $author$project$Capture$captureDataDecoder),
-				X: _List_fromArray(
+				P: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
 					]),
-				Z: 'GET',
-				ad: $elm$core$Maybe$Nothing,
-				ae: $elm$core$Maybe$Nothing,
-				aq: $author$project$Endpoint$toString(
+				R: 'GET',
+				W: $elm$core$Maybe$Nothing,
+				Y: $elm$core$Maybe$Nothing,
+				ar: $author$project$Endpoint$toString(
 					$author$project$Endpoint$capture(idCapture))
 			});
 	});
 var $author$project$Pages$CaptureTimers$initModel = function (session) {
-	return {O: $author$project$Capture$initCapture, k: '', S: session, ac: $elm$time$Time$utc};
+	return {O: $author$project$Capture$initCapture, k: '', U: session, ae: $elm$time$Time$utc};
 };
 var $author$project$Pages$CaptureTimers$init = F2(
 	function (session, idCapture) {
@@ -7818,7 +7818,7 @@ var $author$project$Pages$Home$init = function (session) {
 };
 var $author$project$Pages$Session$Model = F3(
 	function (session, token, error) {
-		return {k: error, S: session, ap: token};
+		return {k: error, U: session, aq: token};
 	});
 var $author$project$Pages$Session$GotPersonInfo = function (a) {
 	return {$: 0, a: a};
@@ -7843,16 +7843,16 @@ var $author$project$Endpoint$personInfo = A2(
 var $author$project$Pages$Session$getPersonInfo = function (token) {
 	return $elm$http$Http$request(
 		{
-			aw: $elm$http$Http$emptyBody,
+			ax: $elm$http$Http$emptyBody,
 			bG: A2($elm$http$Http$expectJson, $author$project$Pages$Session$GotPersonInfo, $author$project$Pages$Session$personDecoder),
-			X: _List_fromArray(
+			P: _List_fromArray(
 				[
 					A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
 				]),
-			Z: 'GET',
-			ad: $elm$core$Maybe$Nothing,
-			ae: $elm$core$Maybe$Nothing,
-			aq: $author$project$Endpoint$toString($author$project$Endpoint$personInfo)
+			R: 'GET',
+			W: $elm$core$Maybe$Nothing,
+			Y: $elm$core$Maybe$Nothing,
+			ar: $author$project$Endpoint$toString($author$project$Endpoint$personInfo)
 		});
 };
 var $author$project$Pages$Session$init = F2(
@@ -7917,19 +7917,19 @@ var $author$project$Route$replaceUrl = F2(
 			$author$project$Route$routeToString(route));
 	});
 var $author$project$Pages$Auth$toSession = function (model) {
-	return model.S;
+	return model.U;
 };
 var $author$project$Pages$Capture$toSession = function (model) {
-	return model.S;
+	return model.U;
 };
 var $author$project$Pages$CaptureTimers$toSession = function (model) {
-	return model.S;
+	return model.U;
 };
 var $author$project$Pages$Home$toSession = function (model) {
 	return model;
 };
 var $author$project$Pages$Session$toSession = function (model) {
-	return model.S;
+	return model.U;
 };
 var $author$project$Main$toSession = function (page) {
 	switch (page.$) {
@@ -8094,7 +8094,7 @@ var $author$project$Pages$Auth$subscriptions = function (model) {
 	return A2(
 		$author$project$Session$changeSession,
 		$author$project$Pages$Auth$GotSession,
-		$author$project$Session$navKey(model.S));
+		$author$project$Session$navKey(model.U));
 };
 var $author$project$Pages$Capture$GotSession = function (a) {
 	return {$: 0, a: a};
@@ -8108,7 +8108,7 @@ var $elm$time$Time$Every = F2(
 	});
 var $elm$time$Time$State = F2(
 	function (taggers, processes) {
-		return {a0: processes, bk: taggers};
+		return {a1: processes, bk: taggers};
 	});
 var $elm$time$Time$init = $elm$core$Task$succeed(
 	A2($elm$time$Time$State, $elm$core$Dict$empty, $elm$core$Dict$empty));
@@ -8244,7 +8244,7 @@ var $elm$time$Time$spawnHelp = F3(
 	});
 var $elm$time$Time$onEffects = F3(
 	function (router, subs, _v0) {
-		var processes = _v0.a0;
+		var processes = _v0.a1;
 		var rightStep = F3(
 			function (_v6, id, _v7) {
 				var spawns = _v7.a;
@@ -8365,7 +8365,7 @@ var $author$project$Pages$Capture$subscriptions = function (model) {
 				A2(
 				$author$project$Session$changeSession,
 				$author$project$Pages$Capture$GotSession,
-				$author$project$Session$navKey(model.S))
+				$author$project$Session$navKey(model.U))
 			]));
 };
 var $author$project$Pages$CaptureTimers$GotSession = function (a) {
@@ -8375,7 +8375,7 @@ var $author$project$Pages$CaptureTimers$subscriptions = function (model) {
 	return A2(
 		$author$project$Session$changeSession,
 		$author$project$Pages$CaptureTimers$GotSession,
-		$author$project$Session$navKey(model.S));
+		$author$project$Session$navKey(model.U));
 };
 var $author$project$Pages$Home$GotSession = $elm$core$Basics$identity;
 var $author$project$Pages$Home$subscriptions = function (model) {
@@ -8391,7 +8391,7 @@ var $author$project$Pages$Session$subscriptions = function (model) {
 	return A2(
 		$author$project$Session$changeSession,
 		$author$project$Pages$Session$GotSession,
-		$author$project$Session$navKey(model.S));
+		$author$project$Session$navKey(model.U));
 };
 var $author$project$Main$subscriptions = function (model) {
 	switch (model.$) {
@@ -8459,7 +8459,7 @@ var $elm$url$Url$addPrefixed = F3(
 	});
 var $elm$url$Url$toString = function (url) {
 	var http = function () {
-		var _v0 = url.a1;
+		var _v0 = url.a2;
 		if (!_v0) {
 			return 'http://';
 		} else {
@@ -8469,17 +8469,17 @@ var $elm$url$Url$toString = function (url) {
 	return A3(
 		$elm$url$Url$addPrefixed,
 		'#',
-		url.aH,
+		url.aI,
 		A3(
 			$elm$url$Url$addPrefixed,
 			'?',
-			url.a2,
+			url.a3,
 			_Utils_ap(
 				A2(
 					$elm$url$Url$addPort,
-					url.aZ,
-					_Utils_ap(http, url.aM)),
-				url.aX)));
+					url.a_,
+					_Utils_ap(http, url.aN)),
+				url.aY)));
 };
 var $author$project$Pages$Auth$update = F2(
 	function (msg, model) {
@@ -8490,7 +8490,7 @@ var $author$project$Pages$Auth$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{ar: urls}),
+						{as: urls}),
 					$elm$core$Platform$Cmd$none);
 			} else {
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -8500,10 +8500,10 @@ var $author$project$Pages$Auth$update = F2(
 			return _Utils_Tuple2(
 				_Utils_update(
 					model,
-					{S: session}),
+					{U: session}),
 				A2(
 					$author$project$Route$replaceUrl,
-					$author$project$Session$navKey(model.S),
+					$author$project$Session$navKey(model.U),
 					$author$project$Route$Home));
 		}
 	});
@@ -8511,6 +8511,7 @@ var $author$project$Capture$Disabled = {$: 3};
 var $author$project$Pages$Capture$CaptureSaved = function (a) {
 	return {$: 2, a: a};
 };
+var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$json$Json$Encode$object = function (pairs) {
 	return _Json_wrap(
 		A3(
@@ -8531,7 +8532,11 @@ var $author$project$Capture$captureEncode = function (capture) {
 			[
 				_Utils_Tuple2(
 				'text',
-				$elm$json$Json$Encode$string(capture.ao))
+				$elm$json$Json$Encode$string(capture.ap)),
+				_Utils_Tuple2(
+				'completed',
+				$elm$json$Json$Encode$bool(
+					_Utils_eq(capture.am, $author$project$Capture$Completed)))
 			]));
 };
 var $elm$http$Http$jsonBody = function (value) {
@@ -8541,21 +8546,39 @@ var $elm$http$Http$jsonBody = function (value) {
 		A2($elm$json$Json$Encode$encode, 0, value));
 };
 var $author$project$Capture$savedCaptureDecoder = A2($elm$json$Json$Decode$field, 'data', $author$project$Capture$captureDecoder);
-var $author$project$Pages$Capture$saveCapture = F2(
+var $author$project$Pages$Capture$apiSaveCapture = F2(
 	function (token, capture) {
 		return $elm$http$Http$request(
 			{
-				aw: $elm$http$Http$jsonBody(
+				ax: $elm$http$Http$jsonBody(
 					$author$project$Capture$captureEncode(capture)),
 				bG: A2($elm$http$Http$expectJson, $author$project$Pages$Capture$CaptureSaved, $author$project$Capture$savedCaptureDecoder),
-				X: _List_fromArray(
+				P: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
 					]),
-				Z: 'POST',
-				ad: $elm$core$Maybe$Nothing,
-				ae: $elm$core$Maybe$Nothing,
-				aq: $author$project$Endpoint$toString($author$project$Endpoint$captures)
+				R: 'POST',
+				W: $elm$core$Maybe$Nothing,
+				Y: $elm$core$Maybe$Nothing,
+				ar: $author$project$Endpoint$toString($author$project$Endpoint$captures)
+			});
+	});
+var $author$project$Pages$Capture$apiUpdateCapture = F2(
+	function (token, capture) {
+		return $elm$http$Http$request(
+			{
+				ax: $elm$http$Http$jsonBody(
+					$author$project$Capture$captureEncode(capture)),
+				bG: A2($elm$http$Http$expectJson, $author$project$Pages$Capture$CaptureSaved, $author$project$Capture$savedCaptureDecoder),
+				P: _List_fromArray(
+					[
+						A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
+					]),
+				R: 'PUT',
+				W: $elm$core$Maybe$Nothing,
+				Y: $elm$core$Maybe$Nothing,
+				ar: $author$project$Endpoint$toString(
+					$author$project$Endpoint$capture(capture.aO))
 			});
 	});
 var $author$project$Pages$Capture$TimerUpdated = F2(
@@ -8579,19 +8602,19 @@ var $author$project$Pages$Capture$startTimer = F2(
 	function (token, idCapture) {
 		return $elm$http$Http$request(
 			{
-				aw: $elm$http$Http$emptyBody,
+				ax: $elm$http$Http$emptyBody,
 				bG: A2(
 					$elm$http$Http$expectJson,
 					$author$project$Pages$Capture$TimerUpdated($author$project$Capture$InProgress),
 					$author$project$Timer$timerDataDecoder),
-				X: _List_fromArray(
+				P: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
 					]),
-				Z: 'POST',
-				ad: $elm$core$Maybe$Nothing,
-				ae: $elm$core$Maybe$Nothing,
-				aq: $author$project$Endpoint$toString(
+				R: 'POST',
+				W: $elm$core$Maybe$Nothing,
+				Y: $elm$core$Maybe$Nothing,
+				ar: $author$project$Endpoint$toString(
 					$author$project$Endpoint$startTimer(idCapture))
 			});
 	});
@@ -8622,20 +8645,20 @@ var $author$project$Pages$Capture$stopTimer = F3(
 	function (token, idTimer, idCapture) {
 		return $elm$http$Http$request(
 			{
-				aw: $elm$http$Http$jsonBody(
+				ax: $elm$http$Http$jsonBody(
 					$author$project$Timer$actionTimerEncode('stop')),
 				bG: A2(
 					$elm$http$Http$expectJson,
 					$author$project$Pages$Capture$TimerUpdated($author$project$Capture$ToDo),
 					$author$project$Timer$timerDataDecoder),
-				X: _List_fromArray(
+				P: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
 					]),
-				Z: 'PUT',
-				ad: $elm$core$Maybe$Nothing,
-				ae: $elm$core$Maybe$Nothing,
-				aq: $author$project$Endpoint$toString(
+				R: 'PUT',
+				W: $elm$core$Maybe$Nothing,
+				Y: $elm$core$Maybe$Nothing,
+				ar: $author$project$Endpoint$toString(
 					A2($author$project$Endpoint$stopTimer, idTimer, idCapture))
 			});
 	});
@@ -8644,9 +8667,9 @@ var $author$project$Pages$Capture$updateCapture = F3(
 		return A2(
 			$elm$core$List$map,
 			function (c) {
-				return _Utils_eq(idCapture, c.aN) ? _Utils_update(
+				return _Utils_eq(idCapture, c.aO) ? _Utils_update(
 					c,
-					{bg: status}) : c;
+					{am: status}) : c;
 			},
 			listCaptures);
 	});
@@ -8660,7 +8683,7 @@ var $author$project$Pages$Capture$update = F2(
 				var timer = model.H;
 				var newTimer = _Utils_update(
 					timer,
-					{as: zone});
+					{at: zone});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -8671,7 +8694,7 @@ var $author$project$Pages$Capture$update = F2(
 				var timer = model.H;
 				var newTimer = _Utils_update(
 					timer,
-					{aa: posix});
+					{ac: posix});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -8682,10 +8705,10 @@ var $author$project$Pages$Capture$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{S: session}),
+						{U: session}),
 					A2(
 						$author$project$Route$replaceUrl,
-						$author$project$Session$navKey(model.S),
+						$author$project$Session$navKey(model.U),
 						$author$project$Route$Home));
 			case 1:
 				var result = msg.a;
@@ -8734,8 +8757,8 @@ var $author$project$Pages$Capture$update = F2(
 						_Utils_update(
 							model,
 							{k: ''}),
-						$author$project$Pages$Capture$getCaptures(
-							$author$project$Session$token(model.S)));
+						$author$project$Pages$Capture$apiGetCaptures(
+							$author$project$Session$token(model.U)));
 				} else {
 					var httpError = result.a;
 					_v4$2:
@@ -8772,7 +8795,7 @@ var $author$project$Pages$Capture$update = F2(
 				var capture = model.E;
 				var newCapture = _Utils_update(
 					capture,
-					{ao: text});
+					{ap: text});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
@@ -8784,8 +8807,8 @@ var $author$project$Pages$Capture$update = F2(
 						model,
 						{E: $author$project$Capture$initCapture}),
 					A2(
-						$author$project$Pages$Capture$saveCapture,
-						$author$project$Session$token(model.S),
+						$author$project$Pages$Capture$apiSaveCapture,
+						$author$project$Session$token(model.U),
 						model.E));
 			case 5:
 				var idCapture = msg.a;
@@ -8796,7 +8819,7 @@ var $author$project$Pages$Capture$update = F2(
 						{J: captures}),
 					A2(
 						$author$project$Pages$Capture$startTimer,
-						$author$project$Session$token(model.S),
+						$author$project$Session$token(model.U),
 						idCapture));
 			case 6:
 				var idTimer = msg.a;
@@ -8805,18 +8828,18 @@ var $author$project$Pages$Capture$update = F2(
 					model,
 					A3(
 						$author$project$Pages$Capture$stopTimer,
-						$author$project$Session$token(model.S),
+						$author$project$Session$token(model.U),
 						idTimer,
 						idCapture));
-			default:
+			case 7:
 				var result = msg.b;
 				if (!result.$) {
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
 							{k: ''}),
-						$author$project$Pages$Capture$getCaptures(
-							$author$project$Session$token(model.S)));
+						$author$project$Pages$Capture$apiGetCaptures(
+							$author$project$Session$token(model.U)));
 				} else {
 					var httpError = result.a;
 					_v6$2:
@@ -8848,6 +8871,18 @@ var $author$project$Pages$Capture$update = F2(
 							{k: 'Error while starting the timer'}),
 						$elm$core$Platform$Cmd$none);
 				}
+			default:
+				var capture = msg.a;
+				var captureStatus = _Utils_eq(capture.am, $author$project$Capture$Completed) ? $author$project$Capture$ToDo : $author$project$Capture$Completed;
+				var updatedCapture = _Utils_update(
+					capture,
+					{am: captureStatus});
+				return _Utils_Tuple2(
+					model,
+					A2(
+						$author$project$Pages$Capture$apiUpdateCapture,
+						$author$project$Session$token(model.U),
+						updatedCapture));
 		}
 	});
 var $author$project$Pages$CaptureTimers$update = F2(
@@ -8858,17 +8893,17 @@ var $author$project$Pages$CaptureTimers$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{ac: zone}),
+						{ae: zone}),
 					$elm$core$Platform$Cmd$none);
 			case 0:
 				var session = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{S: session}),
+						{U: session}),
 					A2(
 						$author$project$Route$replaceUrl,
-						$author$project$Session$navKey(model.S),
+						$author$project$Session$navKey(model.U),
 						$author$project$Route$Home));
 			default:
 				var result = msg.a;
@@ -8931,7 +8966,7 @@ var $author$project$Session$encode = function (person) {
 				$elm$json$Json$Encode$string(person.bE)),
 				_Utils_Tuple2(
 				'token',
-				$elm$json$Json$Encode$string(person.ap))
+				$elm$json$Json$Encode$string(person.aq))
 			]));
 };
 var $author$project$Pages$Session$update = F2(
@@ -8940,7 +8975,7 @@ var $author$project$Pages$Session$update = F2(
 			var result = msg.a;
 			if (!result.$) {
 				var person = result.a;
-				var session = {bE: person.bE, ap: model.ap};
+				var session = {bE: person.bE, aq: model.aq};
 				return _Utils_Tuple2(
 					model,
 					$author$project$Session$storeSession(
@@ -8982,10 +9017,10 @@ var $author$project$Pages$Session$update = F2(
 			return _Utils_Tuple2(
 				_Utils_update(
 					model,
-					{S: session}),
+					{U: session}),
 				A2(
 					$author$project$Route$replaceUrl,
-					$author$project$Session$navKey(model.S),
+					$author$project$Session$navKey(model.U),
 					$author$project$Route$Home));
 		}
 	});
@@ -9129,10 +9164,10 @@ var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $author$project$Page$view = F2(
 	function (toMsg, structure) {
 		return {
-			aw: A2(
+			ax: A2(
 				$elm$core$List$map,
 				$elm$html$Html$map(toMsg),
-				structure.aA),
+				structure.aB),
 			bm: structure.bm
 		};
 	});
@@ -9160,7 +9195,7 @@ var $author$project$Pages$Auth$showAuthUrl = function (url) {
 				$elm$html$Html$a,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$href(url.aq)
+						$elm$html$Html$Attributes$href(url.ar)
 					]),
 				_List_fromArray(
 					[
@@ -9174,7 +9209,7 @@ var $author$project$Pages$Auth$showAuthUrl = function (url) {
 };
 var $author$project$Pages$Auth$view = function (model) {
 	return {
-		aA: _List_fromArray(
+		aB: _List_fromArray(
 			[
 				A2(
 				$elm$html$Html$a,
@@ -9201,7 +9236,7 @@ var $author$project$Pages$Auth$view = function (model) {
 					function (url) {
 						return $author$project$Pages$Auth$showAuthUrl(url);
 					},
-					model.ar))
+					model.as))
 			]),
 		bm: 'Auth'
 	};
@@ -9269,7 +9304,9 @@ var $author$project$Pages$Capture$StopTimer = F2(
 	function (a, b) {
 		return {$: 6, a: a, b: b};
 	});
-var $elm$json$Json$Encode$bool = _Json_wrap;
+var $author$project$Pages$Capture$ToggleCompleted = function (a) {
+	return {$: 11, a: a};
+};
 var $elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
 		return A2(
@@ -9396,9 +9433,9 @@ var $author$project$Timer$timersToMillis = function (timers) {
 };
 var $author$project$Pages$Capture$showTime = F2(
 	function (capture, clock) {
-		var _v0 = capture.bg;
+		var _v0 = capture.am;
 		if (_v0.$ === 2) {
-			var nowToMillis = $elm$time$Time$posixToMillis(clock.aa);
+			var nowToMillis = $elm$time$Time$posixToMillis(clock.ac);
 			var maybeStartedAtMillis = A2(
 				$elm$core$Maybe$map,
 				function (t) {
@@ -9430,7 +9467,7 @@ var $author$project$Pages$Capture$showTime = F2(
 				_List_fromArray(
 					[
 						$author$project$Route$href(
-						$author$project$Route$CaptureTimers(capture.aN)),
+						$author$project$Route$CaptureTimers(capture.aO)),
 						$elm$html$Html$Attributes$class('tc db')
 					]),
 				_List_fromArray(
@@ -9455,7 +9492,7 @@ var $author$project$Pages$Capture$showTime = F2(
 				_List_fromArray(
 					[
 						$author$project$Route$href(
-						$author$project$Route$CaptureTimers(capture.aN)),
+						$author$project$Route$CaptureTimers(capture.aO)),
 						$elm$html$Html$Attributes$class('tc db')
 					]),
 				_List_fromArray(
@@ -9512,6 +9549,7 @@ var $author$project$Pages$Capture$showTimerButton = F2(
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $author$project$Pages$Capture$showCapture = F2(
 	function (clock, capture) {
+		var completed = _Utils_eq(capture.am, $author$project$Capture$Completed);
 		return A2(
 			$elm$html$Html$div,
 			_List_fromArray(
@@ -9533,21 +9571,23 @@ var $author$project$Pages$Capture$showCapture = F2(
 							_List_fromArray(
 								[
 									$elm$html$Html$Attributes$type_('checkbox'),
-									$elm$html$Html$Attributes$checked(false),
+									$elm$html$Html$Attributes$checked(completed),
 									$elm$html$Html$Attributes$disabled(false),
-									$elm$html$Html$Attributes$class('mr2')
+									$elm$html$Html$Attributes$class('mr2'),
+									$elm$html$Html$Events$onClick(
+									$author$project$Pages$Capture$ToggleCompleted(capture))
 								]),
 							_List_Nil),
-							$elm$html$Html$text(capture.ao)
+							$elm$html$Html$text(capture.ap)
 						])),
 					function () {
-					var _v0 = capture.bg;
+					var _v0 = capture.am;
 					switch (_v0.$) {
 						case 0:
 							return A2(
 								$author$project$Pages$Capture$showTimerButton,
 								'start',
-								$author$project$Pages$Capture$StartTimer(capture.aN));
+								$author$project$Pages$Capture$StartTimer(capture.aO));
 						case 2:
 							var timer = $author$project$Capture$getCurrentTimer(capture.bl);
 							if (timer.$ === 1) {
@@ -9557,7 +9597,7 @@ var $author$project$Pages$Capture$showCapture = F2(
 								return A2(
 									$author$project$Pages$Capture$showTimerButton,
 									'stop',
-									A2($author$project$Pages$Capture$StopTimer, t.bM, capture.aN));
+									A2($author$project$Pages$Capture$StopTimer, t.bM, capture.aO));
 							}
 						case 3:
 							return A2($author$project$Pages$Capture$showTimerButton, '...', $author$project$Pages$Capture$None);
@@ -9574,7 +9614,7 @@ var $author$project$Pages$Capture$showCapture = F2(
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
 var $author$project$Pages$Capture$view = function (model) {
 	return {
-		aA: _List_fromArray(
+		aB: _List_fromArray(
 			[
 				A2(
 				$elm$html$Html$a,
@@ -9604,7 +9644,7 @@ var $author$project$Pages$Capture$view = function (model) {
 						$elm$html$Html$text('Dwyl application')
 					])),
 				function () {
-				var _v0 = model.S;
+				var _v0 = model.U;
 				if (!_v0.$) {
 					return A2(
 						$elm$html$Html$a,
@@ -9641,7 +9681,7 @@ var $author$project$Pages$Capture$view = function (model) {
 												_List_fromArray(
 													[
 														$elm$html$Html$Attributes$class('w-80 mr2'),
-														$elm$html$Html$Attributes$value(model.E.ao),
+														$elm$html$Html$Attributes$value(model.E.ap),
 														$elm$html$Html$Events$onInput($author$project$Pages$Capture$UpdateNewCapture)
 													]),
 												_List_Nil),
@@ -9765,15 +9805,15 @@ var $elm$time$Time$toCivil = function (minutes) {
 	var month = mp + ((mp < 10) ? 3 : (-9));
 	var year = yearOfEra + (era * 400);
 	return {
-		aB: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
-		aU: month,
+		aC: (dayOfYear - ((((153 * mp) + 2) / 5) | 0)) + 1,
+		aV: month,
 		bt: year + ((month <= 2) ? 1 : 0)
 	};
 };
 var $elm$time$Time$toDay = F2(
 	function (zone, time) {
 		return $elm$time$Time$toCivil(
-			A2($elm$time$Time$toAdjustedMinutes, zone, time)).aB;
+			A2($elm$time$Time$toAdjustedMinutes, zone, time)).aC;
 	});
 var $elm$time$Time$toHour = F2(
 	function (zone, time) {
@@ -9807,7 +9847,7 @@ var $elm$time$Time$Sep = 8;
 var $elm$time$Time$toMonth = F2(
 	function (zone, time) {
 		var _v0 = $elm$time$Time$toCivil(
-			A2($elm$time$Time$toAdjustedMinutes, zone, time)).aU;
+			A2($elm$time$Time$toAdjustedMinutes, zone, time)).aV;
 		switch (_v0) {
 			case 1:
 				return 0;
@@ -9930,7 +9970,7 @@ var $author$project$Pages$CaptureTimers$showTimers = F2(
 	});
 var $author$project$Pages$CaptureTimers$view = function (model) {
 	return {
-		aA: _List_fromArray(
+		aB: _List_fromArray(
 			[
 				A2(
 				$elm$html$Html$a,
@@ -9967,9 +10007,9 @@ var $author$project$Pages$CaptureTimers$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$elm$html$Html$text(model.O.ao)
+						$elm$html$Html$text(model.O.ap)
 					])),
-				A2($author$project$Pages$CaptureTimers$showTimers, model.ac, model.O.bl)
+				A2($author$project$Pages$CaptureTimers$showTimers, model.ae, model.O.bl)
 			]),
 		bm: 'Timers'
 	};
@@ -9977,7 +10017,7 @@ var $author$project$Pages$CaptureTimers$view = function (model) {
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $author$project$Pages$Home$view = function (model) {
 	return {
-		aA: _List_fromArray(
+		aB: _List_fromArray(
 			[
 				A2(
 				$elm$html$Html$a,
@@ -10068,7 +10108,7 @@ var $author$project$Pages$Home$view = function (model) {
 };
 var $author$project$Pages$Session$view = function (model) {
 	return {
-		aA: _List_fromArray(
+		aB: _List_fromArray(
 			[
 				A2(
 				$elm$html$Html$a,
@@ -10132,7 +10172,7 @@ var $author$project$Main$view = function (model) {
 				$author$project$Pages$Session$view(sessionModel));
 		case 3:
 			return {
-				aw: _List_fromArray(
+				ax: _List_fromArray(
 					[
 						A2(
 						$elm$html$Html$a,
@@ -10166,7 +10206,7 @@ var $author$project$Main$view = function (model) {
 			};
 		case 4:
 			return {
-				aw: _List_fromArray(
+				ax: _List_fromArray(
 					[
 						A2(
 						$elm$html$Html$a,

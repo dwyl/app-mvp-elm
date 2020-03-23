@@ -162,7 +162,7 @@ update msg model =
         StopTimer idTimer idCapture ->
             ( model, stopTimer (token model.session) idTimer idCapture )
 
-        TimerUpdated s result ->
+        TimerUpdated _ result ->
             case result of
                 Ok _ ->
                     ( { model | error = "" }, getCaptures (token model.session) )
@@ -189,8 +189,6 @@ view model =
     , content =
         [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
         , h1 [ class "tc" ] [ text "Dwyl application" ]
-
-        -- , showTime model.timer
         , case model.session of
             Session.Guest _ ->
                 a [ Route.href Route.Home, class "tc db" ] [ text "Not logged in yet!" ]
@@ -288,7 +286,7 @@ showCapture clock capture =
 
             Error e ->
                 showTimerButton e None
-        , showTime capture.status clock capture.timers
+        , showTime capture clock
         ]
 
 
@@ -303,13 +301,13 @@ showTimerButton textButton msg =
         [ text textButton ]
 
 
-showTime : CaptureStatus -> Clock -> List Timer -> Html Msg
-showTime status clock timers =
-    case status of
+showTime : Capture -> Clock -> Html Msg
+showTime capture clock =
+    case capture.status of
         InProgress ->
             let
                 maybeStartedAtMillis =
-                    Maybe.map (\t -> Time.posixToMillis t.startedAt) (getCurrentTimer timers)
+                    Maybe.map (\t -> Time.posixToMillis t.startedAt) (getCurrentTimer capture.timers)
 
                 nowToMillis =
                     Time.posixToMillis clock.posix
@@ -318,7 +316,7 @@ showTime status clock timers =
                     Maybe.map ((-) nowToMillis) maybeStartedAtMillis
 
                 maybePreviousTimersMillis =
-                    getPreviousTimer timers
+                    getPreviousTimer capture.timers
                         |> Maybe.andThen timersToMillis
 
                 allTimes =
@@ -332,19 +330,19 @@ showTime status clock timers =
                         Just t ->
                             millisToHMS t
             in
-            p [ class "tc" ] [ text (hour ++ ":" ++ minute ++ ":" ++ second) ]
+            a [ Route.href (Route.CaptureTimers capture.idCapture), class "tc db" ] [ text (hour ++ ":" ++ minute ++ ":" ++ second) ]
 
         _ ->
             let
                 ( hour, minute, second ) =
-                    case timersToMillis timers of
+                    case timersToMillis capture.timers of
                         Nothing ->
                             ( "", "", "" )
 
                         Just t ->
                             millisToHMS t
             in
-            p [ class "tc" ] [ text (hour ++ ":" ++ minute ++ ":" ++ second) ]
+            a [ Route.href (Route.CaptureTimers capture.idCapture), class "tc db" ] [ text (hour ++ ":" ++ minute ++ ":" ++ second) ]
 
 
 getCaptures : String -> Cmd Msg
@@ -354,7 +352,7 @@ getCaptures token =
         , headers = [ Http.header "authorization" ("Bearer " ++ token) ]
         , url = Endpoint.toString Endpoint.captures
         , body = Http.emptyBody
-        , expect = Http.expectJson GotCaptures capturesDecoder
+        , expect = Http.expectJson GotCaptures capturesDataDecoder
         , timeout = Nothing
         , tracker = Nothing
         }

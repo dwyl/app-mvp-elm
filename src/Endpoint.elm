@@ -1,4 +1,4 @@
-module Endpoint exposing (Endpoint, authUrls, captures, personInfo, startTimer, stopTimer, toString, url)
+module Endpoint exposing (Endpoint, authUrls, capture, captures, personInfo, startTimer, stopTimer, toString, url)
 
 import Url.Builder exposing (QueryParameter)
 
@@ -20,7 +20,7 @@ url : List String -> List QueryParameter -> Endpoint
 url path queryParams =
     -- "https://dwyl-app-api.herokuapp.com"
     -- "http://localhost:4000"
-    Url.Builder.crossOrigin "https://dwyl-app-api.herokuapp.com" path queryParams
+    Url.Builder.crossOrigin "http://localhost:4000" path queryParams
         |> Endpoint
 
 
@@ -45,6 +45,11 @@ personInfo =
 captures : Endpoint
 captures =
     url [ "api", "capture" ] []
+
+
+capture : Int -> Endpoint
+capture idCapture =
+    url [ "api", "capture", String.fromInt idCapture ] []
 
 
 startTimer : Int -> Endpoint

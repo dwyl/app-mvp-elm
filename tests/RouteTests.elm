@@ -113,4 +113,21 @@ suite =
                 in
                 Parser.parse Route.routeParser url
                     |> Expect.equal (Just Route.Capture)
+        , test "Test capture timers route" <|
+            \_ ->
+                let
+                    defaultUrl =
+                        { protocol = Url.Https
+                        , host = "dwyl.com"
+                        , port_ = Just 443
+                        , path = "/"
+                        , query = Nothing
+                        , fragment = Nothing
+                        }
+
+                    url =
+                        Maybe.withDefault defaultUrl (Url.fromString "http://locahost/capture/1")
+                in
+                Parser.parse Route.routeParser url
+                    |> Expect.equal (Just (Route.CaptureTimers 1))
         ]

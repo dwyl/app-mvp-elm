@@ -8,7 +8,7 @@ import Browser.Navigation as Nav
 import Html exposing (Attribute)
 import Html.Attributes as Attr
 import Url exposing (Url)
-import Url.Parser as Parser exposing ((<?>))
+import Url.Parser as Parser exposing ((</>), (<?>))
 import Url.Parser.Query as Query
 
 
@@ -17,6 +17,7 @@ type Route
     | Auth (Maybe String)
     | Logout
     | Capture
+    | CaptureTimers Int
 
 
 routeParser : Parser.Parser (Route -> a) a
@@ -25,6 +26,7 @@ routeParser =
         [ Parser.map Home Parser.top
         , Parser.map Auth (Parser.s "auth" <?> Query.string "jwt")
         , Parser.map Logout (Parser.s "logout")
+        , Parser.map CaptureTimers (Parser.s "capture" </> Parser.int)
         , Parser.map Capture (Parser.s "capture")
         ]
 
@@ -56,6 +58,9 @@ routeToString route =
 
         Capture ->
             "/capture"
+
+        CaptureTimers idCapture ->
+            "/capture/" ++ String.fromInt idCapture
 
 
 replaceUrl : Nav.Key -> Route -> Cmd msg

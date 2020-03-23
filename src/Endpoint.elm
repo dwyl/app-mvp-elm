@@ -1,4 +1,4 @@
-module Endpoint exposing (Endpoint, authUrls, captures, personInfo, startTimer, stopTimer, toString, url)
+module Endpoint exposing (Endpoint, authUrls, capture, captures, personInfo, startTimer, stopTimer, toString, url)
 
 import Url.Builder exposing (QueryParameter)
 
@@ -45,6 +45,11 @@ personInfo =
 captures : Endpoint
 captures =
     url [ "api", "capture" ] []
+
+
+capture : Int -> Endpoint
+capture idCapture =
+    url [ "api", "capture", String.fromInt idCapture ] []
 
 
 startTimer : Int -> Endpoint

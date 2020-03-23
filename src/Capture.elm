@@ -1,4 +1,4 @@
-module Capture exposing (Capture, CaptureStatus(..), captureDecoder, captureEncode, captureStatusDecoder, capturesDecoder, completedToStatusDecoder, getCurrentTimer, getPreviousTimer, initCapture, savedCaptureDecoder, timersToStatusDecoder)
+module Capture exposing (Capture, CaptureStatus(..), captureDataDecoder, captureDecoder, captureEncode, captureStatusDecoder, capturesDataDecoder, completedToStatusDecoder, getCurrentTimer, getPreviousTimer, initCapture, savedCaptureDecoder, timersToStatusDecoder)
 
 import Json.Decode as JD
 import Json.Encode as JE
@@ -30,9 +30,14 @@ initCapture =
     }
 
 
-capturesDecoder : JD.Decoder (List Capture)
-capturesDecoder =
+capturesDataDecoder : JD.Decoder (List Capture)
+capturesDataDecoder =
     JD.field "data" (JD.list captureDecoder)
+
+
+captureDataDecoder : JD.Decoder Capture
+captureDataDecoder =
+    JD.field "data" captureDecoder
 
 
 savedCaptureDecoder : JD.Decoder Capture

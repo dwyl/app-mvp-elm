@@ -8,6 +8,7 @@ import Html.Attributes exposing (..)
 import Page
 import Pages.Auth as Auth
 import Pages.Capture as Capture
+import Pages.CaptureTimers as CaptureTimers
 import Pages.Home as Home
 import Pages.Session as PagesSession
 import Route
@@ -38,6 +39,7 @@ type Model
     | NotFound Session.Session
     | Logout Session.Session
     | Capture Capture.Model
+    | CaptureTimers CaptureTimers.Model
 
 
 
@@ -70,6 +72,7 @@ type Msg
     | GotAuthMsg Auth.Msg
     | GotPagesSessionMsg PagesSession.Msg
     | GotCaptureMsg Capture.Msg
+    | GotCaptureTimersMsg CaptureTimers.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -113,6 +116,13 @@ update msg model =
                     Capture.update captureMsg captureModel
             in
             ( Capture subModel, Cmd.map GotCaptureMsg subMsg )
+
+        ( GotCaptureTimersMsg captureTimersMsg, CaptureTimers captureTimersModel ) ->
+            let
+                ( subModel, subMsg ) =
+                    CaptureTimers.update captureTimersMsg captureTimersModel
+            in
+            ( CaptureTimers subModel, Cmd.map GotCaptureTimersMsg subMsg )
 
         -- combining the msg and the model.page allow us to filter out
         -- messages coming from the wrong page
@@ -167,6 +177,13 @@ loadRoute maybeRoute model =
             in
             ( Capture subModel, Cmd.map GotCaptureMsg subMsg )
 
+        Just (Route.CaptureTimers idCapture) ->
+            let
+                ( subModel, subMsg ) =
+                    CaptureTimers.init session idCapture
+            in
+            ( CaptureTimers subModel, Cmd.map GotCaptureTimersMsg subMsg )
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -188,6 +205,9 @@ subscriptions model =
 
         Capture captureModel ->
             Sub.map GotCaptureMsg (Capture.subscriptions captureModel)
+
+        CaptureTimers captureTimersModel ->
+            Sub.map GotCaptureTimersMsg (CaptureTimers.subscriptions captureTimersModel)
 
 
 view : Model -> Browser.Document Msg
@@ -221,6 +241,9 @@ view model =
         Capture captureModel ->
             Page.view GotCaptureMsg (Capture.view captureModel)
 
+        CaptureTimers captureTimersModel ->
+            Page.view GotCaptureTimersMsg (CaptureTimers.view captureTimersModel)
+
 
 toSession : Model -> Session.Session
 toSession page =
@@ -242,6 +265,9 @@ toSession page =
 
         Capture m ->
             Capture.toSession m
+
+        CaptureTimers m ->
+            CaptureTimers.toSession m
 
 
 toNavKey : Model -> Nav.Key

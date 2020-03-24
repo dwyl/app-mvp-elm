@@ -214,7 +214,12 @@ view model =
                         div []
                             [ div [ class "w-60 center tc" ]
                                 [ input [ class "w-80 mr2", value model.newCapture.text, onInput UpdateNewCapture ] []
-                                , button [ class "pointer", onClick AddCapture ] [ text "Add Capture" ]
+                                , button
+                                    [ class "pointer"
+                                    , onClick AddCapture
+                                    , disabled <| String.isEmpty model.newCapture.text
+                                    ]
+                                    [ text "Add Capture" ]
                                 ]
                             , div [ class "w-50 center" ] <| List.map (\capture -> showCapture model.timer capture) model.captures
                             ]

@@ -5585,7 +5585,7 @@ var $author$project$Session$decode = F2(
 	});
 var $elm$url$Url$Parser$State = F5(
 	function (visited, unvisited, params, frag, value) {
-		return {D: frag, F: params, C: unvisited, y: value, I: visited};
+		return {E: frag, F: params, D: unvisited, y: value, I: visited};
 	});
 var $elm$url$Url$Parser$getFirstMatch = function (states) {
 	getFirstMatch:
@@ -5595,7 +5595,7 @@ var $elm$url$Url$Parser$getFirstMatch = function (states) {
 		} else {
 			var state = states.a;
 			var rest = states.b;
-			var _v1 = state.C;
+			var _v1 = state.D;
 			if (!_v1.b) {
 				return $elm$core$Maybe$Just(state.y);
 			} else {
@@ -6231,9 +6231,9 @@ var $elm$url$Url$Parser$custom = F2(
 	function (tipe, stringToSomething) {
 		return function (_v0) {
 			var visited = _v0.I;
-			var unvisited = _v0.C;
+			var unvisited = _v0.D;
 			var params = _v0.F;
-			var frag = _v0.D;
+			var frag = _v0.E;
 			var value = _v0.y;
 			if (!unvisited.b) {
 				return _List_Nil;
@@ -6263,9 +6263,9 @@ var $elm$url$Url$Parser$int = A2($elm$url$Url$Parser$custom, 'NUMBER', $elm$core
 var $elm$url$Url$Parser$mapState = F2(
 	function (func, _v0) {
 		var visited = _v0.I;
-		var unvisited = _v0.C;
+		var unvisited = _v0.D;
 		var params = _v0.F;
-		var frag = _v0.D;
+		var frag = _v0.E;
 		var value = _v0.y;
 		return A5(
 			$elm$url$Url$Parser$State,
@@ -6280,9 +6280,9 @@ var $elm$url$Url$Parser$map = F2(
 		var parseArg = _v0;
 		return function (_v1) {
 			var visited = _v1.I;
-			var unvisited = _v1.C;
+			var unvisited = _v1.D;
 			var params = _v1.F;
-			var frag = _v1.D;
+			var frag = _v1.E;
 			var value = _v1.y;
 			return A2(
 				$elm$core$List$map,
@@ -6322,9 +6322,9 @@ var $elm$url$Url$Parser$query = function (_v0) {
 	var queryParser = _v0;
 	return function (_v1) {
 		var visited = _v1.I;
-		var unvisited = _v1.C;
+		var unvisited = _v1.D;
 		var params = _v1.F;
-		var frag = _v1.D;
+		var frag = _v1.E;
 		var value = _v1.y;
 		return _List_fromArray(
 			[
@@ -6360,9 +6360,9 @@ var $elm$url$Url$Parser$questionMark = F2(
 var $elm$url$Url$Parser$s = function (str) {
 	return function (_v0) {
 		var visited = _v0.I;
-		var unvisited = _v0.C;
+		var unvisited = _v0.D;
 		var params = _v0.F;
-		var frag = _v0.D;
+		var frag = _v0.E;
 		var value = _v0.y;
 		if (!unvisited.b) {
 			return _List_Nil;
@@ -7733,7 +7733,7 @@ var $author$project$Pages$Capture$initModel = function (session) {
 	return {
 		J: _List_Nil,
 		k: '',
-		E: $author$project$Capture$initCapture,
+		B: $author$project$Capture$initCapture,
 		U: session,
 		H: {
 			ac: $elm$time$Time$millisToPosix(0),
@@ -8792,24 +8792,24 @@ var $author$project$Pages$Capture$update = F2(
 				}
 			case 3:
 				var text = msg.a;
-				var capture = model.E;
+				var capture = model.B;
 				var newCapture = _Utils_update(
 					capture,
 					{ap: text});
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{E: newCapture}),
+						{B: newCapture}),
 					$elm$core$Platform$Cmd$none);
 			case 4:
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{E: $author$project$Capture$initCapture}),
+						{B: $author$project$Capture$initCapture}),
 					A2(
 						$author$project$Pages$Capture$apiSaveCapture,
 						$author$project$Session$token(model.U),
-						model.E));
+						model.B));
 			case 5:
 				var idCapture = msg.a;
 				var captures = A3($author$project$Pages$Capture$updateCapture, $author$project$Capture$Disabled, idCapture, model.J);
@@ -9246,6 +9246,14 @@ var $author$project$Pages$Capture$UpdateNewCapture = function (a) {
 	return {$: 3, a: a};
 };
 var $elm$html$Html$button = _VirtualDom_node('button');
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$input = _VirtualDom_node('input');
 var $elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 0, a: a};
@@ -9307,15 +9315,7 @@ var $author$project$Pages$Capture$StopTimer = F2(
 var $author$project$Pages$Capture$ToggleCompleted = function (a) {
 	return {$: 11, a: a};
 };
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
 var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
-var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $author$project$Capture$getCurrentTimer = function (timers) {
 	return $elm$core$List$head(timers);
 };
@@ -9681,7 +9681,7 @@ var $author$project$Pages$Capture$view = function (model) {
 												_List_fromArray(
 													[
 														$elm$html$Html$Attributes$class('w-80 mr2'),
-														$elm$html$Html$Attributes$value(model.E.ap),
+														$elm$html$Html$Attributes$value(model.B.ap),
 														$elm$html$Html$Events$onInput($author$project$Pages$Capture$UpdateNewCapture)
 													]),
 												_List_Nil),
@@ -9690,7 +9690,9 @@ var $author$project$Pages$Capture$view = function (model) {
 												_List_fromArray(
 													[
 														$elm$html$Html$Attributes$class('pointer'),
-														$elm$html$Html$Events$onClick($author$project$Pages$Capture$AddCapture)
+														$elm$html$Html$Events$onClick($author$project$Pages$Capture$AddCapture),
+														$elm$html$Html$Attributes$disabled(
+														$elm$core$String$isEmpty(model.B.ap))
 													]),
 												_List_fromArray(
 													[

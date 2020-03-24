@@ -9316,6 +9316,7 @@ var $author$project$Pages$Capture$ToggleCompleted = function (a) {
 	return {$: 11, a: a};
 };
 var $elm$html$Html$Attributes$checked = $elm$html$Html$Attributes$boolProperty('checked');
+var $elm$html$Html$del = _VirtualDom_node('del');
 var $author$project$Capture$getCurrentTimer = function (timers) {
 	return $elm$core$List$head(timers);
 };
@@ -9578,7 +9579,13 @@ var $author$project$Pages$Capture$showCapture = F2(
 									$author$project$Pages$Capture$ToggleCompleted(capture))
 								]),
 							_List_Nil),
-							$elm$html$Html$text(capture.ap)
+							completed ? A2(
+							$elm$html$Html$del,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text(capture.ap)
+								])) : $elm$html$Html$text(capture.ap)
 						])),
 					function () {
 					var _v0 = capture.am;

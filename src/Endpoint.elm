@@ -1,5 +1,7 @@
 module Endpoint exposing (Endpoint, authUrls, capture, captures, personInfo, startTimer, stopTimer, toString, url)
 
+{- This module define the API endpoints -}
+
 import Url.Builder exposing (QueryParameter)
 
 

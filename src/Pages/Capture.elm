@@ -291,7 +291,11 @@ showCapture clock capture =
                 , onClick (ToggleCompleted capture)
                 ]
                 []
-            , text <| capture.text
+            , if completed then
+                del [] [ text <| capture.text ]
+
+              else
+                text <| capture.text
             ]
         , case capture.status of
             ToDo ->

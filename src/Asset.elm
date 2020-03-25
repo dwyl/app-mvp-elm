@@ -1,4 +1,4 @@
-module Asset exposing (Image, logo, signinGithub, signinGoogle, src)
+module Asset exposing (Image, imagePath, logo, signinGithub, signinGoogle, src)
 
 import Html exposing (Attribute)
 import Html.Attributes as Attr
@@ -26,6 +26,11 @@ signinGithub =
 image : String -> Image
 image filename =
     Image ("/assets/images/" ++ filename)
+
+
+imagePath : Image -> String
+imagePath (Image url) =
+    url
 
 
 src : Image -> Attribute msg

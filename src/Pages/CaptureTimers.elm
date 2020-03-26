@@ -2,9 +2,9 @@ module Pages.CaptureTimers exposing (Model, Msg(..), init, subscriptions, toSess
 
 import Asset
 import Capture exposing (..)
+import Element exposing (..)
+import Element.Font exposing (..)
 import Endpoint
-import Html exposing (..)
-import Html.Attributes exposing (..)
 import Http
 import Page
 import Route
@@ -91,27 +91,33 @@ view : Model -> Page.PageStructure Msg
 view model =
     { title = "Timers"
     , content =
-        [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
-        , h1 [ class "tc" ] [ text "Dwyl application" ]
-        , h1 [ class "tc" ] [ text model.capture.text ]
-        , showTimers model.timeZone model.capture.timers
+        [ layout [] <|
+            column [ Element.centerX ]
+                [ link [ Element.centerX ]
+                    { url = Route.routeToString Route.Home
+                    , label = image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
+                    }
+                , el [ centerX ] (text "DWYL Application")
+                , el [ centerX ] (text model.capture.text)
+                , showTimers model.timeZone model.capture.timers
+                ]
         ]
     }
 
 
-showTimers : Time.Zone -> List Timer -> Html Msg
+showTimers : Time.Zone -> List Timer -> Element Msg
 showTimers zone timers =
-    ul [] (List.map (showTimer zone) timers)
+    column [ centerX ] <| List.map (showTimer zone) timers
 
 
-showTimer : Time.Zone -> Timer -> Html Msg
+showTimer : Time.Zone -> Timer -> Element Msg
 showTimer zone timer =
     case timer.stoppedAt of
         Nothing ->
-            li [ class "tc green" ] [ text <| formatPosix timer.startedAt zone ]
+            el [ color (rgb255 25 169 27) ] (text <| formatPosix timer.startedAt zone)
 
         Just stoppedAt ->
-            li [ class "tc pa2" ] [ text <| formatPosix timer.startedAt zone ++ " -- " ++ formatPosix stoppedAt zone ]
+            el [] (text <| formatPosix timer.startedAt zone ++ " -- " ++ formatPosix stoppedAt zone)
 
 
 toSession : Model -> Session

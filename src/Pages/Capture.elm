@@ -2,10 +2,10 @@ module Pages.Capture exposing (Model, Msg(..), init, subscriptions, toSession, u
 
 import Asset
 import Capture exposing (..)
+import Element exposing (..)
+import Element.Font exposing (..)
+import Element.Input as EltInput
 import Endpoint
-import Html exposing (..)
-import Html.Attributes exposing (..)
-import Html.Events exposing (onClick, onInput)
 import Http
 import Page
 import Route
@@ -13,6 +13,7 @@ import Session exposing (..)
 import Task
 import Time
 import Timer exposing (..)
+import UI
 
 
 
@@ -73,7 +74,7 @@ type Msg
     | None
     | AdjustTimeZone Time.Zone
     | Tick Time.Posix
-    | ToggleCompleted Capture
+    | ToggleCompleted Capture Bool
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -179,7 +180,7 @@ update msg model =
                         _ ->
                             ( { model | error = "Error while starting the timer" }, Cmd.none )
 
-        ToggleCompleted capture ->
+        ToggleCompleted capture _ ->
             let
                 captureStatus =
                     if capture.status == Completed then
@@ -202,31 +203,48 @@ view : Model -> Page.PageStructure Msg
 view model =
     { title = "Capture"
     , content =
-        [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
-        , h1 [ class "tc" ] [ text "Dwyl application" ]
-        , case model.session of
-            Session.Guest _ ->
-                a [ Route.href Route.Home, class "tc db" ] [ text "Not logged in yet!" ]
-
-            Session.Session _ _ ->
-                div []
-                    [ if String.isEmpty model.error then
-                        div []
-                            [ div [ class "w-60 center tc" ]
-                                [ input [ class "w-80 mr2", value model.newCapture.text, onInput UpdateNewCapture ] []
-                                , button
-                                    [ class "pointer"
-                                    , onClick AddCapture
-                                    , disabled <| String.isEmpty model.newCapture.text
-                                    ]
-                                    [ text "Add Capture" ]
-                                ]
-                            , div [ class "w-50 center" ] <| List.map (\capture -> showCapture model.timer capture) model.captures
-                            ]
-
-                      else
-                        p [ class "red tc" ] [ text model.error ]
+        [ layout [] <|
+            column [ Element.width Element.fill ]
+                [ column [ centerX ]
+                    [ link []
+                        { url = Route.routeToString Route.Home
+                        , label = image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
+                        }
+                    , el [] (text "DWYL Application")
                     ]
+                , case model.session of
+                    Session.Guest _ ->
+                        link [ centerX ]
+                            { url = Route.routeToString Route.Home
+                            , label = text "Not logged in yet!"
+                            }
+
+                    Session.Session _ _ ->
+                        if String.isEmpty model.error then
+                            column [ width fill ]
+                                [ column [ centerX, spacing 10, padding 30 ]
+                                    [ EltInput.text []
+                                        { onChange = UpdateNewCapture
+                                        , text = model.newCapture.text
+                                        , placeholder = Nothing
+                                        , label = EltInput.labelHidden "capture text"
+                                        }
+                                    , EltInput.button
+                                        UI.buttonAttrs
+                                        { onPress = Just AddCapture, label = text "Add Capture" }
+                                    ]
+                                , column
+                                    [ width fill
+                                    , spacing 30
+                                    , padding 30
+                                    ]
+                                  <|
+                                    List.map (\capture -> showCapture model.timer capture) model.captures
+                                ]
+
+                        else
+                            el [ color (rgb255 255 65 54) ] (text model.error)
+                ]
         ]
     }
 
@@ -274,69 +292,64 @@ stopTimer token idTimer idCapture =
         }
 
 
-showCapture : Clock -> Capture -> Html Msg
+showCapture : Clock -> Capture -> Element Msg
 showCapture clock capture =
     let
         completed =
             capture.status == Completed
     in
-    div [ class "pa2" ]
-        [ label
-            [ class "dib pa2" ]
-            [ input
-                [ type_ "checkbox"
-                , checked completed
-                , disabled False
-                , class "mr2"
-                , onClick (ToggleCompleted capture)
-                ]
-                []
-            , if completed then
-                del [] [ text <| capture.text ]
+    column
+        [ centerX
+        , spacing 10
+        , width (fill |> maximum 500)
+        ]
+        [ row [ spacing 30, width fill ]
+            [ EltInput.checkbox [ Element.alignLeft ]
+                { onChange = ToggleCompleted capture
+                , icon = EltInput.defaultCheckbox
+                , checked = completed
+                , label =
+                    if completed then
+                        EltInput.labelRight [ strike ] (text capture.text)
 
-              else
-                text <| capture.text
+                    else
+                        EltInput.labelRight [] (text capture.text)
+                }
+            , case capture.status of
+                ToDo ->
+                    showTimerButton "start" (StartTimer capture.idCapture)
+
+                InProgress ->
+                    let
+                        timer =
+                            getCurrentTimer capture.timers
+                    in
+                    case timer of
+                        Nothing ->
+                            showTimerButton "Error Timer" None
+
+                        Just t ->
+                            showTimerButton "stop" (StopTimer t.idTimer capture.idCapture)
+
+                Disabled ->
+                    showTimerButton "..." None
+
+                Completed ->
+                    showTimerButton "completed" None
+
+                Error e ->
+                    showTimerButton e None
             ]
-        , case capture.status of
-            ToDo ->
-                showTimerButton "start" (StartTimer capture.idCapture)
-
-            InProgress ->
-                let
-                    timer =
-                        getCurrentTimer capture.timers
-                in
-                case timer of
-                    Nothing ->
-                        showTimerButton "Error Timer" None
-
-                    Just t ->
-                        showTimerButton "stop" (StopTimer t.idTimer capture.idCapture)
-
-            Disabled ->
-                showTimerButton "..." None
-
-            Completed ->
-                showTimerButton "completed" None
-
-            Error e ->
-                showTimerButton e None
         , showTime capture clock
         ]
 
 
-showTimerButton : String -> Msg -> Html Msg
+showTimerButton : String -> Msg -> Element Msg
 showTimerButton textButton msg =
-    button
-        [ disabled False
-        , class "fr"
-        , classList [ ( "pointer", True ) ]
-        , onClick msg
-        ]
-        [ text textButton ]
+    EltInput.button (Element.alignRight :: UI.buttonAttrs) { onPress = Just msg, label = text textButton }
 
 
-showTime : Capture -> Clock -> Html Msg
+showTime : Capture -> Clock -> Element Msg
 showTime capture clock =
     case capture.status of
         InProgress ->
@@ -365,7 +378,10 @@ showTime capture clock =
                         Just t ->
                             millisToHMS t
             in
-            a [ Route.href (Route.CaptureTimers capture.idCapture), class "tc db" ] [ text (hour ++ ":" ++ minute ++ ":" ++ second) ]
+            link [ centerX ]
+                { url = Route.routeToString (Route.CaptureTimers capture.idCapture)
+                , label = text (hour ++ ":" ++ minute ++ ":" ++ second)
+                }
 
         _ ->
             let
@@ -377,7 +393,10 @@ showTime capture clock =
                         Just t ->
                             millisToHMS t
             in
-            a [ Route.href (Route.CaptureTimers capture.idCapture), class "tc db" ] [ text (hour ++ ":" ++ minute ++ ":" ++ second) ]
+            link [ centerX ]
+                { url = Route.routeToString (Route.CaptureTimers capture.idCapture)
+                , label = text (hour ++ ":" ++ minute ++ ":" ++ second)
+                }
 
 
 apiGetCaptures : String -> Cmd Msg

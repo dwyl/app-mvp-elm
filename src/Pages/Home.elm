@@ -1,8 +1,8 @@
 module Pages.Home exposing (Model, Msg(..), init, subscriptions, toSession, update, view)
 
 import Asset
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Element exposing (..)
+import Element.Font exposing (..)
 import Page
 import Route
 import Session exposing (..)
@@ -46,18 +46,21 @@ view : Model -> Page.PageStructure Msg
 view model =
     { title = "Home"
     , content =
-        [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
-        , h1 [ class "tc" ] [ text "Dwyl application" ]
-        , case model of
-            Session.Guest _ ->
-                a [ Route.href (Route.Auth Nothing), class "tc db" ] [ text "login/signup" ]
+        [ layout [] <|
+            column [ centerX ]
+                [ image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
+                , el [ bold, size 30 ] (text "DWYL Application")
+                , case model of
+                    Session.Guest _ ->
+                        link [] { url = Route.routeToString (Route.Auth Nothing), label = text "login/signup" }
 
-            Session.Session _ person ->
-                div []
-                    [ span [ class "tc db" ] [ text <| "logged in with: " ++ person.email ]
-                    , a [ Route.href Route.Capture, class "tc db" ] [ text "capture" ]
-                    , a [ Route.href Route.Logout, class "tc db" ] [ text "logout" ]
-                    ]
+                    Session.Session _ person ->
+                        column []
+                            [ text <| "logged in with: " ++ person.email
+                            , link [] { url = Route.routeToString Route.Capture, label = text "captures" }
+                            , link [] { url = Route.routeToString Route.Logout, label = text "logout" }
+                            ]
+                ]
         ]
     }
 

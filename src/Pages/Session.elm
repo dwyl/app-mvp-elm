@@ -1,9 +1,8 @@
 module Pages.Session exposing (Model, Msg(..), PersonInfo, getPersonInfo, init, personDecoder, subscriptions, toSession, update, view)
 
 import Asset
+import Element exposing (..)
 import Endpoint
-import Html exposing (..)
-import Html.Attributes exposing (..)
 import Http
 import Json.Decode as JD
 import Page
@@ -97,12 +96,18 @@ view : Model -> Page.PageStructure Msg
 view model =
     { title = "Auth"
     , content =
-        [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
-        , if String.isEmpty model.error then
-            p [ class "tc" ] [ text "Creating session..." ]
+        [ layout [] <|
+            column [ Element.centerX ]
+                [ link [ Element.centerX ]
+                    { url = Route.routeToString Route.Home
+                    , label = image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
+                    }
+                , if String.isEmpty model.error then
+                    el [ centerX ] (text "Creating session...")
 
-          else
-            p [ class "red tc" ] [ text model.error ]
+                  else
+                    el [ centerX ] (text model.error)
+                ]
         ]
     }
 

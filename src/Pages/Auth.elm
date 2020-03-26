@@ -1,9 +1,8 @@
 module Pages.Auth exposing (Model, Msg(..), TypeUrl(..), Url, authUrlsDecoder, getAuthUrls, init, showAuthUrl, subscriptions, toSession, update, urlDecoder, urlTypeDecoder, view)
 
 import Asset exposing (..)
+import Element exposing (..)
 import Endpoint
-import Html exposing (..)
-import Html.Attributes exposing (..)
 import Http
 import Json.Decode as JD
 import Page
@@ -71,8 +70,14 @@ view : Model -> Page.PageStructure Msg
 view model =
     { title = "Auth"
     , content =
-        [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
-        , div [] <| List.map (\url -> showAuthUrl url) model.urls
+        [ layout [] <|
+            column [ Element.centerX ]
+                [ link [ Element.centerX ]
+                    { url = Route.routeToString Route.Home
+                    , label = image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
+                    }
+                , column [ centerX ] <| List.map (\url -> showAuthUrl url) model.urls
+                ]
         ]
     }
 
@@ -114,20 +119,22 @@ urlTypeDecoder =
             )
 
 
-showAuthUrl : Url -> Html Msg
+showAuthUrl : Url -> Element Msg
 showAuthUrl url =
     let
         imgSrc =
             case url.typeUrl of
                 Google ->
-                    Asset.src Asset.signinGoogle
+                    Asset.imagePath Asset.signinGoogle
 
                 Github ->
-                    Asset.src Asset.signinGithub
+                    Asset.imagePath Asset.signinGithub
     in
-    div [ class "tc pa2" ]
-        [ a [ href url.url ] [ img [ imgSrc ] [] ]
-        ]
+    link [ Element.centerX ]
+        { url = url.url
+        , label =
+            image [] { src = imgSrc, description = "Authentication button" }
+        }
 
 
 toSession : Model -> Session

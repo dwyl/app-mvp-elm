@@ -15090,6 +15090,60 @@ var $mdgriffith$elm_ui$Element$Input$button = F2(
 				_List_fromArray(
 					[label])));
 	});
+var $mdgriffith$elm_ui$Internal$Model$PaddingStyle = F5(
+	function (a, b, c, d, e) {
+		return {$: 7, a: a, b: b, c: c, d: d, e: e};
+	});
+var $mdgriffith$elm_ui$Internal$Flag$padding = $mdgriffith$elm_ui$Internal$Flag$flag(2);
+var $mdgriffith$elm_ui$Element$padding = function (x) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$padding,
+		A5(
+			$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
+			'p-' + $elm$core$String$fromInt(x),
+			x,
+			x,
+			x,
+			x));
+};
+var $mdgriffith$elm_ui$Internal$Flag$borderRound = $mdgriffith$elm_ui$Internal$Flag$flag(17);
+var $mdgriffith$elm_ui$Element$Border$rounded = function (radius) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$borderRound,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$Single,
+			'br-' + $elm$core$String$fromInt(radius),
+			'border-radius',
+			$elm$core$String$fromInt(radius) + 'px'));
+};
+var $mdgriffith$elm_ui$Internal$Flag$borderStyle = $mdgriffith$elm_ui$Internal$Flag$flag(11);
+var $mdgriffith$elm_ui$Element$Border$solid = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$borderStyle, $mdgriffith$elm_ui$Internal$Style$classes.c2);
+var $mdgriffith$elm_ui$Internal$Model$BorderWidth = F5(
+	function (a, b, c, d, e) {
+		return {$: 6, a: a, b: b, c: c, d: d, e: e};
+	});
+var $mdgriffith$elm_ui$Element$Border$width = function (v) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$borderWidth,
+		A5(
+			$mdgriffith$elm_ui$Internal$Model$BorderWidth,
+			'b-' + $elm$core$String$fromInt(v),
+			v,
+			v,
+			v,
+			v));
+};
+var $author$project$UI$buttonAttrs = _List_fromArray(
+	[
+		$mdgriffith$elm_ui$Element$centerX,
+		$mdgriffith$elm_ui$Element$Border$solid,
+		$mdgriffith$elm_ui$Element$Border$width(1),
+		$mdgriffith$elm_ui$Element$Border$rounded(3),
+		$mdgriffith$elm_ui$Element$padding(5)
+	]);
 var $mdgriffith$elm_ui$Element$Font$color = function (fontColor) {
 	return A2(
 		$mdgriffith$elm_ui$Internal$Model$StyleClass,
@@ -15117,6 +15171,10 @@ var $mdgriffith$elm_ui$Element$el = F2(
 				_List_fromArray(
 					[child])));
 	});
+var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
+	return {$: 2, a: a};
+};
+var $mdgriffith$elm_ui$Element$fill = $mdgriffith$elm_ui$Internal$Model$Fill(1);
 var $mdgriffith$elm_ui$Element$Input$HiddenLabel = function (a) {
 	return {$: 1, a: a};
 };
@@ -15213,10 +15271,6 @@ var $mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
 };
 var $mdgriffith$elm_ui$Internal$Model$CenterY = 1;
 var $mdgriffith$elm_ui$Element$centerY = $mdgriffith$elm_ui$Internal$Model$AlignY(1);
-var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
-	return {$: 2, a: a};
-};
-var $mdgriffith$elm_ui$Element$fill = $mdgriffith$elm_ui$Internal$Model$Fill(1);
 var $mdgriffith$elm_ui$Internal$Model$Label = function (a) {
 	return {$: 5, a: a};
 };
@@ -15394,17 +15448,6 @@ var $mdgriffith$elm_ui$Element$rotate = function (angle) {
 			_Utils_Tuple3(0, 0, 1),
 			angle));
 };
-var $mdgriffith$elm_ui$Internal$Flag$borderRound = $mdgriffith$elm_ui$Internal$Flag$flag(17);
-var $mdgriffith$elm_ui$Element$Border$rounded = function (radius) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$borderRound,
-		A3(
-			$mdgriffith$elm_ui$Internal$Model$Single,
-			'br-' + $elm$core$String$fromInt(radius),
-			'border-radius',
-			$elm$core$String$fromInt(radius) + 'px'));
-};
 var $mdgriffith$elm_ui$Internal$Model$boxShadowClass = function (shadow) {
 	return $elm$core$String$concat(
 		_List_fromArray(
@@ -15436,22 +15479,6 @@ var $mdgriffith$elm_ui$Element$Font$size = function (i) {
 		$mdgriffith$elm_ui$Internal$Model$FontSize(i));
 };
 var $mdgriffith$elm_ui$Element$Input$white = A3($mdgriffith$elm_ui$Element$rgb, 1, 1, 1);
-var $mdgriffith$elm_ui$Internal$Model$BorderWidth = F5(
-	function (a, b, c, d, e) {
-		return {$: 6, a: a, b: b, c: c, d: d, e: e};
-	});
-var $mdgriffith$elm_ui$Element$Border$width = function (v) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$borderWidth,
-		A5(
-			$mdgriffith$elm_ui$Internal$Model$BorderWidth,
-			'b-' + $elm$core$String$fromInt(v),
-			v,
-			v,
-			v,
-			v));
-};
 var $mdgriffith$elm_ui$Element$Border$widthXY = F2(
 	function (x, y) {
 		return A2(
@@ -15538,6 +15565,14 @@ var $mdgriffith$elm_ui$Element$Input$Label = F3(
 	});
 var $mdgriffith$elm_ui$Element$Input$OnRight = 0;
 var $mdgriffith$elm_ui$Element$Input$labelRight = $mdgriffith$elm_ui$Element$Input$Label(0);
+var $mdgriffith$elm_ui$Internal$Model$Max = F2(
+	function (a, b) {
+		return {$: 4, a: a, b: b};
+	});
+var $mdgriffith$elm_ui$Element$maximum = F2(
+	function (i, l) {
+		return A2($mdgriffith$elm_ui$Internal$Model$Max, i, l);
+	});
 var $mdgriffith$elm_ui$Element$row = F2(
 	function (attrs, children) {
 		return A4(
@@ -15732,8 +15767,7 @@ var $author$project$Pages$Capture$showTimerButton = F2(
 	function (textButton, msg) {
 		return A2(
 			$mdgriffith$elm_ui$Element$Input$button,
-			_List_fromArray(
-				[$mdgriffith$elm_ui$Element$alignRight]),
+			A2($elm$core$List$cons, $mdgriffith$elm_ui$Element$alignRight, $author$project$UI$buttonAttrs),
 			{
 				bO: $mdgriffith$elm_ui$Element$text(textButton),
 				bY: $elm$core$Maybe$Just(msg)
@@ -15745,12 +15779,22 @@ var $author$project$Pages$Capture$showCapture = F2(
 		var completed = _Utils_eq(capture.a4, $author$project$Capture$Completed);
 		return A2(
 			$mdgriffith$elm_ui$Element$column,
-			_List_Nil,
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$centerX,
+					$mdgriffith$elm_ui$Element$spacing(10),
+					$mdgriffith$elm_ui$Element$width(
+					A2($mdgriffith$elm_ui$Element$maximum, 500, $mdgriffith$elm_ui$Element$fill))
+				]),
 			_List_fromArray(
 				[
 					A2(
 					$mdgriffith$elm_ui$Element$row,
-					_List_Nil,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$spacing(30),
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
 					_List_fromArray(
 						[
 							A2(
@@ -15854,11 +15898,6 @@ var $mdgriffith$elm_ui$Element$Input$calcMoveToCompensateForPadding = function (
 var $mdgriffith$elm_ui$Internal$Flag$overflow = $mdgriffith$elm_ui$Internal$Flag$flag(20);
 var $mdgriffith$elm_ui$Element$clip = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$overflow, $mdgriffith$elm_ui$Internal$Style$classes.da);
 var $mdgriffith$elm_ui$Element$Input$darkGrey = A3($mdgriffith$elm_ui$Element$rgb, 186 / 255, 189 / 255, 182 / 255);
-var $mdgriffith$elm_ui$Internal$Model$PaddingStyle = F5(
-	function (a, b, c, d, e) {
-		return {$: 7, a: a, b: b, c: c, d: d, e: e};
-	});
-var $mdgriffith$elm_ui$Internal$Flag$padding = $mdgriffith$elm_ui$Internal$Flag$flag(2);
 var $mdgriffith$elm_ui$Element$paddingXY = F2(
 	function (x, y) {
 		return _Utils_eq(x, y) ? A2(
@@ -16579,29 +16618,36 @@ var $author$project$Pages$Capture$view = function (model) {
 				A2(
 					$mdgriffith$elm_ui$Element$column,
 					_List_fromArray(
-						[$mdgriffith$elm_ui$Element$centerX]),
+						[
+							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						]),
 					_List_fromArray(
 						[
 							A2(
-							$mdgriffith$elm_ui$Element$link,
+							$mdgriffith$elm_ui$Element$column,
 							_List_fromArray(
 								[$mdgriffith$elm_ui$Element$centerX]),
-							{
-								bO: A2(
-									$mdgriffith$elm_ui$Element$image,
-									_List_fromArray(
-										[$mdgriffith$elm_ui$Element$centerX]),
+							_List_fromArray(
+								[
+									A2(
+									$mdgriffith$elm_ui$Element$link,
+									_List_Nil,
 									{
-										bs: 'DWYL Logo',
-										cn: $author$project$Asset$imagePath($author$project$Asset$logo)
+										bO: A2(
+											$mdgriffith$elm_ui$Element$image,
+											_List_fromArray(
+												[$mdgriffith$elm_ui$Element$centerX]),
+											{
+												bs: 'DWYL Logo',
+												cn: $author$project$Asset$imagePath($author$project$Asset$logo)
+											}),
+										ax: $author$project$Route$routeToString($author$project$Route$Home)
 									}),
-								ax: $author$project$Route$routeToString($author$project$Route$Home)
-							}),
-							A2(
-							$mdgriffith$elm_ui$Element$el,
-							_List_fromArray(
-								[$mdgriffith$elm_ui$Element$centerX]),
-							$mdgriffith$elm_ui$Element$text('DWYL Application')),
+									A2(
+									$mdgriffith$elm_ui$Element$el,
+									_List_Nil,
+									$mdgriffith$elm_ui$Element$text('DWYL Application'))
+								])),
 							function () {
 							var _v0 = model.ap;
 							if (!_v0.$) {
@@ -16614,14 +16660,22 @@ var $author$project$Pages$Capture$view = function (model) {
 										ax: $author$project$Route$routeToString($author$project$Route$Home)
 									});
 							} else {
-								return A2(
+								return $elm$core$String$isEmpty(model.l) ? A2(
 									$mdgriffith$elm_ui$Element$column,
-									_List_Nil,
 									_List_fromArray(
 										[
-											$elm$core$String$isEmpty(model.l) ? A2(
+											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+										]),
+									_List_fromArray(
+										[
+											A2(
 											$mdgriffith$elm_ui$Element$column,
-											_List_Nil,
+											_List_fromArray(
+												[
+													$mdgriffith$elm_ui$Element$centerX,
+													$mdgriffith$elm_ui$Element$spacing(10),
+													$mdgriffith$elm_ui$Element$padding(30)
+												]),
 											_List_fromArray(
 												[
 													A2(
@@ -16635,30 +16689,34 @@ var $author$project$Pages$Capture$view = function (model) {
 													}),
 													A2(
 													$mdgriffith$elm_ui$Element$Input$button,
-													_List_Nil,
+													$author$project$UI$buttonAttrs,
 													{
 														bO: $mdgriffith$elm_ui$Element$text('Add Capture'),
 														bY: $elm$core$Maybe$Just($author$project$Pages$Capture$AddCapture)
-													}),
-													A2(
-													$mdgriffith$elm_ui$Element$column,
-													_List_fromArray(
-														[$mdgriffith$elm_ui$Element$centerX]),
-													A2(
-														$elm$core$List$map,
-														function (capture) {
-															return A2($author$project$Pages$Capture$showCapture, model.X, capture);
-														},
-														model.aa))
-												])) : A2(
-											$mdgriffith$elm_ui$Element$el,
+													})
+												])),
+											A2(
+											$mdgriffith$elm_ui$Element$column,
 											_List_fromArray(
 												[
-													$mdgriffith$elm_ui$Element$Font$color(
-													A3($mdgriffith$elm_ui$Element$rgb255, 255, 65, 54))
+													$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+													$mdgriffith$elm_ui$Element$spacing(30),
+													$mdgriffith$elm_ui$Element$padding(30)
 												]),
-											$mdgriffith$elm_ui$Element$text(model.l))
-										]));
+											A2(
+												$elm$core$List$map,
+												function (capture) {
+													return A2($author$project$Pages$Capture$showCapture, model.X, capture);
+												},
+												model.aa))
+										])) : A2(
+									$mdgriffith$elm_ui$Element$el,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$Font$color(
+											A3($mdgriffith$elm_ui$Element$rgb255, 255, 65, 54))
+										]),
+									$mdgriffith$elm_ui$Element$text(model.l));
 							}
 						}()
 						])))

@@ -13,6 +13,7 @@ import Session exposing (..)
 import Task
 import Time
 import Timer exposing (..)
+import UI
 
 
 
@@ -203,49 +204,46 @@ view model =
     { title = "Capture"
     , content =
         [ layout [] <|
-            column [ Element.centerX ]
-                [ link [ Element.centerX ]
-                    { url = Route.routeToString Route.Home
-                    , label = image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
-                    }
-                , el [ centerX ] (text "DWYL Application")
+            column [ Element.width Element.fill ]
+                [ column [ centerX ]
+                    [ link []
+                        { url = Route.routeToString Route.Home
+                        , label = image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
+                        }
+                    , el [] (text "DWYL Application")
+                    ]
                 , case model.session of
                     Session.Guest _ ->
-                        link [ Element.centerX ]
+                        link [ centerX ]
                             { url = Route.routeToString Route.Home
                             , label = text "Not logged in yet!"
                             }
 
                     Session.Session _ _ ->
-                        column []
-                            [ if String.isEmpty model.error then
-                                column []
+                        if String.isEmpty model.error then
+                            column [ width fill ]
+                                [ column [ centerX, spacing 10, padding 30 ]
                                     [ EltInput.text []
                                         { onChange = UpdateNewCapture
                                         , text = model.newCapture.text
                                         , placeholder = Nothing
                                         , label = EltInput.labelHidden "capture text"
                                         }
-                                    , EltInput.button [] { onPress = Just AddCapture, label = text "Add Capture" }
-                                    , column [ centerX ] <| List.map (\capture -> showCapture model.timer capture) model.captures
+                                    , EltInput.button
+                                        UI.buttonAttrs
+                                        { onPress = Just AddCapture, label = text "Add Capture" }
                                     ]
+                                , column
+                                    [ width fill
+                                    , spacing 30
+                                    , padding 30
+                                    ]
+                                  <|
+                                    List.map (\capture -> showCapture model.timer capture) model.captures
+                                ]
 
-                              else
-                                el [ color (rgb255 255 65 54) ] (text model.error)
-                            ]
-
-                --  div []
-                --      [ div [ class "w-60 center tc" ]
-                --          [ input [ class "w-80 mr2", value model.newCapture.text, onInput UpdateNewCapture ] []
-                --          , button
-                --              [ class "pointer"
-                --              , onClick AddCapture
-                --              , disabled <| String.isEmpty model.newCapture.text
-                --              ]
-                --              [ text "Add Capture" ]
-                --          ]
-                --      , div [ class "w-50 center" ] <| List.map (\capture -> showCapture model.timer capture) model.captures
-                --      ]
+                        else
+                            el [ color (rgb255 255 65 54) ] (text model.error)
                 ]
         ]
     }
@@ -300,8 +298,12 @@ showCapture clock capture =
         completed =
             capture.status == Completed
     in
-    column []
-        [ row []
+    column
+        [ centerX
+        , spacing 10
+        , width (fill |> maximum 500)
+        ]
+        [ row [ spacing 30, width fill ]
             [ EltInput.checkbox [ Element.alignLeft ]
                 { onChange = ToggleCompleted capture
                 , icon = EltInput.defaultCheckbox
@@ -344,7 +346,7 @@ showCapture clock capture =
 
 showTimerButton : String -> Msg -> Element Msg
 showTimerButton textButton msg =
-    EltInput.button [ Element.alignRight ] { onPress = Just msg, label = text textButton }
+    EltInput.button (Element.alignRight :: UI.buttonAttrs) { onPress = Just msg, label = text textButton }
 
 
 showTime : Capture -> Clock -> Element Msg
@@ -376,7 +378,7 @@ showTime capture clock =
                         Just t ->
                             millisToHMS t
             in
-            link [ Element.centerX ]
+            link [ centerX ]
                 { url = Route.routeToString (Route.CaptureTimers capture.idCapture)
                 , label = text (hour ++ ":" ++ minute ++ ":" ++ second)
                 }
@@ -391,7 +393,7 @@ showTime capture clock =
                         Just t ->
                             millisToHMS t
             in
-            link [ Element.centerX ]
+            link [ centerX ]
                 { url = Route.routeToString (Route.CaptureTimers capture.idCapture)
                 , label = text (hour ++ ":" ++ minute ++ ":" ++ second)
                 }

@@ -15808,41 +15808,39 @@ var $author$project$Pages$Session$view = function (model) {
 		bs: _List_fromArray(
 			[
 				A2(
-				$elm$html$Html$a,
-				_List_fromArray(
-					[
-						$author$project$Route$href($author$project$Route$Home)
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$img,
-						_List_fromArray(
-							[
-								$author$project$Asset$src($author$project$Asset$logo),
-								$elm$html$Html$Attributes$class('center db pt2')
-							]),
-						_List_Nil)
-					])),
-				$elm$core$String$isEmpty(model.m) ? A2(
-				$elm$html$Html$p,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('tc')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Creating session...')
-					])) : A2(
-				$elm$html$Html$p,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('red tc')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(model.m)
-					]))
+				$mdgriffith$elm_ui$Element$layout,
+				_List_Nil,
+				A2(
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[$mdgriffith$elm_ui$Element$centerX]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$link,
+							_List_fromArray(
+								[$mdgriffith$elm_ui$Element$centerX]),
+							{
+								bS: A2(
+									$mdgriffith$elm_ui$Element$image,
+									_List_fromArray(
+										[$mdgriffith$elm_ui$Element$centerX]),
+									{
+										bv: 'DWYL Logo',
+										cp: $author$project$Asset$imagePath($author$project$Asset$logo)
+									}),
+								az: $author$project$Route$routeToString($author$project$Route$Home)
+							}),
+							$elm$core$String$isEmpty(model.m) ? A2(
+							$mdgriffith$elm_ui$Element$el,
+							_List_fromArray(
+								[$mdgriffith$elm_ui$Element$centerX]),
+							$mdgriffith$elm_ui$Element$text('Creating session...')) : A2(
+							$mdgriffith$elm_ui$Element$el,
+							_List_fromArray(
+								[$mdgriffith$elm_ui$Element$centerX]),
+							$mdgriffith$elm_ui$Element$text(model.m))
+						])))
 			]),
 		cv: 'Auth'
 	};

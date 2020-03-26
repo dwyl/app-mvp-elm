@@ -3,8 +3,6 @@ module Pages.Home exposing (Model, Msg(..), init, subscriptions, toSession, upda
 import Asset
 import Element exposing (..)
 import Element.Font exposing (..)
-import Html
-import Html.Attributes
 import Page
 import Route
 import Session exposing (..)

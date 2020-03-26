@@ -15412,6 +15412,33 @@ var $author$project$Pages$Capture$view = function (model) {
 		cv: 'Capture'
 	};
 };
+var $mdgriffith$elm_ui$Element$el = F2(
+	function (attrs, child) {
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asEl,
+			$mdgriffith$elm_ui$Internal$Model$div,
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
+					attrs)),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
+				_List_fromArray(
+					[child])));
+	});
+var $mdgriffith$elm_ui$Element$Font$color = function (fontColor) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$fontColor,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$Colored,
+			'fc-' + $mdgriffith$elm_ui$Internal$Model$formatColorClass(fontColor),
+			'color',
+			fontColor));
+};
 var $author$project$Pages$CaptureTimers$monthToString = function (month) {
 	switch (month) {
 		case 0:
@@ -15611,43 +15638,44 @@ var $author$project$Pages$CaptureTimers$formatPosix = F2(
 				A2($elm$time$Time$toDay, zone, posix)));
 		return day + (' ' + (month + (' ' + (year + (' ' + (hour + (':' + (minute + (':' + second)))))))));
 	});
-var $elm$html$Html$li = _VirtualDom_node('li');
+var $mdgriffith$elm_ui$Element$rgb255 = F3(
+	function (red, green, blue) {
+		return A4($mdgriffith$elm_ui$Internal$Model$Rgba, red / 255, green / 255, blue / 255, 1);
+	});
+var $mdgriffith$elm_ui$Internal$Model$Text = function (a) {
+	return {$: 2, a: a};
+};
+var $mdgriffith$elm_ui$Element$text = function (content) {
+	return $mdgriffith$elm_ui$Internal$Model$Text(content);
+};
 var $author$project$Pages$CaptureTimers$showTimer = F2(
 	function (zone, timer) {
 		var _v0 = timer.eq;
 		if (_v0.$ === 1) {
 			return A2(
-				$elm$html$Html$li,
+				$mdgriffith$elm_ui$Element$el,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('tc green')
+						$mdgriffith$elm_ui$Element$Font$color(
+						A3($mdgriffith$elm_ui$Element$rgb255, 25, 169, 27))
 					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						A2($author$project$Pages$CaptureTimers$formatPosix, timer.el, zone))
-					]));
+				$mdgriffith$elm_ui$Element$text(
+					A2($author$project$Pages$CaptureTimers$formatPosix, timer.el, zone)));
 		} else {
 			var stoppedAt = _v0.a;
 			return A2(
-				$elm$html$Html$li,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('tc pa2')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(
-						A2($author$project$Pages$CaptureTimers$formatPosix, timer.el, zone) + (' -- ' + A2($author$project$Pages$CaptureTimers$formatPosix, stoppedAt, zone)))
-					]));
+				$mdgriffith$elm_ui$Element$el,
+				_List_Nil,
+				$mdgriffith$elm_ui$Element$text(
+					A2($author$project$Pages$CaptureTimers$formatPosix, timer.el, zone) + (' -- ' + A2($author$project$Pages$CaptureTimers$formatPosix, stoppedAt, zone))));
 		}
 	});
-var $elm$html$Html$ul = _VirtualDom_node('ul');
 var $author$project$Pages$CaptureTimers$showTimers = F2(
 	function (zone, timers) {
 		return A2(
-			$elm$html$Html$ul,
-			_List_Nil,
+			$mdgriffith$elm_ui$Element$column,
+			_List_fromArray(
+				[$mdgriffith$elm_ui$Element$centerX]),
 			A2(
 				$elm$core$List$map,
 				$author$project$Pages$CaptureTimers$showTimer(zone),
@@ -15658,43 +15686,41 @@ var $author$project$Pages$CaptureTimers$view = function (model) {
 		bs: _List_fromArray(
 			[
 				A2(
-				$elm$html$Html$a,
-				_List_fromArray(
-					[
-						$author$project$Route$href($author$project$Route$Home)
-					]),
-				_List_fromArray(
-					[
-						A2(
-						$elm$html$Html$img,
-						_List_fromArray(
-							[
-								$author$project$Asset$src($author$project$Asset$logo),
-								$elm$html$Html$Attributes$class('center db pt2')
-							]),
-						_List_Nil)
-					])),
+				$mdgriffith$elm_ui$Element$layout,
+				_List_Nil,
 				A2(
-				$elm$html$Html$h1,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('tc')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text('Dwyl application')
-					])),
-				A2(
-				$elm$html$Html$h1,
-				_List_fromArray(
-					[
-						$elm$html$Html$Attributes$class('tc')
-					]),
-				_List_fromArray(
-					[
-						$elm$html$Html$text(model.ak.a9)
-					])),
-				A2($author$project$Pages$CaptureTimers$showTimers, model.aO, model.ak.cu)
+					$mdgriffith$elm_ui$Element$column,
+					_List_fromArray(
+						[$mdgriffith$elm_ui$Element$centerX]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$link,
+							_List_fromArray(
+								[$mdgriffith$elm_ui$Element$centerX]),
+							{
+								bS: A2(
+									$mdgriffith$elm_ui$Element$image,
+									_List_fromArray(
+										[$mdgriffith$elm_ui$Element$centerX]),
+									{
+										bv: 'DWYL Logo',
+										cp: $author$project$Asset$imagePath($author$project$Asset$logo)
+									}),
+								az: $author$project$Route$routeToString($author$project$Route$Home)
+							}),
+							A2(
+							$mdgriffith$elm_ui$Element$el,
+							_List_fromArray(
+								[$mdgriffith$elm_ui$Element$centerX]),
+							$mdgriffith$elm_ui$Element$text('DWYL Application')),
+							A2(
+							$mdgriffith$elm_ui$Element$el,
+							_List_fromArray(
+								[$mdgriffith$elm_ui$Element$centerX]),
+							$mdgriffith$elm_ui$Element$text(model.ak.a9)),
+							A2($author$project$Pages$CaptureTimers$showTimers, model.aO, model.ak.cu)
+						])))
 			]),
 		cv: 'Timers'
 	};
@@ -15705,34 +15731,11 @@ var $mdgriffith$elm_ui$Internal$Model$Class = F2(
 	});
 var $mdgriffith$elm_ui$Internal$Flag$fontWeight = $mdgriffith$elm_ui$Internal$Flag$flag(13);
 var $mdgriffith$elm_ui$Element$Font$bold = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.c0);
-var $mdgriffith$elm_ui$Element$el = F2(
-	function (attrs, child) {
-		return A4(
-			$mdgriffith$elm_ui$Internal$Model$element,
-			$mdgriffith$elm_ui$Internal$Model$asEl,
-			$mdgriffith$elm_ui$Internal$Model$div,
-			A2(
-				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
-				A2(
-					$elm$core$List$cons,
-					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
-					attrs)),
-			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-				_List_fromArray(
-					[child])));
-	});
 var $mdgriffith$elm_ui$Element$Font$size = function (i) {
 	return A2(
 		$mdgriffith$elm_ui$Internal$Model$StyleClass,
 		$mdgriffith$elm_ui$Internal$Flag$fontSize,
 		$mdgriffith$elm_ui$Internal$Model$FontSize(i));
-};
-var $mdgriffith$elm_ui$Internal$Model$Text = function (a) {
-	return {$: 2, a: a};
-};
-var $mdgriffith$elm_ui$Element$text = function (content) {
-	return $mdgriffith$elm_ui$Internal$Model$Text(content);
 };
 var $author$project$Pages$Home$view = function (model) {
 	return {

@@ -182,23 +182,6 @@ update msg model =
 
         ToggleCompleted capture _ ->
             case capture.status of
-                InProgress ->
-                    case getCurrentTimer capture.timers of
-                        Just t ->
-                            ( model
-                            , Cmd.batch
-                                [ stopTimer (token model.session) t.idTimer capture.idCapture
-                                , apiUpdateCapture
-                                    (token model.session)
-                                    { capture | status = Completed }
-                                ]
-                            )
-
-                        Nothing ->
-                            ( model
-                            , apiUpdateCapture (token model.session) { capture | status = Completed }
-                            )
-
                 Completed ->
                     ( model
                     , apiUpdateCapture (token model.session) { capture | status = ToDo }

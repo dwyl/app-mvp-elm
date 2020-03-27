@@ -1,4 +1,4 @@
-module UI exposing (..)
+module UI exposing (buttonAttrs)
 
 import Element as Elt
 import Element.Border as EltBrd

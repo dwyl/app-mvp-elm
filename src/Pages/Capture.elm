@@ -181,18 +181,33 @@ update msg model =
                             ( { model | error = "Error while starting the timer" }, Cmd.none )
 
         ToggleCompleted capture _ ->
-            let
-                captureStatus =
-                    if capture.status == Completed then
-                        ToDo
+            case capture.status of
+                InProgress ->
+                    case getCurrentTimer capture.timers of
+                        Just t ->
+                            ( model
+                            , Cmd.batch
+                                [ stopTimer (token model.session) t.idTimer capture.idCapture
+                                , apiUpdateCapture
+                                    (token model.session)
+                                    { capture | status = Completed }
+                                ]
+                            )
 
-                    else
-                        Completed
+                        Nothing ->
+                            ( model
+                            , apiUpdateCapture (token model.session) { capture | status = Completed }
+                            )
 
-                updatedCapture =
-                    { capture | status = captureStatus }
-            in
-            ( model, apiUpdateCapture (token model.session) updatedCapture )
+                Completed ->
+                    ( model
+                    , apiUpdateCapture (token model.session) { capture | status = ToDo }
+                    )
+
+                _ ->
+                    ( model
+                    , apiUpdateCapture (token model.session) { capture | status = Completed }
+                    )
 
 
 

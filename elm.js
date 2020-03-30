@@ -15140,7 +15140,6 @@ var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
 	return {$: 2, a: a};
 };
 var $mdgriffith$elm_ui$Element$fill = $mdgriffith$elm_ui$Internal$Model$Fill(1);
-var $mdgriffith$elm_ui$Element$fillPortion = $mdgriffith$elm_ui$Internal$Model$Fill;
 var $mdgriffith$elm_ui$Element$Input$HiddenLabel = function (a) {
 	return {$: 1, a: a};
 };
@@ -15600,6 +15599,7 @@ var $mdgriffith$elm_ui$Element$Input$Label = F3(
 	});
 var $mdgriffith$elm_ui$Element$Input$OnRight = 0;
 var $mdgriffith$elm_ui$Element$Input$labelRight = $mdgriffith$elm_ui$Element$Input$Label(0);
+var $author$project$UI$lightGrey = A3($mdgriffith$elm_ui$Element$rgb255, 202, 210, 211);
 var $mdgriffith$elm_ui$Internal$Model$Max = F2(
 	function (a, b) {
 		return {$: 4, a: a, b: b};
@@ -15876,84 +15876,106 @@ var $author$project$Pages$Capture$showCapture = F2(
 	function (clock, capture) {
 		var completed = _Utils_eq(capture.a4, $author$project$Capture$Completed);
 		return A2(
-			$mdgriffith$elm_ui$Element$row,
+			$mdgriffith$elm_ui$Element$column,
 			_List_fromArray(
 				[
-					$mdgriffith$elm_ui$Element$width(
-					A2($mdgriffith$elm_ui$Element$maximum, 1000, $mdgriffith$elm_ui$Element$fill)),
-					$mdgriffith$elm_ui$Element$centerX,
-					$mdgriffith$elm_ui$Element$spacing(20)
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					$mdgriffith$elm_ui$Element$spacing(10)
 				]),
 			_List_fromArray(
 				[
 					A2(
-					$mdgriffith$elm_ui$Element$Input$checkbox,
+					$mdgriffith$elm_ui$Element$row,
 					_List_fromArray(
 						[
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+							$mdgriffith$elm_ui$Element$width(
+							A2($mdgriffith$elm_ui$Element$maximum, 1000, $mdgriffith$elm_ui$Element$fill)),
+							$mdgriffith$elm_ui$Element$centerX,
+							$mdgriffith$elm_ui$Element$spacing(20)
 						]),
-					{
-						c8: completed,
-						dz: $mdgriffith$elm_ui$Element$Input$defaultCheckbox,
-						bO: completed ? A2(
-							$mdgriffith$elm_ui$Element$Input$labelRight,
-							_List_fromArray(
-								[
-									$mdgriffith$elm_ui$Element$Font$strike,
-									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
-								]),
+					_List_fromArray(
+						[
 							A2(
-								$mdgriffith$elm_ui$Element$paragraph,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$mdgriffith$elm_ui$Element$text(capture.a7)
-									]))) : A2(
-							$mdgriffith$elm_ui$Element$Input$labelRight,
+							$mdgriffith$elm_ui$Element$Input$checkbox,
 							_List_fromArray(
 								[
 									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
 								]),
-							A2(
-								$mdgriffith$elm_ui$Element$paragraph,
-								_List_Nil,
-								_List_fromArray(
-									[
-										$mdgriffith$elm_ui$Element$text(capture.a7)
-									]))),
-						bX: $author$project$Pages$Capture$ToggleCompleted(capture)
-					}),
-					A2($author$project$Pages$Capture$showTime, capture, clock),
-					function () {
-					var _v0 = capture.a4;
-					switch (_v0.$) {
-						case 0:
-							return A3(
-								$author$project$Pages$Capture$showTimerButton,
-								$author$project$UI$startButtonAttrs,
-								'start',
-								$author$project$Pages$Capture$StartTimer(capture.bH));
-						case 2:
-							var timer = $author$project$Capture$getCurrentTimer(capture.cs);
-							if (timer.$ === 1) {
-								return A3($author$project$Pages$Capture$showTimerButton, _List_Nil, 'Error Timer', $author$project$Pages$Capture$None);
-							} else {
-								var t = timer.a;
-								return A3(
-									$author$project$Pages$Capture$showTimerButton,
-									$author$project$UI$stopButtonAttrs,
-									'stop',
-									A2($author$project$Pages$Capture$StopTimer, t.dA, capture.bH));
+							{
+								c8: completed,
+								dz: $mdgriffith$elm_ui$Element$Input$defaultCheckbox,
+								bO: completed ? A2(
+									$mdgriffith$elm_ui$Element$Input$labelRight,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$Font$strike,
+											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+										]),
+									A2(
+										$mdgriffith$elm_ui$Element$paragraph,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$mdgriffith$elm_ui$Element$text(capture.a7)
+											]))) : A2(
+									$mdgriffith$elm_ui$Element$Input$labelRight,
+									_List_fromArray(
+										[
+											$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+										]),
+									A2(
+										$mdgriffith$elm_ui$Element$paragraph,
+										_List_Nil,
+										_List_fromArray(
+											[
+												$mdgriffith$elm_ui$Element$text(capture.a7)
+											]))),
+								bX: $author$project$Pages$Capture$ToggleCompleted(capture)
+							}),
+							A2($author$project$Pages$Capture$showTime, capture, clock),
+							function () {
+							var _v0 = capture.a4;
+							switch (_v0.$) {
+								case 0:
+									return A3(
+										$author$project$Pages$Capture$showTimerButton,
+										$author$project$UI$startButtonAttrs,
+										'start',
+										$author$project$Pages$Capture$StartTimer(capture.bH));
+								case 2:
+									var timer = $author$project$Capture$getCurrentTimer(capture.cs);
+									if (timer.$ === 1) {
+										return A3($author$project$Pages$Capture$showTimerButton, _List_Nil, 'Error Timer', $author$project$Pages$Capture$None);
+									} else {
+										var t = timer.a;
+										return A3(
+											$author$project$Pages$Capture$showTimerButton,
+											$author$project$UI$stopButtonAttrs,
+											'stop',
+											A2($author$project$Pages$Capture$StopTimer, t.dA, capture.bH));
+									}
+								case 3:
+									return A3($author$project$Pages$Capture$showTimerButton, $author$project$UI$completedButtonAttrs, '...', $author$project$Pages$Capture$None);
+								case 1:
+									return A3($author$project$Pages$Capture$showTimerButton, $author$project$UI$completedButtonAttrs, 'completed', $author$project$Pages$Capture$None);
+								default:
+									var e = _v0.a;
+									return A3($author$project$Pages$Capture$showTimerButton, _List_Nil, e, $author$project$Pages$Capture$None);
 							}
-						case 3:
-							return A3($author$project$Pages$Capture$showTimerButton, $author$project$UI$completedButtonAttrs, '...', $author$project$Pages$Capture$None);
-						case 1:
-							return A3($author$project$Pages$Capture$showTimerButton, $author$project$UI$completedButtonAttrs, 'completed', $author$project$Pages$Capture$None);
-						default:
-							var e = _v0.a;
-							return A3($author$project$Pages$Capture$showTimerButton, _List_Nil, e, $author$project$Pages$Capture$None);
-					}
-				}()
+						}()
+						])),
+					A2(
+					$mdgriffith$elm_ui$Element$el,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width(
+							A2($mdgriffith$elm_ui$Element$maximum, 1000, $mdgriffith$elm_ui$Element$fill)),
+							$mdgriffith$elm_ui$Element$centerX,
+							$mdgriffith$elm_ui$Element$Background$color($author$project$UI$lightGrey),
+							$mdgriffith$elm_ui$Element$height(
+							$mdgriffith$elm_ui$Element$px(1))
+						]),
+					$mdgriffith$elm_ui$Element$none)
 				]));
 	});
 var $mdgriffith$elm_ui$Element$Input$TextInputNode = function (a) {
@@ -16838,9 +16860,7 @@ var $author$project$Pages$Capture$view = function (model) {
 									_List_fromArray(
 										[
 											$mdgriffith$elm_ui$Element$Font$color(
-											A3($mdgriffith$elm_ui$Element$rgb255, 255, 65, 54)),
-											$mdgriffith$elm_ui$Element$height(
-											$mdgriffith$elm_ui$Element$fillPortion(4))
+											A3($mdgriffith$elm_ui$Element$rgb255, 255, 65, 54))
 										]),
 									$mdgriffith$elm_ui$Element$text(model.l));
 							}

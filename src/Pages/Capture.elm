@@ -303,43 +303,46 @@ showCapture clock capture =
         completed =
             capture.status == Completed
     in
-    row [ width (fill |> maximum 1000), centerX, spacing 20 ]
-        [ EltInput.checkbox [ width fill ]
-            { onChange = ToggleCompleted capture
-            , icon = EltInput.defaultCheckbox
-            , checked = completed
-            , label =
-                if completed then
-                    EltInput.labelRight [ strike, width fill ] (paragraph [] [ text capture.text ])
+    column [ width fill, spacing 10 ]
+        [ row [ width (fill |> maximum 1000), centerX, spacing 20 ]
+            [ EltInput.checkbox [ width fill ]
+                { onChange = ToggleCompleted capture
+                , icon = EltInput.defaultCheckbox
+                , checked = completed
+                , label =
+                    if completed then
+                        EltInput.labelRight [ strike, width fill ] (paragraph [] [ text capture.text ])
 
-                else
-                    EltInput.labelRight [ width fill ] (paragraph [] [ text capture.text ])
-            }
-        , showTime capture clock
-        , case capture.status of
-            ToDo ->
-                showTimerButton UI.startButtonAttrs "start" (StartTimer capture.idCapture)
+                    else
+                        EltInput.labelRight [ width fill ] (paragraph [] [ text capture.text ])
+                }
+            , showTime capture clock
+            , case capture.status of
+                ToDo ->
+                    showTimerButton UI.startButtonAttrs "start" (StartTimer capture.idCapture)
 
-            InProgress ->
-                let
-                    timer =
-                        getCurrentTimer capture.timers
-                in
-                case timer of
-                    Nothing ->
-                        showTimerButton [] "Error Timer" None
+                InProgress ->
+                    let
+                        timer =
+                            getCurrentTimer capture.timers
+                    in
+                    case timer of
+                        Nothing ->
+                            showTimerButton [] "Error Timer" None
 
-                    Just t ->
-                        showTimerButton UI.stopButtonAttrs "stop" (StopTimer t.idTimer capture.idCapture)
+                        Just t ->
+                            showTimerButton UI.stopButtonAttrs "stop" (StopTimer t.idTimer capture.idCapture)
 
-            Disabled ->
-                showTimerButton UI.completedButtonAttrs "..." None
+                Disabled ->
+                    showTimerButton UI.completedButtonAttrs "..." None
 
-            Completed ->
-                showTimerButton UI.completedButtonAttrs "completed" None
+                Completed ->
+                    showTimerButton UI.completedButtonAttrs "completed" None
 
-            Error e ->
-                showTimerButton [] e None
+                Error e ->
+                    showTimerButton [] e None
+            ]
+        , el [ width (fill |> maximum 1000), centerX, EltBackground.color UI.lightGrey, height (px 1) ] none
         ]
 
 

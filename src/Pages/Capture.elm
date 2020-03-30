@@ -303,7 +303,7 @@ showCapture clock capture =
         completed =
             capture.status == Completed
     in
-    row [ width (fill |> maximum 1000), centerX,spacing 20]
+    row [ width (fill |> maximum 1000), centerX, spacing 20 ]
         [ EltInput.checkbox [ width fill ]
             { onChange = ToggleCompleted capture
             , icon = EltInput.defaultCheckbox
@@ -345,10 +345,8 @@ showCapture clock capture =
 
 showTimerButton : List (Attribute Msg) -> String -> Msg -> Element Msg
 showTimerButton attrs textButton msg =
-    el [width fill, Element.alignRight]
-    (
-     EltInput.button ([ center, width (fill |> maximum 150)] ++ attrs) { onPress = Just msg, label = text textButton }
-    )
+    el [ width fill, Element.alignRight ]
+        (EltInput.button ([ center, width (fill |> maximum 150) ] ++ attrs) { onPress = Just msg, label = text textButton })
 
 
 showTime : Capture -> Clock -> Element Msg

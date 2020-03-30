@@ -248,7 +248,7 @@ view model =
                                 ]
 
                         else
-                            el [ color (rgb255 255 65 54), height (fillPortion 4) ] (text model.error)
+                            el [ color (rgb255 255 65 54) ] (text model.error)
                 ]
         ]
     }

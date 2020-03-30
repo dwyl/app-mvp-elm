@@ -3,6 +3,7 @@ module Pages.Capture exposing (Model, Msg(..), init, subscriptions, toSession, u
 import Asset
 import Capture exposing (..)
 import Element exposing (..)
+import Element.Background as EltBackground
 import Element.Font exposing (..)
 import Element.Input as EltInput
 import Endpoint
@@ -201,15 +202,14 @@ view : Model -> Page.PageStructure Msg
 view model =
     { title = "Capture"
     , content =
-        [ layout [] <|
-            column [ Element.width Element.fill ]
-                [ column [ centerX ]
-                    [ link []
+        [ layout [ family [ typeface "Montserrat", sansSerif ] ] <|
+            column [ width fill, height fill, spacing 30 ]
+                [ el [ centerX, width (px 150), padding 10 ]
+                    (link []
                         { url = Route.routeToString Route.Home
                         , label = image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
                         }
-                    , el [] (text "DWYL Application")
-                    ]
+                    )
                 , case model.session of
                     Session.Guest _ ->
                         link [ centerX ]
@@ -219,17 +219,24 @@ view model =
 
                     Session.Session _ _ ->
                         if String.isEmpty model.error then
-                            column [ width fill ]
-                                [ column [ centerX, spacing 10, padding 30 ]
+                            column [ width fill, height fill, spacing 50 ]
+                                [ column [ centerX, spacing 10 ]
                                     [ EltInput.text []
                                         { onChange = UpdateNewCapture
                                         , text = model.newCapture.text
-                                        , placeholder = Nothing
+                                        , placeholder = Just (EltInput.placeholder [] (text "capture text"))
                                         , label = EltInput.labelHidden "capture text"
                                         }
                                     , EltInput.button
-                                        UI.buttonAttrs
-                                        { onPress = Just AddCapture, label = text "Add Capture" }
+                                        UI.mintButtonAttrs
+                                        { onPress =
+                                            if String.isEmpty model.newCapture.text then
+                                                Nothing
+
+                                            else
+                                                Just AddCapture
+                                        , label = text "Add Capture"
+                                        }
                                     ]
                                 , column
                                     [ width fill
@@ -241,7 +248,7 @@ view model =
                                 ]
 
                         else
-                            el [ color (rgb255 255 65 54) ] (text model.error)
+                            el [ color (rgb255 255 65 54), height (fillPortion 4) ] (text model.error)
                 ]
         ]
     }
@@ -296,55 +303,52 @@ showCapture clock capture =
         completed =
             capture.status == Completed
     in
-    column
-        [ centerX
-        , spacing 10
-        , width (fill |> maximum 500)
-        ]
-        [ row [ spacing 30, width fill ]
-            [ EltInput.checkbox [ Element.alignLeft ]
-                { onChange = ToggleCompleted capture
-                , icon = EltInput.defaultCheckbox
-                , checked = completed
-                , label =
-                    if completed then
-                        EltInput.labelRight [ strike ] (text capture.text)
+    row [ width (fill |> maximum 1000), centerX,spacing 20]
+        [ EltInput.checkbox [ width fill ]
+            { onChange = ToggleCompleted capture
+            , icon = EltInput.defaultCheckbox
+            , checked = completed
+            , label =
+                if completed then
+                    EltInput.labelRight [ strike, width fill ] (paragraph [] [ text capture.text ])
 
-                    else
-                        EltInput.labelRight [] (text capture.text)
-                }
-            , case capture.status of
-                ToDo ->
-                    showTimerButton "start" (StartTimer capture.idCapture)
-
-                InProgress ->
-                    let
-                        timer =
-                            getCurrentTimer capture.timers
-                    in
-                    case timer of
-                        Nothing ->
-                            showTimerButton "Error Timer" None
-
-                        Just t ->
-                            showTimerButton "stop" (StopTimer t.idTimer capture.idCapture)
-
-                Disabled ->
-                    showTimerButton "..." None
-
-                Completed ->
-                    showTimerButton "completed" None
-
-                Error e ->
-                    showTimerButton e None
-            ]
+                else
+                    EltInput.labelRight [ width fill ] (paragraph [] [ text capture.text ])
+            }
         , showTime capture clock
+        , case capture.status of
+            ToDo ->
+                showTimerButton UI.startButtonAttrs "start" (StartTimer capture.idCapture)
+
+            InProgress ->
+                let
+                    timer =
+                        getCurrentTimer capture.timers
+                in
+                case timer of
+                    Nothing ->
+                        showTimerButton [] "Error Timer" None
+
+                    Just t ->
+                        showTimerButton UI.stopButtonAttrs "stop" (StopTimer t.idTimer capture.idCapture)
+
+            Disabled ->
+                showTimerButton UI.completedButtonAttrs "..." None
+
+            Completed ->
+                showTimerButton UI.completedButtonAttrs "completed" None
+
+            Error e ->
+                showTimerButton [] e None
         ]
 
 
-showTimerButton : String -> Msg -> Element Msg
-showTimerButton textButton msg =
-    EltInput.button (Element.alignRight :: UI.buttonAttrs) { onPress = Just msg, label = text textButton }
+showTimerButton : List (Attribute Msg) -> String -> Msg -> Element Msg
+showTimerButton attrs textButton msg =
+    el [width fill, Element.alignRight]
+    (
+     EltInput.button ([ center, width (fill |> maximum 150)] ++ attrs) { onPress = Just msg, label = text textButton }
+    )
 
 
 showTime : Capture -> Clock -> Element Msg
@@ -376,7 +380,7 @@ showTime capture clock =
                         Just t ->
                             millisToHMS t
             in
-            link [ centerX ]
+            link [ center, bold, width fill, padding 30 ]
                 { url = Route.routeToString (Route.CaptureTimers capture.idCapture)
                 , label = text (hour ++ ":" ++ minute ++ ":" ++ second)
                 }
@@ -391,7 +395,7 @@ showTime capture clock =
                         Just t ->
                             millisToHMS t
             in
-            link [ centerX ]
+            link [ center, bold, width fill, padding 30 ]
                 { url = Route.routeToString (Route.CaptureTimers capture.idCapture)
                 , label = text (hour ++ ":" ++ minute ++ ":" ++ second)
                 }

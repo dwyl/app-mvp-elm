@@ -1,7 +1,9 @@
-module UI exposing (buttonAttrs)
+module UI exposing (buttonAttrs, completedButtonAttrs, lightGrey, mint, mintButtonAttrs, startButtonAttrs, stopButtonAttrs)
 
 import Element as Elt
+import Element.Background as EltBackground
 import Element.Border as EltBrd
+import Element.Font as EltFont
 
 
 buttonAttrs : List (Elt.Attribute msg)
@@ -12,3 +14,77 @@ buttonAttrs =
     , EltBrd.rounded 3
     , Elt.padding 5
     ]
+
+
+mintButtonAttrs : List (Elt.Attribute msg)
+mintButtonAttrs =
+    [ Elt.centerX
+    , EltBrd.rounded 3
+    , Elt.padding 15
+    , EltBackground.color mint
+    , EltFont.color white
+    ]
+
+
+startButtonAttrs : List (Elt.Attribute msg)
+startButtonAttrs =
+    [ Elt.centerX
+    , EltBrd.rounded 3
+    , Elt.padding 15
+    , EltBackground.color teal
+    , EltFont.color white
+    ]
+
+
+stopButtonAttrs : List (Elt.Attribute msg)
+stopButtonAttrs =
+    [ Elt.centerX
+    , EltBrd.rounded 3
+    , Elt.padding 15
+    , EltBackground.color orange
+    , EltFont.color white
+    ]
+
+
+completedButtonAttrs : List (Elt.Attribute msg)
+completedButtonAttrs =
+    [ Elt.centerX
+    , EltBrd.rounded 3
+    , Elt.padding 15
+    , EltBackground.color grey
+    , EltFont.color white
+    ]
+
+
+
+-- Colours
+
+
+mint : Elt.Color
+mint =
+    Elt.rgb255 75 192 169
+
+
+white : Elt.Color
+white =
+    Elt.rgb255 255 255 255
+
+
+teal : Elt.Color
+teal =
+    Elt.rgb255 26 117 102
+
+
+orange : Elt.Color
+orange =
+    Elt.rgb255 252 134 91
+
+
+lightGrey : Elt.Color
+lightGrey =
+    Elt.rgb255 202 210 211
+
+
+grey : Elt.Color
+grey =
+    Elt.rgb255 113 126 132

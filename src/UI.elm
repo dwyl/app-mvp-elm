@@ -1,4 +1,4 @@
-module UI exposing (buttonAttrs, completedButtonAttrs, lightGrey, mint, mintButtonAttrs, startButtonAttrs, stopButtonAttrs)
+module UI exposing (buttonAttrs, completedButtonAttrs, darkGrey, lightGrey, mint, mintButtonAttrs, startButtonAttrs, stopButtonAttrs)
 
 import Element as Elt
 import Element.Background as EltBackground
@@ -88,3 +88,8 @@ lightGrey =
 grey : Elt.Color
 grey =
     Elt.rgb255 113 126 132
+
+
+darkGrey : Elt.Color
+darkGrey =
+    Elt.rgb255 69 83 91

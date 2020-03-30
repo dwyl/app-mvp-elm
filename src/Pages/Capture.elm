@@ -305,7 +305,7 @@ showCapture clock capture =
     in
     column [ width fill, spacing 10 ]
         [ row [ width (fill |> maximum 1000), centerX, spacing 20 ]
-            [ EltInput.checkbox [ width fill ]
+            [ EltInput.checkbox [ width fill, color UI.darkGrey ]
                 { onChange = ToggleCompleted capture
                 , icon = EltInput.defaultCheckbox
                 , checked = completed

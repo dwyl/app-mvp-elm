@@ -15414,6 +15414,7 @@ var $author$project$UI$completedButtonAttrs = _List_fromArray(
 		$mdgriffith$elm_ui$Element$Background$color($author$project$UI$grey),
 		$mdgriffith$elm_ui$Element$Font$color($author$project$UI$white)
 	]);
+var $author$project$UI$darkGrey = A3($mdgriffith$elm_ui$Element$rgb255, 69, 83, 91);
 var $mdgriffith$elm_ui$Internal$Flag$fontAlignment = $mdgriffith$elm_ui$Internal$Flag$flag(12);
 var $mdgriffith$elm_ui$Element$Font$center = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontAlignment, $mdgriffith$elm_ui$Internal$Style$classes.ev);
 var $mdgriffith$elm_ui$Internal$Flag$borderColor = $mdgriffith$elm_ui$Internal$Flag$flag(28);
@@ -15899,7 +15900,8 @@ var $author$project$Pages$Capture$showCapture = F2(
 							$mdgriffith$elm_ui$Element$Input$checkbox,
 							_List_fromArray(
 								[
-									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+									$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+									$mdgriffith$elm_ui$Element$Font$color($author$project$UI$darkGrey)
 								]),
 							{
 								c8: completed,

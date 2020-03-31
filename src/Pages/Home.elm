@@ -6,6 +6,7 @@ import Element.Font exposing (..)
 import Page
 import Route
 import Session exposing (..)
+import UI
 
 
 
@@ -46,19 +47,20 @@ view : Model -> Page.PageStructure Msg
 view model =
     { title = "Home"
     , content =
-        [ layout [] <|
-            column [ centerX ]
-                [ image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
-                , el [ bold, size 30 ] (text "DWYL Application")
+        [ layout [ family [ typeface "Montserrat", sansSerif ] ] <|
+            column [ width fill, height fill, spacing 30 ]
+                [ UI.dwylLogo
                 , case model of
                     Session.Guest _ ->
-                        link [] { url = Route.routeToString (Route.Auth Nothing), label = text "login/signup" }
+                        link [ centerX, color UI.teal, bold ] { url = Route.routeToString (Route.Auth Nothing), label = text "login/signup" }
 
                     Session.Session _ person ->
-                        column []
+                        column [ centerX, spacing 30 ]
                             [ text <| "logged in with: " ++ person.email
-                            , link [] { url = Route.routeToString Route.Capture, label = text "captures" }
-                            , link [] { url = Route.routeToString Route.Logout, label = text "logout" }
+                            , row [ spacing 30, centerX ]
+                                [ link [ color UI.teal, bold ] { url = Route.routeToString Route.Capture, label = text "captures" }
+                                , link [ color UI.teal, bold ] { url = Route.routeToString Route.Logout, label = text "logout" }
+                                ]
                             ]
                 ]
         ]

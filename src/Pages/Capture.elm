@@ -204,12 +204,7 @@ view model =
     , content =
         [ layout [ family [ typeface "Montserrat", sansSerif ] ] <|
             column [ width fill, height fill, spacing 30 ]
-                [ el [ centerX, width (px 150), padding 10 ]
-                    (link []
-                        { url = Route.routeToString Route.Home
-                        , label = image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
-                        }
-                    )
+                [ UI.dwylLogo
                 , case model.session of
                     Session.Guest _ ->
                         link [ centerX ]
@@ -381,7 +376,7 @@ showTime capture clock =
                         Just t ->
                             millisToHMS t
             in
-            link [ center, bold, width fill, padding 30 ]
+            link [ center, bold, width fill, padding 30, color UI.teal ]
                 { url = Route.routeToString (Route.CaptureTimers capture.idCapture)
                 , label = text (hour ++ ":" ++ minute ++ ":" ++ second)
                 }
@@ -396,7 +391,7 @@ showTime capture clock =
                         Just t ->
                             millisToHMS t
             in
-            link [ center, bold, width fill, padding 30 ]
+            link [ center, bold, width fill, padding 30, color UI.teal ]
                 { url = Route.routeToString (Route.CaptureTimers capture.idCapture)
                 , label = text (hour ++ ":" ++ minute ++ ":" ++ second)
                 }

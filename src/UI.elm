@@ -1,9 +1,29 @@
-module UI exposing (buttonAttrs, completedButtonAttrs, darkGrey, lightGrey, mint, mintButtonAttrs, startButtonAttrs, stopButtonAttrs)
+module UI exposing (buttonAttrs, completedButtonAttrs, darkGrey, dwylLogo, lightGrey, mint, mintButtonAttrs, startButtonAttrs, stopButtonAttrs, teal)
 
+import Asset
 import Element as Elt
 import Element.Background as EltBackground
 import Element.Border as EltBrd
 import Element.Font as EltFont
+import Route
+
+
+
+-- logo
+
+
+dwylLogo : Elt.Element msg
+dwylLogo =
+    Elt.el [ Elt.centerX, Elt.width (Elt.px 150), Elt.padding 10 ]
+        (Elt.link []
+            { url = Route.routeToString Route.Home
+            , label = Elt.image [ Elt.centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
+            }
+        )
+
+
+
+-- Buttons
 
 
 buttonAttrs : List (Elt.Attribute msg)

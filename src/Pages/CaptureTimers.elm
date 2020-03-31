@@ -12,6 +12,7 @@ import Session exposing (..)
 import Task
 import Time
 import Timer exposing (..)
+import UI
 
 
 
@@ -91,14 +92,10 @@ view : Model -> Page.PageStructure Msg
 view model =
     { title = "Timers"
     , content =
-        [ layout [] <|
-            column [ Element.centerX ]
-                [ link [ Element.centerX ]
-                    { url = Route.routeToString Route.Home
-                    , label = image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
-                    }
-                , el [ centerX ] (text "DWYL Application")
-                , el [ centerX ] (text model.capture.text)
+        [ layout [ family [ typeface "Montserrat", sansSerif ] ] <|
+            column [ width fill, height fill, spacing 30 ]
+                [ UI.dwylLogo
+                , el [ centerX, width (fill |> maximum 800) ] (paragraph [] [ text model.capture.text ])
                 , showTimers model.timeZone model.capture.timers
                 ]
         ]
@@ -107,17 +104,17 @@ view model =
 
 showTimers : Time.Zone -> List Timer -> Element Msg
 showTimers zone timers =
-    column [ centerX ] <| List.map (showTimer zone) timers
+    column [ centerX, spacing 20 ] <| List.map (showTimer zone) timers
 
 
 showTimer : Time.Zone -> Timer -> Element Msg
 showTimer zone timer =
     case timer.stoppedAt of
         Nothing ->
-            el [ color (rgb255 25 169 27) ] (text <| formatPosix timer.startedAt zone)
+            el [ color UI.teal ] (text <| formatPosix timer.startedAt zone)
 
         Just stoppedAt ->
-            el [] (text <| formatPosix timer.startedAt zone ++ " -- " ++ formatPosix stoppedAt zone)
+            el [] (text <| formatPosix timer.startedAt zone ++ " - " ++ formatPosix stoppedAt zone)
 
 
 toSession : Model -> Session

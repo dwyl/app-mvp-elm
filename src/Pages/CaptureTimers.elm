@@ -95,7 +95,7 @@ view model =
         [ layout [ family [ typeface "Montserrat", sansSerif ] ] <|
             column [ width fill, height fill, spacing 30 ]
                 [ UI.dwylLogo
-                , el [ centerX ] (paragraph [] [ text model.capture.text ])
+                , el [ centerX, width (fill |> maximum 800) ] (paragraph [] [ text model.capture.text ])
                 , showTimers model.timeZone model.capture.timers
                 ]
         ]

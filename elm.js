@@ -17136,7 +17136,11 @@ var $author$project$Pages$CaptureTimers$view = function (model) {
 							A2(
 							$mdgriffith$elm_ui$Element$el,
 							_List_fromArray(
-								[$mdgriffith$elm_ui$Element$centerX]),
+								[
+									$mdgriffith$elm_ui$Element$centerX,
+									$mdgriffith$elm_ui$Element$width(
+									A2($mdgriffith$elm_ui$Element$maximum, 800, $mdgriffith$elm_ui$Element$fill))
+								]),
 							A2(
 								$mdgriffith$elm_ui$Element$paragraph,
 								_List_Nil,

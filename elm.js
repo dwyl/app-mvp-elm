@@ -15750,6 +15750,7 @@ var $elm$time$Time$posixToMillis = function (_v0) {
 	var millis = _v0;
 	return millis;
 };
+var $author$project$UI$teal = A3($mdgriffith$elm_ui$Element$rgb255, 26, 117, 102);
 var $mdgriffith$elm_ui$Internal$Model$Text = function (a) {
 	return {$: 2, a: a};
 };
@@ -15815,7 +15816,8 @@ var $author$project$Pages$Capture$showTime = F2(
 						$mdgriffith$elm_ui$Element$Font$center,
 						$mdgriffith$elm_ui$Element$Font$bold,
 						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-						$mdgriffith$elm_ui$Element$padding(30)
+						$mdgriffith$elm_ui$Element$padding(30),
+						$mdgriffith$elm_ui$Element$Font$color($author$project$UI$teal)
 					]),
 				{
 					bO: $mdgriffith$elm_ui$Element$text(hour + (':' + (minute + (':' + second)))),
@@ -15842,7 +15844,8 @@ var $author$project$Pages$Capture$showTime = F2(
 						$mdgriffith$elm_ui$Element$Font$center,
 						$mdgriffith$elm_ui$Element$Font$bold,
 						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-						$mdgriffith$elm_ui$Element$padding(30)
+						$mdgriffith$elm_ui$Element$padding(30),
+						$mdgriffith$elm_ui$Element$Font$color($author$project$UI$teal)
 					]),
 				{
 					bO: $mdgriffith$elm_ui$Element$text(hour + (':' + (minute + (':' + second)))),
@@ -15877,7 +15880,6 @@ var $author$project$Pages$Capture$showTimerButton = F3(
 					bY: $elm$core$Maybe$Just(msg)
 				}));
 	});
-var $author$project$UI$teal = A3($mdgriffith$elm_ui$Element$rgb255, 26, 117, 102);
 var $author$project$UI$startButtonAttrs = _List_fromArray(
 	[
 		$mdgriffith$elm_ui$Element$centerX,

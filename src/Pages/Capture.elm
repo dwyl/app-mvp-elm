@@ -376,7 +376,7 @@ showTime capture clock =
                         Just t ->
                             millisToHMS t
             in
-            link [ center, bold, width fill, padding 30 ]
+            link [ center, bold, width fill, padding 30, color UI.teal ]
                 { url = Route.routeToString (Route.CaptureTimers capture.idCapture)
                 , label = text (hour ++ ":" ++ minute ++ ":" ++ second)
                 }
@@ -391,7 +391,7 @@ showTime capture clock =
                         Just t ->
                             millisToHMS t
             in
-            link [ center, bold, width fill, padding 30 ]
+            link [ center, bold, width fill, padding 30, color UI.teal ]
                 { url = Route.routeToString (Route.CaptureTimers capture.idCapture)
                 , label = text (hour ++ ":" ++ minute ++ ":" ++ second)
                 }

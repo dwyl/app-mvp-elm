@@ -20,7 +20,7 @@ url : List String -> List QueryParameter -> Endpoint
 url path queryParams =
     -- "https://dwyl-app-api.herokuapp.com"
     -- "http://localhost:4000"
-    Url.Builder.crossOrigin  "https://dwyl-app-api.herokuapp.com" path queryParams
+    Url.Builder.crossOrigin "https://dwyl-app-api.herokuapp.com" path queryParams
         |> Endpoint
 
 

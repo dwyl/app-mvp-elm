@@ -52,7 +52,10 @@ view model =
                 [ UI.dwylLogo
                 , case model of
                     Session.Guest _ ->
-                        link [ centerX, color UI.teal, bold ] { url = Route.routeToString (Route.Auth Nothing), label = text "login/signup" }
+                        link [ centerX, color UI.teal, bold ]
+                            { url = Route.routeToString (Route.Auth Nothing)
+                            , label = text "login/signup"
+                            }
 
                     Session.Session _ person ->
                         column [ centerX, spacing 30 ]

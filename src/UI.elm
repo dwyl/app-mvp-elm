@@ -1,10 +1,12 @@
-module UI exposing (buttonAttrs, completedButtonAttrs, darkGrey, dwylLogo, lightGrey, mint, mintButtonAttrs, startButtonAttrs, stopButtonAttrs, teal)
+module UI exposing (buttonAttrs, completedButtonAttrs, darkGrey, dwylLogo, lightGrey, loader, loaderHtml, mint, mintButtonAttrs, startButtonAttrs, stopButtonAttrs, teal)
 
 import Asset
 import Element as Elt
 import Element.Background as EltBackground
 import Element.Border as EltBrd
 import Element.Font as EltFont
+import Html
+import Html.Attributes as HtmlAttr
 import Route
 
 
@@ -20,6 +22,20 @@ dwylLogo =
             , label = Elt.image [ Elt.centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
             }
         )
+
+
+
+-- loading spinner
+
+
+loader : Elt.Element msg
+loader =
+    Elt.el [ Elt.htmlAttribute <| HtmlAttr.class "loader" ] Elt.none
+
+
+loaderHtml : Html.Html msg
+loaderHtml =
+    Html.div [ HtmlAttr.class "loader" ] []
 
 
 

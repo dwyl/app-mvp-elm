@@ -24,10 +24,16 @@ import UI
 type alias Model =
     { session : Session
     , captures : List Capture
+    , pageStatus : PageStatus
     , newCapture : Capture
     , timer : Clock
     , error : String
     }
+
+
+type PageStatus
+    = Loading
+    | Ready
 
 
 type alias Clock =
@@ -40,6 +46,7 @@ initModel : Session -> Model
 initModel session =
     { session = session
     , captures = []
+    , pageStatus = Loading
     , newCapture = initCapture
     , timer =
         { zone = Time.utc
@@ -112,7 +119,7 @@ update msg model =
         GotCaptures result ->
             case result of
                 Ok captures ->
-                    ( { model | captures = captures, error = "" }, Cmd.none )
+                    ( { model | captures = captures, pageStatus = Ready, error = "" }, Cmd.none )
 
                 Err httpError ->
                     case httpError of
@@ -233,13 +240,20 @@ view model =
                                         , label = text "Add Capture"
                                         }
                                     ]
-                                , column
-                                    [ width fill
-                                    , spacing 30
-                                    , padding 30
-                                    ]
-                                  <|
-                                    List.map (\capture -> showCapture model.timer capture) model.captures
+                                , if model.pageStatus == Ready then
+                                    column
+                                        [ width fill
+                                        , spacing 30
+                                        , padding 30
+                                        ]
+                                    <|
+                                        List.map (\capture -> showCapture model.timer capture) model.captures
+
+                                  else
+                                    column [ centerX, spacing 20 ]
+                                        [ text "Loading captures"
+                                        , el [ centerX ] <| html UI.loaderHtml
+                                        ]
                                 ]
 
                         else

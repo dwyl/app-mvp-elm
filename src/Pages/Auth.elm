@@ -50,9 +50,10 @@ view _ =
     { title = "Auth"
     , content =
         [ layout [ family [ typeface "Montserrat", sansSerif ] ] <|
-            column [ Element.centerX ]
+            column [ centerX, spacing 20 ]
                 [ UI.dwylLogo
                 , text "Loading auth service page"
+                , el [ centerX ] <| html UI.loaderHtml
                 ]
         ]
     }

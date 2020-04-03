@@ -15146,6 +15146,7 @@ var $mdgriffith$elm_ui$Element$Background$color = function (clr) {
 			'background-color',
 			clr));
 };
+var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
 var $mdgriffith$elm_ui$Element$rgb255 = F3(
 	function (red, green, blue) {
 		return A4($mdgriffith$elm_ui$Internal$Model$Rgba, red / 255, green / 255, blue / 255, 1);
@@ -15169,7 +15170,9 @@ var $author$project$UI$mintButtonAttrs = _List_fromArray(
 		$mdgriffith$elm_ui$Element$Border$rounded(3),
 		$mdgriffith$elm_ui$Element$padding(15),
 		$mdgriffith$elm_ui$Element$Background$color($author$project$UI$mint),
-		$mdgriffith$elm_ui$Element$Font$color($author$project$UI$white)
+		$mdgriffith$elm_ui$Element$Font$color($author$project$UI$white),
+		$mdgriffith$elm_ui$Element$htmlAttribute(
+		$elm$html$Html$Attributes$class('dim'))
 	]);
 var $mdgriffith$elm_ui$Element$Input$Placeholder = F2(
 	function (a, b) {
@@ -15363,7 +15366,9 @@ var $author$project$UI$completedButtonAttrs = _List_fromArray(
 		$mdgriffith$elm_ui$Element$Border$rounded(3),
 		$mdgriffith$elm_ui$Element$padding(15),
 		$mdgriffith$elm_ui$Element$Background$color($author$project$UI$grey),
-		$mdgriffith$elm_ui$Element$Font$color($author$project$UI$white)
+		$mdgriffith$elm_ui$Element$Font$color($author$project$UI$white),
+		$mdgriffith$elm_ui$Element$htmlAttribute(
+		$elm$html$Html$Attributes$class('dim'))
 	]);
 var $author$project$UI$darkGrey = A3($mdgriffith$elm_ui$Element$rgb255, 69, 83, 91);
 var $mdgriffith$elm_ui$Internal$Flag$fontAlignment = $mdgriffith$elm_ui$Internal$Flag$flag(12);
@@ -15808,7 +15813,9 @@ var $author$project$UI$startButtonAttrs = _List_fromArray(
 		$mdgriffith$elm_ui$Element$Border$rounded(3),
 		$mdgriffith$elm_ui$Element$padding(15),
 		$mdgriffith$elm_ui$Element$Background$color($author$project$UI$teal),
-		$mdgriffith$elm_ui$Element$Font$color($author$project$UI$white)
+		$mdgriffith$elm_ui$Element$Font$color($author$project$UI$white),
+		$mdgriffith$elm_ui$Element$htmlAttribute(
+		$elm$html$Html$Attributes$class('dim'))
 	]);
 var $author$project$UI$orange = A3($mdgriffith$elm_ui$Element$rgb255, 252, 134, 91);
 var $author$project$UI$stopButtonAttrs = _List_fromArray(
@@ -15817,7 +15824,9 @@ var $author$project$UI$stopButtonAttrs = _List_fromArray(
 		$mdgriffith$elm_ui$Element$Border$rounded(3),
 		$mdgriffith$elm_ui$Element$padding(15),
 		$mdgriffith$elm_ui$Element$Background$color($author$project$UI$orange),
-		$mdgriffith$elm_ui$Element$Font$color($author$project$UI$white)
+		$mdgriffith$elm_ui$Element$Font$color($author$project$UI$white),
+		$mdgriffith$elm_ui$Element$htmlAttribute(
+		$elm$html$Html$Attributes$class('dim'))
 	]);
 var $mdgriffith$elm_ui$Element$Font$strike = $mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.eq);
 var $author$project$Pages$Capture$showCapture = F2(
@@ -16126,7 +16135,6 @@ var $mdgriffith$elm_ui$Element$paddingEach = function (_v0) {
 			bottom,
 			left));
 };
-var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
 var $mdgriffith$elm_ui$Element$Input$isFill = function (len) {
 	isFill:
 	while (true) {

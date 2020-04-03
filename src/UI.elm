@@ -49,6 +49,7 @@ buttonAttrs =
     , EltBrd.width 1
     , EltBrd.rounded 3
     , Elt.padding 5
+    , Elt.htmlAttribute <| HtmlAttr.class "dim"
     ]
 
 
@@ -59,6 +60,7 @@ mintButtonAttrs =
     , Elt.padding 15
     , EltBackground.color mint
     , EltFont.color white
+    , Elt.htmlAttribute <| HtmlAttr.class "dim"
     ]
 
 
@@ -69,6 +71,7 @@ startButtonAttrs =
     , Elt.padding 15
     , EltBackground.color teal
     , EltFont.color white
+    , Elt.htmlAttribute <| HtmlAttr.class "dim"
     ]
 
 
@@ -79,6 +82,7 @@ stopButtonAttrs =
     , Elt.padding 15
     , EltBackground.color orange
     , EltFont.color white
+    , Elt.htmlAttribute <| HtmlAttr.class "dim"
     ]
 
 
@@ -89,6 +93,7 @@ completedButtonAttrs =
     , Elt.padding 15
     , EltBackground.color grey
     , EltFont.color white
+    , Elt.htmlAttribute <| HtmlAttr.class "dim"
     ]
 
 

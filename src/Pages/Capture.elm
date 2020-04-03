@@ -174,7 +174,7 @@ update msg model =
                 captures =
                     updateCapture Disabled idCapture model.captures
             in
-            ( { model | captures = captures }, startTimer (token model.session) idCapture )
+            ( { model | captures = captures, sortCaptures = Status InProgress }, startTimer (token model.session) idCapture )
 
         StopTimer idTimer idCapture ->
             ( model, stopTimer (token model.session) idTimer idCapture )

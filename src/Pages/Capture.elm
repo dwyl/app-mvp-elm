@@ -89,6 +89,7 @@ type Msg
     | AdjustTimeZone Time.Zone
     | Tick Time.Posix
     | ToggleCompleted Capture Bool
+    | SortBy SortCaptures
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -206,6 +207,9 @@ update msg model =
                     , apiUpdateCapture (token model.session) { capture | status = Completed }
                     )
 
+        SortBy status ->
+            ( { model | sortCaptures = status }, Cmd.none )
+
 
 
 -- View
@@ -247,13 +251,18 @@ view model =
                                         }
                                     ]
                                 , if model.pageStatus == Ready then
-                                    column
-                                        [ width fill
-                                        , spacing 30
-                                        , padding 30
+                                    column [ width (fill |> maximum 1000), centerX ]
+                                        [ showSortingOptions model.sortCaptures
+                                        , column
+                                            [ width fill
+                                            , spacing 30
+                                            , padding 30
+                                            ]
+                                          <|
+                                            List.map
+                                                (\capture -> showCapture model.timer capture)
+                                                (sortCaptures model.sortCaptures model.captures)
                                         ]
-                                    <|
-                                        List.map (\capture -> showCapture model.timer capture) (sortCaptures model.sortCaptures model.captures)
 
                                   else
                                     column [ centerX, spacing 20 ]
@@ -351,13 +360,43 @@ stopTimer token idTimer idCapture =
         }
 
 
+showSortingOptions : SortCaptures -> Element Msg
+showSortingOptions (Status s) =
+    row [ spacing 20, width fill ]
+        [ el [ width fill, Element.alignRight ] none
+        , el [ width fill, Element.alignRight ] none
+        , el
+            [ width fill, Element.alignRight, center ]
+            (EltInput.button
+                [ centerX, center, padding 15, width (fill |> maximum 150) ]
+                { onPress = Just <| SortBy (nextSortCaptures (Status s)), label = text <| captureStatusToString s ++ " ↕" }
+            )
+        ]
+
+
+nextSortCaptures : SortCaptures -> SortCaptures
+nextSortCaptures (Status s) =
+    case s of
+        InProgress ->
+            Status Completed
+
+        Completed ->
+            Status ToDo
+
+        ToDo ->
+            Status InProgress
+
+        _ ->
+            Status s
+
+
 showCapture : Clock -> Capture -> Element Msg
 showCapture clock capture =
     let
         completed =
             capture.status == Completed
     in
-    column [ width (fill |> maximum 1000), spacing 10, centerX ]
+    column [ width fill, spacing 10, centerX ]
         [ row [ spacing 20, width fill ]
             [ EltInput.checkbox [ width fill, color UI.darkGrey ]
                 { onChange = ToggleCompleted capture

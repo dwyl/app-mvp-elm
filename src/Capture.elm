@@ -1,4 +1,4 @@
-module Capture exposing (Capture, CaptureStatus(..), captureDataDecoder, captureDecoder, captureEncode, captureStatusDecoder, capturesDataDecoder, completedToStatusDecoder, getCurrentTimer, getPreviousTimer, initCapture, savedCaptureDecoder, timersToStatusDecoder)
+module Capture exposing (Capture, CaptureStatus(..), captureDataDecoder, captureDecoder, captureEncode, captureStatusDecoder, captureStatusToString, capturesDataDecoder, completedToStatusDecoder, getCurrentTimer, getPreviousTimer, initCapture, savedCaptureDecoder, timersToStatusDecoder)
 
 import Json.Decode as JD
 import Json.Encode as JE
@@ -107,3 +107,19 @@ getCurrentTimer timers =
 getPreviousTimer : List Timer -> Maybe (List Timer)
 getPreviousTimer timers =
     List.tail timers
+
+
+captureStatusToString : CaptureStatus -> String
+captureStatusToString status =
+    case status of
+        ToDo ->
+            "start"
+
+        Completed ->
+            "completed"
+
+        InProgress ->
+            "stop"
+
+        _ ->
+            ""

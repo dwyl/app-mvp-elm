@@ -16023,49 +16023,52 @@ var $author$project$Pages$Capture$compareCaptures = F3(
 		var _v1 = _Utils_Tuple3(sortBy, c1.a9, c2.a9);
 		switch (_v1.a.$) {
 			case 2:
-				if (_v1.b.$ === 2) {
-					var _v2 = _v1.a;
-					var _v3 = _v1.b;
-					return 0;
-				} else {
-					if (_v1.c.$ === 2) {
-						var _v4 = _v1.a;
-						var _v5 = _v1.c;
-						return 2;
-					} else {
-						var _v6 = _v1.a;
+				if (_v1.c.$ === 2) {
+					if (_v1.b.$ === 2) {
+						var _v2 = _v1.a;
+						var _v3 = _v1.b;
+						var _v4 = _v1.c;
 						return 1;
+					} else {
+						var _v5 = _v1.a;
+						var _v6 = _v1.c;
+						return 2;
 					}
+				} else {
+					var _v7 = _v1.a;
+					return 0;
 				}
 			case 0:
-				if (!_v1.b.$) {
-					var _v7 = _v1.a;
-					var _v8 = _v1.b;
-					return 0;
-				} else {
-					if (!_v1.c.$) {
-						var _v9 = _v1.a;
+				if (!_v1.c.$) {
+					if (!_v1.b.$) {
+						var _v8 = _v1.a;
+						var _v9 = _v1.b;
 						var _v10 = _v1.c;
-						return 2;
+						return 1;
 					} else {
 						var _v11 = _v1.a;
-						return 1;
+						var _v12 = _v1.c;
+						return 2;
 					}
+				} else {
+					var _v13 = _v1.a;
+					return 0;
 				}
 			case 1:
-				if (_v1.b.$ === 1) {
-					var _v12 = _v1.a;
-					var _v13 = _v1.b;
-					return 0;
-				} else {
-					if (_v1.c.$ === 1) {
+				if (_v1.c.$ === 1) {
+					if (_v1.b.$ === 1) {
 						var _v14 = _v1.a;
-						var _v15 = _v1.c;
-						return 2;
-					} else {
-						var _v16 = _v1.a;
+						var _v15 = _v1.b;
+						var _v16 = _v1.c;
 						return 1;
+					} else {
+						var _v17 = _v1.a;
+						var _v18 = _v1.c;
+						return 2;
 					}
+				} else {
+					var _v19 = _v1.a;
+					return 0;
 				}
 			default:
 				return 1;

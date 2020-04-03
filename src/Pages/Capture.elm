@@ -303,32 +303,32 @@ sortCaptures sortBy =
 compareCaptures : SortCaptures -> Capture -> Capture -> Order
 compareCaptures (Status sortBy) c1 c2 =
     case ( sortBy, c1.status, c2.status ) of
-        ( InProgress, InProgress, _ ) ->
-            LT
+        ( InProgress, InProgress, InProgress ) ->
+            EQ
 
         ( InProgress, _, InProgress ) ->
             GT
 
         ( InProgress, _, _ ) ->
-            EQ
-
-        ( ToDo, ToDo, _ ) ->
             LT
+
+        ( ToDo, ToDo, ToDo ) ->
+            EQ
 
         ( ToDo, _, ToDo ) ->
             GT
 
         ( ToDo, _, _ ) ->
-            EQ
-
-        ( Completed, Completed, _ ) ->
             LT
+
+        ( Completed, Completed, Completed ) ->
+            EQ
 
         ( Completed, _, Completed ) ->
             GT
 
         ( Completed, _, _ ) ->
-            EQ
+            LT
 
         _ ->
             EQ

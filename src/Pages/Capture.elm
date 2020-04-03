@@ -24,11 +24,16 @@ import UI
 type alias Model =
     { session : Session
     , captures : List Capture
+    , sortCaptures : SortCaptures
     , pageStatus : PageStatus
     , newCapture : Capture
     , timer : Clock
     , error : String
     }
+
+
+type SortCaptures
+    = Status Capture.CaptureStatus
 
 
 type PageStatus
@@ -46,6 +51,7 @@ initModel : Session -> Model
 initModel session =
     { session = session
     , captures = []
+    , sortCaptures = Status InProgress
     , pageStatus = Loading
     , newCapture = initCapture
     , timer =
@@ -247,7 +253,7 @@ view model =
                                         , padding 30
                                         ]
                                     <|
-                                        List.map (\capture -> showCapture model.timer capture) model.captures
+                                        List.map (\capture -> showCapture model.timer capture) (sortCaptures model.sortCaptures model.captures)
 
                                   else
                                     column [ centerX, spacing 20 ]
@@ -278,6 +284,45 @@ subscriptions model =
 
 
 -- captures
+
+
+sortCaptures : SortCaptures -> List Capture -> List Capture
+sortCaptures sortBy =
+    List.sortWith (compareCaptures sortBy)
+
+
+compareCaptures : SortCaptures -> Capture -> Capture -> Order
+compareCaptures (Status sortBy) c1 c2 =
+    case ( sortBy, c1.status, c2.status ) of
+        ( InProgress, InProgress, _ ) ->
+            LT
+
+        ( InProgress, _, InProgress ) ->
+            GT
+
+        ( InProgress, _, _ ) ->
+            EQ
+
+        ( ToDo, ToDo, _ ) ->
+            LT
+
+        ( ToDo, _, ToDo ) ->
+            GT
+
+        ( ToDo, _, _ ) ->
+            EQ
+
+        ( Completed, Completed, _ ) ->
+            LT
+
+        ( Completed, _, Completed ) ->
+            GT
+
+        ( Completed, _, _ ) ->
+            EQ
+
+        _ ->
+            EQ
 
 
 startTimer : String -> Int -> Cmd Msg

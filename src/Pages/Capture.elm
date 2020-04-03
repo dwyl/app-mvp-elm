@@ -1,12 +1,12 @@
 module Pages.Capture exposing (Model, Msg(..), init, subscriptions, toSession, update, view)
 
-import Asset
 import Capture exposing (..)
 import Element exposing (..)
 import Element.Background as EltBackground
 import Element.Font exposing (..)
 import Element.Input as EltInput
 import Endpoint
+import Html.Attributes as HtmlAttr
 import Http
 import Page
 import Route
@@ -390,7 +390,14 @@ showTime capture clock =
                         Just t ->
                             millisToHMS t
             in
-            link [ center, bold, width fill, padding 30, color UI.teal ]
+            link
+                [ center
+                , bold
+                , width fill
+                , padding 30
+                , color UI.teal
+                , htmlAttribute <| HtmlAttr.class "underline"
+                ]
                 { url = Route.routeToString (Route.CaptureTimers capture.idCapture)
                 , label = text (hour ++ ":" ++ minute ++ ":" ++ second)
                 }
@@ -405,7 +412,14 @@ showTime capture clock =
                         Just t ->
                             millisToHMS t
             in
-            link [ center, bold, width fill, padding 30, color UI.teal ]
+            link
+                [ center
+                , bold
+                , width fill
+                , padding 30
+                , color UI.teal
+                , htmlAttribute <| HtmlAttr.class "underline"
+                ]
                 { url = Route.routeToString (Route.CaptureTimers capture.idCapture)
                 , label = text (hour ++ ":" ++ minute ++ ":" ++ second)
                 }

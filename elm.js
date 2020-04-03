@@ -15744,7 +15744,9 @@ var $author$project$Pages$Capture$showTime = F2(
 						$mdgriffith$elm_ui$Element$Font$bold,
 						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
 						$mdgriffith$elm_ui$Element$padding(30),
-						$mdgriffith$elm_ui$Element$Font$color($author$project$UI$teal)
+						$mdgriffith$elm_ui$Element$Font$color($author$project$UI$teal),
+						$mdgriffith$elm_ui$Element$htmlAttribute(
+						$elm$html$Html$Attributes$class('underline'))
 					]),
 				{
 					W: $mdgriffith$elm_ui$Element$text(hour + (':' + (minute + (':' + second)))),
@@ -15772,7 +15774,9 @@ var $author$project$Pages$Capture$showTime = F2(
 						$mdgriffith$elm_ui$Element$Font$bold,
 						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
 						$mdgriffith$elm_ui$Element$padding(30),
-						$mdgriffith$elm_ui$Element$Font$color($author$project$UI$teal)
+						$mdgriffith$elm_ui$Element$Font$color($author$project$UI$teal),
+						$mdgriffith$elm_ui$Element$htmlAttribute(
+						$elm$html$Html$Attributes$class('underline'))
 					]),
 				{
 					W: $mdgriffith$elm_ui$Element$text(hour + (':' + (minute + (':' + second)))),

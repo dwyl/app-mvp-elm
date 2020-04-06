@@ -784,11 +784,11 @@ function _Debug_crash_UNUSED(identifier, fact1, fact2, fact3, fact4)
 
 function _Debug_regionToString(region)
 {
-	if (region.a8.ap === region.bw.ap)
+	if (region.a8.aq === region.bw.aq)
 	{
-		return 'on line ' + region.a8.ap;
+		return 'on line ' + region.a8.aq;
 	}
-	return 'on lines ' + region.a8.ap + ' through ' + region.bw.ap;
+	return 'on lines ' + region.a8.aq + ' through ' + region.bw.aq;
 }
 
 
@@ -4512,17 +4512,17 @@ var _Http_toTask = F3(function(router, toTask, request)
 	return _Scheduler_binding(function(callback)
 	{
 		function done(response) {
-			callback(toTask(request.an.a(response)));
+			callback(toTask(request.ao.a(response)));
 		}
 
 		var xhr = new XMLHttpRequest();
 		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
-		xhr.addEventListener('load', function() { done(_Http_toResponse(request.an.b, xhr)); });
+		xhr.addEventListener('load', function() { done(_Http_toResponse(request.ao.b, xhr)); });
 		$elm$core$Maybe$isJust(request.ay) && _Http_track(router, xhr, request.ay.a);
 
 		try {
-			xhr.open(request.aq, request.S, true);
+			xhr.open(request.ar, request.S, true);
 		} catch (e) {
 			return done($elm$http$Http$BadUrl_(request.S));
 		}
@@ -4541,12 +4541,12 @@ var _Http_toTask = F3(function(router, toTask, request)
 
 function _Http_configureRequest(xhr, request)
 {
-	for (var headers = request.ao; headers.b; headers = headers.b) // WHILE_CONS
+	for (var headers = request.ap; headers.b; headers = headers.b) // WHILE_CONS
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
 	xhr.timeout = request.av.a || 0;
-	xhr.responseType = request.an.d;
+	xhr.responseType = request.ao.d;
 	xhr.withCredentials = request.cR;
 }
 
@@ -4571,7 +4571,7 @@ function _Http_toMetadata(xhr)
 		S: xhr.responseURL,
 		em: xhr.status,
 		en: xhr.statusText,
-		ao: _Http_parseHeaders(xhr.getAllResponseHeaders())
+		ap: _Http_parseHeaders(xhr.getAllResponseHeaders())
 	};
 }
 
@@ -7628,9 +7628,9 @@ var $elm$http$Http$cmdMap = F2(
 				{
 					cR: r.cR,
 					bn: r.bn,
-					an: A2(_Http_mapExpect, func, r.an),
-					ao: r.ao,
-					aq: r.aq,
+					ao: A2(_Http_mapExpect, func, r.ao),
+					ap: r.ap,
+					ar: r.ar,
 					av: r.av,
 					ay: r.ay,
 					S: r.S
@@ -7656,18 +7656,18 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{cR: false, bn: r.bn, an: r.an, ao: r.ao, aq: r.aq, av: r.av, ay: r.ay, S: r.S}));
+			{cR: false, bn: r.bn, ao: r.ao, ap: r.ap, ar: r.ar, av: r.av, ay: r.ay, S: r.S}));
 };
 var $author$project$Pages$Capture$apiGetCaptures = function (token) {
 	return $elm$http$Http$request(
 		{
 			bn: $elm$http$Http$emptyBody,
-			an: A2($elm$http$Http$expectJson, $author$project$Pages$Capture$GotCaptures, $author$project$Capture$capturesDataDecoder),
-			ao: _List_fromArray(
+			ao: A2($elm$http$Http$expectJson, $author$project$Pages$Capture$GotCaptures, $author$project$Capture$capturesDataDecoder),
+			ap: _List_fromArray(
 				[
 					A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
 				]),
-			aq: 'GET',
+			ar: 'GET',
 			av: $elm$core$Maybe$Nothing,
 			ay: $elm$core$Maybe$Nothing,
 			S: $author$project$Endpoint$toString($author$project$Endpoint$captures)
@@ -7696,7 +7696,7 @@ var $author$project$Pages$Capture$initModel = function (session) {
 		O: $author$project$Capture$initCapture,
 		aL: 0,
 		q: session,
-		at: $author$project$Capture$InProgress,
+		ai: $author$project$Capture$InProgress,
 		_: {
 			aM: $elm$time$Time$millisToPosix(0),
 			bh: $elm$time$Time$utc
@@ -7745,12 +7745,12 @@ var $author$project$Pages$CaptureTimers$getCapture = F2(
 		return $elm$http$Http$request(
 			{
 				bn: $elm$http$Http$emptyBody,
-				an: A2($elm$http$Http$expectJson, $author$project$Pages$CaptureTimers$GotCapture, $author$project$Capture$captureDataDecoder),
-				ao: _List_fromArray(
+				ao: A2($elm$http$Http$expectJson, $author$project$Pages$CaptureTimers$GotCapture, $author$project$Capture$captureDataDecoder),
+				ap: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
 					]),
-				aq: 'GET',
+				ar: 'GET',
 				av: $elm$core$Maybe$Nothing,
 				ay: $elm$core$Maybe$Nothing,
 				S: $author$project$Endpoint$toString(
@@ -7758,7 +7758,7 @@ var $author$project$Pages$CaptureTimers$getCapture = F2(
 			});
 	});
 var $author$project$Pages$CaptureTimers$initModel = function (session) {
-	return {al: $author$project$Capture$initCapture, l: '', q: session, aQ: $elm$time$Time$utc};
+	return {am: $author$project$Capture$initCapture, l: '', q: session, aQ: $elm$time$Time$utc};
 };
 var $author$project$Pages$CaptureTimers$init = F2(
 	function (session, idCapture) {
@@ -7806,12 +7806,12 @@ var $author$project$Pages$Session$getPersonInfo = function (token) {
 	return $elm$http$Http$request(
 		{
 			bn: $elm$http$Http$emptyBody,
-			an: A2($elm$http$Http$expectJson, $author$project$Pages$Session$GotPersonInfo, $author$project$Pages$Session$personDecoder),
-			ao: _List_fromArray(
+			ao: A2($elm$http$Http$expectJson, $author$project$Pages$Session$GotPersonInfo, $author$project$Pages$Session$personDecoder),
+			ap: _List_fromArray(
 				[
 					A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
 				]),
-			aq: 'GET',
+			ar: 'GET',
 			av: $elm$core$Maybe$Nothing,
 			ay: $elm$core$Maybe$Nothing,
 			S: $author$project$Endpoint$toString($author$project$Endpoint$personInfo)
@@ -8496,12 +8496,12 @@ var $author$project$Pages$Capture$apiSaveCapture = F2(
 			{
 				bn: $elm$http$Http$jsonBody(
 					$author$project$Capture$captureEncode(capture)),
-				an: A2($elm$http$Http$expectJson, $author$project$Pages$Capture$CaptureSaved, $author$project$Capture$savedCaptureDecoder),
-				ao: _List_fromArray(
+				ao: A2($elm$http$Http$expectJson, $author$project$Pages$Capture$CaptureSaved, $author$project$Capture$savedCaptureDecoder),
+				ap: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
 					]),
-				aq: 'POST',
+				ar: 'POST',
 				av: $elm$core$Maybe$Nothing,
 				ay: $elm$core$Maybe$Nothing,
 				S: $author$project$Endpoint$toString($author$project$Endpoint$captures)
@@ -8513,12 +8513,12 @@ var $author$project$Pages$Capture$apiUpdateCapture = F2(
 			{
 				bn: $elm$http$Http$jsonBody(
 					$author$project$Capture$captureEncode(capture)),
-				an: A2($elm$http$Http$expectJson, $author$project$Pages$Capture$CaptureSaved, $author$project$Capture$savedCaptureDecoder),
-				ao: _List_fromArray(
+				ao: A2($elm$http$Http$expectJson, $author$project$Pages$Capture$CaptureSaved, $author$project$Capture$savedCaptureDecoder),
+				ap: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
 					]),
-				aq: 'PUT',
+				ar: 'PUT',
 				av: $elm$core$Maybe$Nothing,
 				ay: $elm$core$Maybe$Nothing,
 				S: $author$project$Endpoint$toString(
@@ -8547,15 +8547,15 @@ var $author$project$Pages$Capture$startTimer = F2(
 		return $elm$http$Http$request(
 			{
 				bn: $elm$http$Http$emptyBody,
-				an: A2(
+				ao: A2(
 					$elm$http$Http$expectJson,
 					$author$project$Pages$Capture$TimerUpdated($author$project$Capture$InProgress),
 					$author$project$Timer$timerDataDecoder),
-				ao: _List_fromArray(
+				ap: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
 					]),
-				aq: 'POST',
+				ar: 'POST',
 				av: $elm$core$Maybe$Nothing,
 				ay: $elm$core$Maybe$Nothing,
 				S: $author$project$Endpoint$toString(
@@ -8591,15 +8591,15 @@ var $author$project$Pages$Capture$stopTimer = F3(
 			{
 				bn: $elm$http$Http$jsonBody(
 					$author$project$Timer$actionTimerEncode('stop')),
-				an: A2(
+				ao: A2(
 					$elm$http$Http$expectJson,
 					$author$project$Pages$Capture$TimerUpdated($author$project$Capture$ToDo),
 					$author$project$Timer$timerDataDecoder),
-				ao: _List_fromArray(
+				ap: _List_fromArray(
 					[
 						A2($elm$http$Http$header, 'authorization', 'Bearer ' + token)
 					]),
-				aq: 'PUT',
+				ar: 'PUT',
 				av: $elm$core$Maybe$Nothing,
 				ay: $elm$core$Maybe$Nothing,
 				S: $author$project$Endpoint$toString(
@@ -8760,7 +8760,7 @@ var $author$project$Pages$Capture$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{ad: captures}),
+						{ad: captures, ai: $author$project$Capture$InProgress}),
 					A2(
 						$author$project$Pages$Capture$startTimer,
 						$author$project$Session$token(model.q),
@@ -8842,7 +8842,7 @@ var $author$project$Pages$Capture$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{at: status}),
+						{ai: status}),
 					$elm$core$Platform$Cmd$none);
 		}
 	});
@@ -8873,7 +8873,7 @@ var $author$project$Pages$CaptureTimers$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{al: capture, l: ''}),
+							{am: capture, l: ''}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					var httpError = result.a;
@@ -9142,7 +9142,7 @@ var $mdgriffith$elm_ui$Internal$Model$Unkeyed = function (a) {
 };
 var $mdgriffith$elm_ui$Internal$Model$AsColumn = 1;
 var $mdgriffith$elm_ui$Internal$Model$asColumn = 1;
-var $mdgriffith$elm_ui$Internal$Style$classes = {cG: 'a', aR: 'atv', cJ: 'ab', cK: 'cx', cL: 'cy', cM: 'acb', cN: 'accx', cO: 'accy', cP: 'acr', bj: 'al', bk: 'ar', cQ: 'at', aS: 'ah', aT: 'av', cT: 's', cX: 'bh', cY: 'b', cZ: 'w7', c$: 'bd', c0: 'bdt', aB: 'bn', c1: 'bs', aC: 'cpe', c9: 'cp', da: 'cpx', db: 'cpy', K: 'c', aE: 'ctr', aF: 'cb', aG: 'ccx', L: 'ccy', am: 'cl', aH: 'cr', dc: 'ct', de: 'cptr', df: 'ctxt', ds: 'fcs', bA: 'focus-within', dt: 'fs', du: 'g', aY: 'hbh', aZ: 'hc', bG: 'he', a_: 'hf', bH: 'hfp', dw: 'hv', dA: 'ic', dC: 'fr', dE: 'iml', dF: 'imlf', dG: 'imlp', dH: 'implw', dI: 'it', dK: 'i', bT: 'lnk', ag: 'nb', bW: 'notxt', dX: 'ol', dY: 'or', X: 'oq', d1: 'oh', b$: 'pg', b0: 'p', d2: 'ppe', d7: 'ui', cf: 'r', d9: 'sb', ea: 'sbx', eb: 'sby', ec: 'sbt', ef: 'e', eg: 'cap', eh: 'sev', er: 'sk', bc: 't', ev: 'tc', ew: 'w8', ex: 'w2', ey: 'w9', ez: 'tj', aP: 'tja', eA: 'tl', eB: 'w3', eC: 'w5', eD: 'w4', eE: 'tr', eF: 'w6', eG: 'w1', eH: 'tun', cw: 'ts', aa: 'clr', eL: 'u', be: 'wc', cB: 'we', bf: 'wf', cC: 'wfp', bg: 'wrp'};
+var $mdgriffith$elm_ui$Internal$Style$classes = {cG: 'a', aR: 'atv', cJ: 'ab', cK: 'cx', cL: 'cy', cM: 'acb', cN: 'accx', cO: 'accy', cP: 'acr', bj: 'al', bk: 'ar', cQ: 'at', aS: 'ah', aT: 'av', cT: 's', cX: 'bh', cY: 'b', cZ: 'w7', c$: 'bd', c0: 'bdt', aB: 'bn', c1: 'bs', aC: 'cpe', c9: 'cp', da: 'cpx', db: 'cpy', K: 'c', aE: 'ctr', aF: 'cb', aG: 'ccx', L: 'ccy', an: 'cl', aH: 'cr', dc: 'ct', de: 'cptr', df: 'ctxt', ds: 'fcs', bA: 'focus-within', dt: 'fs', du: 'g', aY: 'hbh', aZ: 'hc', bG: 'he', a_: 'hf', bH: 'hfp', dw: 'hv', dA: 'ic', dC: 'fr', dE: 'iml', dF: 'imlf', dG: 'imlp', dH: 'implw', dI: 'it', dK: 'i', bT: 'lnk', ag: 'nb', bW: 'notxt', dX: 'ol', dY: 'or', X: 'oq', d1: 'oh', b$: 'pg', b0: 'p', d2: 'ppe', d7: 'ui', cf: 'r', d9: 'sb', ea: 'sbx', eb: 'sby', ec: 'sbt', ef: 'e', eg: 'cap', eh: 'sev', er: 'sk', bc: 't', ev: 'tc', ew: 'w8', ex: 'w2', ey: 'w9', ez: 'tj', aP: 'tja', eA: 'tl', eB: 'w3', eC: 'w5', eD: 'w4', eE: 'tr', eF: 'w6', eG: 'w1', eH: 'tun', cw: 'ts', aa: 'clr', eL: 'u', be: 'wc', cB: 'we', bf: 'wf', cC: 'wfp', bg: 'wrp'};
 var $mdgriffith$elm_ui$Internal$Model$Generic = {$: 0};
 var $mdgriffith$elm_ui$Internal$Model$div = $mdgriffith$elm_ui$Internal$Model$Generic;
 var $mdgriffith$elm_ui$Internal$Model$NoNearbyChildren = {$: 0};
@@ -9667,7 +9667,7 @@ var $mdgriffith$elm_ui$Internal$Style$contentName = function (desc) {
 			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aH);
 		case 3:
 			var _v4 = desc;
-			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.am);
+			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.an);
 		case 4:
 			var _v5 = desc;
 			return $mdgriffith$elm_ui$Internal$Style$dot($mdgriffith$elm_ui$Internal$Style$classes.aG);
@@ -14473,7 +14473,7 @@ var $mdgriffith$elm_ui$Element$column = F2(
 			$mdgriffith$elm_ui$Internal$Model$div,
 			A2(
 				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.dc + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.am)),
+				$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.dc + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.an)),
 				A2(
 					$elm$core$List$cons,
 					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
@@ -15596,7 +15596,7 @@ var $mdgriffith$elm_ui$Element$row = F2(
 			$mdgriffith$elm_ui$Internal$Model$div,
 			A2(
 				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.am + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.L)),
+				$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.an + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.L)),
 				A2(
 					$elm$core$List$cons,
 					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
@@ -16396,7 +16396,7 @@ var $mdgriffith$elm_ui$Element$Input$redistributeOver = F4(
 								f: A2($elm$core$List$cons, attr, els.f),
 								m: A2($elm$core$List$cons, attr, els.m),
 								b: A2($elm$core$List$cons, attr, els.b),
-								aj: A2($elm$core$List$cons, attr, els.aj)
+								ak: A2($elm$core$List$cons, attr, els.ak)
 							});
 					case 7:
 						var cls = attr.a;
@@ -16518,13 +16518,13 @@ var $mdgriffith$elm_ui$Element$Input$redistribute = F3(
 				f: $elm$core$List$reverse(redist.f),
 				m: $elm$core$List$reverse(redist.m),
 				b: $elm$core$List$reverse(redist.b),
-				aj: $elm$core$List$reverse(redist.aj)
+				ak: $elm$core$List$reverse(redist.ak)
 			};
 		}(
 			A3(
 				$elm$core$List$foldl,
 				A2($mdgriffith$elm_ui$Element$Input$redistributeOver, isMultiline, stacked),
-				{u: _List_Nil, f: _List_Nil, m: _List_Nil, b: _List_Nil, aj: _List_Nil},
+				{u: _List_Nil, f: _List_Nil, m: _List_Nil, b: _List_Nil, ak: _List_Nil},
 				attrs));
 	});
 var $mdgriffith$elm_ui$Element$Input$renderBox = function (_v0) {
@@ -16752,7 +16752,7 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 											A2(
 												$elm$core$List$cons,
 												$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.dG),
-												redistributed.aj)))),
+												redistributed.ak)))),
 								$mdgriffith$elm_ui$Internal$Model$Unkeyed(
 									function () {
 										if (textOptions.bc === '') {
@@ -16928,7 +16928,7 @@ var $author$project$Pages$Capture$view = function (model) {
 												]),
 											_List_fromArray(
 												[
-													$author$project$Pages$Capture$showSortingOptions(model.at),
+													$author$project$Pages$Capture$showSortingOptions(model.ai),
 													A2(
 													$mdgriffith$elm_ui$Element$column,
 													_List_fromArray(
@@ -16942,7 +16942,7 @@ var $author$project$Pages$Capture$view = function (model) {
 														function (capture) {
 															return A2($author$project$Pages$Capture$showCapture, model._, capture);
 														},
-														A2($author$project$Pages$Capture$sortCaptures, model.at, model.ad)))
+														A2($author$project$Pages$Capture$sortCaptures, model.ai, model.ad)))
 												])) : A2(
 											$mdgriffith$elm_ui$Element$column,
 											_List_fromArray(
@@ -17247,9 +17247,9 @@ var $author$project$Pages$CaptureTimers$view = function (model) {
 								_List_Nil,
 								_List_fromArray(
 									[
-										$mdgriffith$elm_ui$Element$text(model.al.bc)
+										$mdgriffith$elm_ui$Element$text(model.am.bc)
 									]))),
-							A2($author$project$Pages$CaptureTimers$showTimers, model.aQ, model.al.cs)
+							A2($author$project$Pages$CaptureTimers$showTimers, model.aQ, model.am.cs)
 						])))
 			]),
 		ct: 'Timers'

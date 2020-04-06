@@ -1,6 +1,5 @@
-module Pages.Capture exposing (Model, Msg(..), init, subscriptions, toSession, update, view)
+module Pages.Capture exposing (Model, Msg(..), SortCaptures(..), compareCaptures, init, sortCaptures, subscriptions, toSession, update, view)
 
-import Asset
 import Capture exposing (..)
 import Element exposing (..)
 import Element.Background as EltBackground
@@ -309,7 +308,7 @@ compareCaptures (Status sortBy) c1 c2 =
         ( InProgress, _, InProgress ) ->
             GT
 
-        ( InProgress, _, _ ) ->
+        ( InProgress, InProgress, _ ) ->
             LT
 
         ( ToDo, ToDo, ToDo ) ->

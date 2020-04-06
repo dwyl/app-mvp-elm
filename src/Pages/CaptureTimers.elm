@@ -64,7 +64,7 @@ update msg model =
 
         GotSession session ->
             ( { model | session = session }
-            , Route.replaceUrl (Session.navKey model.session) Route.Home
+            , Route.replaceUrl (Session.navKey model.session) Route.Capture
             )
 
         GotCapture result ->

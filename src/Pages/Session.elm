@@ -62,7 +62,7 @@ update msg model =
 
         GotSession session ->
             ( { model | session = session }
-            , Route.replaceUrl (Session.navKey model.session) Route.Home
+            , Route.replaceUrl (Session.navKey model.session) Route.Capture
             )
 
 
@@ -99,7 +99,7 @@ view model =
         [ layout [] <|
             column [ Element.centerX ]
                 [ link [ Element.centerX ]
-                    { url = Route.routeToString Route.Home
+                    { url = Route.routeToString Route.Capture
                     , label = image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
                     }
                 , if String.isEmpty model.error then

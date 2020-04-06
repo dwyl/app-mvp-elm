@@ -9,7 +9,6 @@ import Page
 import Pages.Auth as Auth
 import Pages.Capture as Capture
 import Pages.CaptureTimers as CaptureTimers
-import Pages.Home as Home
 import Pages.Session as PagesSession
 import Route
 import Session
@@ -33,8 +32,7 @@ main =
 
 
 type Model
-    = Home Home.Model
-    | Auth Auth.Model
+    = Auth Auth.Model
     | Session PagesSession.Model
     | NotFound Session.Session
     | Logout Session.Session
@@ -68,7 +66,6 @@ init flags url navKey =
 type Msg
     = UrlChanged Url.Url
     | LinkClicked Browser.UrlRequest
-    | GotHomeMsg Home.Msg
     | GotAuthMsg Auth.Msg
     | GotPagesSessionMsg PagesSession.Msg
     | GotCaptureMsg Capture.Msg
@@ -88,13 +85,6 @@ update msg model =
 
         ( UrlChanged url, _ ) ->
             loadRoute (Route.fromUrl url) model
-
-        ( GotHomeMsg homeMsg, Home homeModel ) ->
-            let
-                ( subModel, subMsg ) =
-                    Home.update homeMsg homeModel
-            in
-            ( Home subModel, Cmd.map GotHomeMsg subMsg )
 
         ( GotAuthMsg authMsg, Auth authModel ) ->
             let
@@ -141,13 +131,6 @@ loadRoute maybeRoute model =
         Nothing ->
             ( NotFound session, Cmd.none )
 
-        Just Route.Home ->
-            let
-                ( subModel, subMsg ) =
-                    Home.init session
-            in
-            ( Home subModel, Cmd.map GotHomeMsg subMsg )
-
         Just (Route.Auth Nothing) ->
             let
                 ( subModel, subMsg ) =
@@ -166,7 +149,7 @@ loadRoute maybeRoute model =
             ( Logout session
             , Cmd.batch
                 [ Session.logout
-                , Route.replaceUrl (Session.navKey session) Route.Home
+                , Route.replaceUrl (Session.navKey session) (Route.Auth Nothing)
                 ]
             )
 
@@ -188,9 +171,6 @@ loadRoute maybeRoute model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model of
-        Home home ->
-            Sub.map GotHomeMsg (Home.subscriptions home)
-
         Auth authModel ->
             Sub.map GotAuthMsg (Auth.subscriptions authModel)
 
@@ -213,9 +193,6 @@ subscriptions model =
 view : Model -> Browser.Document Msg
 view model =
     case model of
-        Home home ->
-            Page.view GotHomeMsg (Home.view home)
-
         Auth authModel ->
             Page.view GotAuthMsg (Auth.view authModel)
 
@@ -225,7 +202,7 @@ view model =
         NotFound _ ->
             { title = "Not Found"
             , body =
-                [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+                [ a [ Route.href Route.Capture ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
                 , h1 [ class "tc" ] [ text "page not found" ]
                 ]
             }
@@ -233,7 +210,7 @@ view model =
         Logout _ ->
             { title = "Logout"
             , body =
-                [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+                [ a [ Route.href Route.Capture ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
                 , h1 [ class "tc" ] [ text "Logout" ]
                 ]
             }
@@ -250,9 +227,6 @@ toSession page =
     case page of
         NotFound session ->
             session
-
-        Home m ->
-            Home.toSession m
 
         Auth m ->
             Auth.toSession m

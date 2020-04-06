@@ -37,7 +37,7 @@ update msg _ =
     case msg of
         GotSession session ->
             ( session
-            , Route.replaceUrl (Session.navKey session) Route.Home
+            , Route.replaceUrl (Session.navKey session) Route.Capture
             )
 
 

@@ -119,7 +119,7 @@ update msg model =
 
         GotSession session ->
             ( { model | session = session }
-            , Route.replaceUrl (Session.navKey model.session) Route.Home
+            , Route.replaceUrl (Session.navKey model.session) Route.Capture
             )
 
         GotCaptures result ->
@@ -224,7 +224,7 @@ view model =
                 , case model.session of
                     Session.Guest _ ->
                         link [ centerX ]
-                            { url = Route.routeToString Route.Home
+                            { url = Route.routeToString Route.Capture
                             , label = text "Not logged in yet!"
                             }
 

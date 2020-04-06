@@ -63,12 +63,19 @@ initModel session =
 
 init : Session -> ( Model, Cmd Msg )
 init session =
-    ( initModel session
-    , Cmd.batch
-        [ apiGetCaptures (token session)
-        , Task.perform AdjustTimeZone Time.here
-        ]
-    )
+    case session of
+        Guest _ ->
+            ( initModel session
+            , Route.replaceUrl (Session.navKey session) Route.Login
+            )
+
+        Session _ _ ->
+            ( initModel session
+            , Cmd.batch
+                [ apiGetCaptures (token session)
+                , Task.perform AdjustTimeZone Time.here
+                ]
+            )
 
 
 

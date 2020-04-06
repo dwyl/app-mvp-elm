@@ -15,6 +15,7 @@ import Url.Parser.Query as Query
 type Route
     = Auth (Maybe String)
     | Logout
+    | Login
     | Capture
     | CaptureTimers Int
 
@@ -25,6 +26,7 @@ routeParser =
         [ Parser.map Capture Parser.top
         , Parser.map Auth (Parser.s "auth" <?> Query.string "jwt")
         , Parser.map Logout (Parser.s "logout")
+        , Parser.map Login (Parser.s "login")
         , Parser.map CaptureTimers (Parser.s "capture" </> Parser.int)
         ]
 
@@ -53,6 +55,9 @@ routeToString route =
 
         Logout ->
             "/logout"
+
+        Login ->
+            "/login"
 
         CaptureTimers idCapture ->
             "/capture/" ++ String.fromInt idCapture

@@ -9,6 +9,7 @@ import Page
 import Pages.Auth as Auth
 import Pages.Capture as Capture
 import Pages.CaptureTimers as CaptureTimers
+import Pages.Login as Login
 import Pages.Session as PagesSession
 import Route
 import Session
@@ -36,6 +37,7 @@ type Model
     | Session PagesSession.Model
     | NotFound Session.Session
     | Logout Session.Session
+    | Login Session.Session
     | Capture Capture.Model
     | CaptureTimers CaptureTimers.Model
 
@@ -70,6 +72,7 @@ type Msg
     | GotPagesSessionMsg PagesSession.Msg
     | GotCaptureMsg Capture.Msg
     | GotCaptureTimersMsg CaptureTimers.Msg
+    | GotLoginMsg Login.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -114,6 +117,13 @@ update msg model =
             in
             ( CaptureTimers subModel, Cmd.map GotCaptureTimersMsg subMsg )
 
+        ( GotLoginMsg loginMsg, Login loginModel ) ->
+            let
+                ( subModel, subMsg ) =
+                    Login.update loginMsg loginModel
+            in
+            ( Login subModel, Cmd.map GotLoginMsg subMsg )
+
         -- combining the msg and the model.page allow us to filter out
         -- messages coming from the wrong page
         ( _, _ ) ->
@@ -149,9 +159,16 @@ loadRoute maybeRoute model =
             ( Logout session
             , Cmd.batch
                 [ Session.logout
-                , Route.replaceUrl (Session.navKey session) (Route.Auth Nothing)
+                , Route.replaceUrl (Session.navKey session) Route.Login
                 ]
             )
+
+        Just Route.Login ->
+            let
+                ( subModel, subMsg ) =
+                    Login.init session
+            in
+            ( Login subModel, Cmd.map GotLoginMsg subMsg )
 
         Just Route.Capture ->
             let
@@ -189,6 +206,9 @@ subscriptions model =
         CaptureTimers captureTimersModel ->
             Sub.map GotCaptureTimersMsg (CaptureTimers.subscriptions captureTimersModel)
 
+        Login loginModel ->
+            Sub.map GotLoginMsg (Login.subscriptions loginModel)
+
 
 view : Model -> Browser.Document Msg
 view model =
@@ -215,6 +235,9 @@ view model =
                 ]
             }
 
+        Login loginModel ->
+            Page.view GotLoginMsg (Login.view loginModel)
+
         Capture captureModel ->
             Page.view GotCaptureMsg (Capture.view captureModel)
 
@@ -236,6 +259,9 @@ toSession page =
 
         Logout session ->
             session
+
+        Login m ->
+            Login.toSession m
 
         Capture m ->
             Capture.toSession m

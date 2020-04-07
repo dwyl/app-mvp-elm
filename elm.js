@@ -7745,7 +7745,7 @@ var $author$project$Pages$Capture$initModel = function (session) {
 		l: '',
 		N: $author$project$Capture$initCapture,
 		aM: 0,
-		q: session,
+		n: session,
 		ai: $author$project$Capture$InProgress,
 		Z: {
 			aN: $elm$time$Time$millisToPosix(0),
@@ -7808,7 +7808,7 @@ var $author$project$Pages$CaptureTimers$getCapture = F2(
 			});
 	});
 var $author$project$Pages$CaptureTimers$initModel = function (session) {
-	return {am: $author$project$Capture$initCapture, l: '', q: session, aR: $elm$time$Time$utc};
+	return {am: $author$project$Capture$initCapture, l: '', n: session, aR: $elm$time$Time$utc};
 };
 var $author$project$Pages$CaptureTimers$init = F2(
 	function (session, idCapture) {
@@ -7835,7 +7835,7 @@ var $author$project$Pages$Login$init = function (session) {
 };
 var $author$project$Pages$Session$Model = F3(
 	function (session, token, error) {
-		return {l: error, q: session, be: token};
+		return {l: error, n: session, be: token};
 	});
 var $author$project$Pages$Session$GotPersonInfo = function (a) {
 	return {$: 0, a: a};
@@ -7919,16 +7919,16 @@ var $author$project$Pages$Auth$toSession = function (model) {
 	return model;
 };
 var $author$project$Pages$Capture$toSession = function (model) {
-	return model.q;
+	return model.n;
 };
 var $author$project$Pages$CaptureTimers$toSession = function (model) {
-	return model.q;
+	return model.n;
 };
 var $author$project$Pages$Login$toSession = function (model) {
 	return model;
 };
 var $author$project$Pages$Session$toSession = function (model) {
-	return model.q;
+	return model.n;
 };
 var $author$project$Main$toSession = function (page) {
 	switch (page.$) {
@@ -8375,7 +8375,7 @@ var $author$project$Pages$Capture$subscriptions = function (model) {
 				A2(
 				$author$project$Session$changeSession,
 				$author$project$Pages$Capture$GotSession,
-				$author$project$Session$navKey(model.q))
+				$author$project$Session$navKey(model.n))
 			]));
 };
 var $author$project$Pages$CaptureTimers$GotSession = function (a) {
@@ -8385,7 +8385,7 @@ var $author$project$Pages$CaptureTimers$subscriptions = function (model) {
 	return A2(
 		$author$project$Session$changeSession,
 		$author$project$Pages$CaptureTimers$GotSession,
-		$author$project$Session$navKey(model.q));
+		$author$project$Session$navKey(model.n));
 };
 var $author$project$Pages$Login$GotSession = $elm$core$Basics$identity;
 var $author$project$Pages$Login$subscriptions = function (model) {
@@ -8401,7 +8401,7 @@ var $author$project$Pages$Session$subscriptions = function (model) {
 	return A2(
 		$author$project$Session$changeSession,
 		$author$project$Pages$Session$GotSession,
-		$author$project$Session$navKey(model.q));
+		$author$project$Session$navKey(model.n));
 };
 var $author$project$Main$subscriptions = function (model) {
 	switch (model.$) {
@@ -8699,10 +8699,10 @@ var $author$project$Pages$Capture$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{q: session}),
+						{n: session}),
 					A2(
 						$author$project$Route$replaceUrl,
-						$author$project$Session$navKey(model.q),
+						$author$project$Session$navKey(model.n),
 						$author$project$Route$Capture));
 			case 1:
 				var result = msg.a;
@@ -8724,10 +8724,15 @@ var $author$project$Pages$Capture$update = F2(
 										_Utils_update(
 											model,
 											{l: 'Access not authorised'}),
-										A2(
-											$author$project$Route$replaceUrl,
-											$author$project$Session$navKey(model.q),
-											$author$project$Route$Capture));
+										$elm$core$Platform$Cmd$batch(
+											_List_fromArray(
+												[
+													$author$project$Session$logout,
+													A2(
+													$author$project$Route$replaceUrl,
+													$author$project$Session$navKey(model.n),
+													$author$project$Route$Login)
+												])));
 								case 404:
 									return _Utils_Tuple2(
 										_Utils_update(
@@ -8755,7 +8760,7 @@ var $author$project$Pages$Capture$update = F2(
 							model,
 							{l: ''}),
 						$author$project$Pages$Capture$apiGetCaptures(
-							$author$project$Session$token(model.q)));
+							$author$project$Session$token(model.n)));
 				} else {
 					var httpError = result.a;
 					_v4$2:
@@ -8767,7 +8772,15 @@ var $author$project$Pages$Capture$update = F2(
 										_Utils_update(
 											model,
 											{l: 'Access not authorised'}),
-										$elm$core$Platform$Cmd$none);
+										$elm$core$Platform$Cmd$batch(
+											_List_fromArray(
+												[
+													$author$project$Session$logout,
+													A2(
+													$author$project$Route$replaceUrl,
+													$author$project$Session$navKey(model.n),
+													$author$project$Route$Login)
+												])));
 								case 404:
 									return _Utils_Tuple2(
 										_Utils_update(
@@ -8805,7 +8818,7 @@ var $author$project$Pages$Capture$update = F2(
 						{N: $author$project$Capture$initCapture}),
 					A2(
 						$author$project$Pages$Capture$apiSaveCapture,
-						$author$project$Session$token(model.q),
+						$author$project$Session$token(model.n),
 						model.N));
 			case 5:
 				var idCapture = msg.a;
@@ -8816,7 +8829,7 @@ var $author$project$Pages$Capture$update = F2(
 						{ad: captures, ai: $author$project$Capture$InProgress}),
 					A2(
 						$author$project$Pages$Capture$startTimer,
-						$author$project$Session$token(model.q),
+						$author$project$Session$token(model.n),
 						idCapture));
 			case 6:
 				var idTimer = msg.a;
@@ -8825,7 +8838,7 @@ var $author$project$Pages$Capture$update = F2(
 					model,
 					A3(
 						$author$project$Pages$Capture$stopTimer,
-						$author$project$Session$token(model.q),
+						$author$project$Session$token(model.n),
 						idTimer,
 						idCapture));
 			case 7:
@@ -8836,7 +8849,7 @@ var $author$project$Pages$Capture$update = F2(
 							model,
 							{l: ''}),
 						$author$project$Pages$Capture$apiGetCaptures(
-							$author$project$Session$token(model.q)));
+							$author$project$Session$token(model.n)));
 				} else {
 					var httpError = result.a;
 					_v6$2:
@@ -8848,7 +8861,15 @@ var $author$project$Pages$Capture$update = F2(
 										_Utils_update(
 											model,
 											{l: 'Access not authorised'}),
-										$elm$core$Platform$Cmd$none);
+										$elm$core$Platform$Cmd$batch(
+											_List_fromArray(
+												[
+													$author$project$Session$logout,
+													A2(
+													$author$project$Route$replaceUrl,
+													$author$project$Session$navKey(model.n),
+													$author$project$Route$Login)
+												])));
 								case 404:
 									return _Utils_Tuple2(
 										_Utils_update(
@@ -8876,7 +8897,7 @@ var $author$project$Pages$Capture$update = F2(
 						model,
 						A2(
 							$author$project$Pages$Capture$apiUpdateCapture,
-							$author$project$Session$token(model.q),
+							$author$project$Session$token(model.n),
 							_Utils_update(
 								capture,
 								{au: $author$project$Capture$ToDo})));
@@ -8885,7 +8906,7 @@ var $author$project$Pages$Capture$update = F2(
 						model,
 						A2(
 							$author$project$Pages$Capture$apiUpdateCapture,
-							$author$project$Session$token(model.q),
+							$author$project$Session$token(model.n),
 							_Utils_update(
 								capture,
 								{au: $author$project$Capture$Completed})));
@@ -8914,10 +8935,10 @@ var $author$project$Pages$CaptureTimers$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{q: session}),
+						{n: session}),
 					A2(
 						$author$project$Route$replaceUrl,
-						$author$project$Session$navKey(model.q),
+						$author$project$Session$navKey(model.n),
 						$author$project$Route$Capture));
 			default:
 				var result = msg.a;
@@ -8939,10 +8960,15 @@ var $author$project$Pages$CaptureTimers$update = F2(
 										_Utils_update(
 											model,
 											{l: 'Access not authorised'}),
-										A2(
-											$author$project$Route$replaceUrl,
-											$author$project$Session$navKey(model.q),
-											$author$project$Route$Capture));
+										$elm$core$Platform$Cmd$batch(
+											_List_fromArray(
+												[
+													$author$project$Session$logout,
+													A2(
+													$author$project$Route$replaceUrl,
+													$author$project$Session$navKey(model.n),
+													$author$project$Route$Login)
+												])));
 								case 404:
 									return _Utils_Tuple2(
 										_Utils_update(
@@ -9009,7 +9035,15 @@ var $author$project$Pages$Session$update = F2(
 									_Utils_update(
 										model,
 										{l: 'Access not authorised'}),
-									$elm$core$Platform$Cmd$none);
+									$elm$core$Platform$Cmd$batch(
+										_List_fromArray(
+											[
+												$author$project$Session$logout,
+												A2(
+												$author$project$Route$replaceUrl,
+												$author$project$Session$navKey(model.n),
+												$author$project$Route$Login)
+											])));
 							case 404:
 								return _Utils_Tuple2(
 									_Utils_update(
@@ -9034,10 +9068,10 @@ var $author$project$Pages$Session$update = F2(
 			return _Utils_Tuple2(
 				_Utils_update(
 					model,
-					{q: session}),
+					{n: session}),
 				A2(
 					$author$project$Route$replaceUrl,
-					$author$project$Session$navKey(model.q),
+					$author$project$Session$navKey(model.n),
 					$author$project$Route$Capture));
 		}
 	});
@@ -11461,7 +11495,7 @@ var $elm$core$String$concat = function (strings) {
 var $mdgriffith$elm_ui$Internal$Style$Intermediate = $elm$core$Basics$identity;
 var $mdgriffith$elm_ui$Internal$Style$emptyIntermediate = F2(
 	function (selector, closing) {
-		return {aE: closing, p: _List_Nil, P: _List_Nil, H: selector};
+		return {aE: closing, q: _List_Nil, P: _List_Nil, H: selector};
 	});
 var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 	function (_v0, rulesToRender) {
@@ -11488,10 +11522,10 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 						return _Utils_update(
 							rendered,
 							{
-								p: A2(
+								q: A2(
 									$elm$core$List$cons,
-									{aE: '\n}', p: _List_Nil, P: props, H: '@supports (' + (prop + (':' + (value + (') {' + parent.H))))},
-									rendered.p)
+									{aE: '\n}', q: _List_Nil, P: props, H: '@supports (' + (prop + (':' + (value + (') {' + parent.H))))},
+									rendered.q)
 							});
 					case 4:
 						var selector = rule.a;
@@ -11499,13 +11533,13 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 						return _Utils_update(
 							rendered,
 							{
-								p: A2(
+								q: A2(
 									$elm$core$List$cons,
 									A2(
 										$mdgriffith$elm_ui$Internal$Style$renderRules,
 										A2($mdgriffith$elm_ui$Internal$Style$emptyIntermediate, parent.H + (' + ' + selector), ''),
 										adjRules),
-									rendered.p)
+									rendered.q)
 							});
 					case 1:
 						var child = rule.a;
@@ -11513,13 +11547,13 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 						return _Utils_update(
 							rendered,
 							{
-								p: A2(
+								q: A2(
 									$elm$core$List$cons,
 									A2(
 										$mdgriffith$elm_ui$Internal$Style$renderRules,
 										A2($mdgriffith$elm_ui$Internal$Style$emptyIntermediate, parent.H + (' > ' + child), ''),
 										childRules),
-									rendered.p)
+									rendered.q)
 							});
 					case 3:
 						var descriptor = rule.a;
@@ -11527,7 +11561,7 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 						return _Utils_update(
 							rendered,
 							{
-								p: A2(
+								q: A2(
 									$elm$core$List$cons,
 									A2(
 										$mdgriffith$elm_ui$Internal$Style$renderRules,
@@ -11536,20 +11570,20 @@ var $mdgriffith$elm_ui$Internal$Style$renderRules = F2(
 											_Utils_ap(parent.H, descriptor),
 											''),
 										descriptorRules),
-									rendered.p)
+									rendered.q)
 							});
 					default:
 						var batched = rule.a;
 						return _Utils_update(
 							rendered,
 							{
-								p: A2(
+								q: A2(
 									$elm$core$List$cons,
 									A2(
 										$mdgriffith$elm_ui$Internal$Style$renderRules,
 										A2($mdgriffith$elm_ui$Internal$Style$emptyIntermediate, parent.H, ''),
 										batched),
-									rendered.p)
+									rendered.q)
 							});
 				}
 			});
@@ -11580,7 +11614,7 @@ var $mdgriffith$elm_ui$Internal$Style$renderCompact = function (styleClasses) {
 		return _Utils_ap(
 			renderClass(rule),
 			$elm$core$String$concat(
-				A2($elm$core$List$map, renderIntermediate, rule.p)));
+				A2($elm$core$List$map, renderIntermediate, rule.q)));
 	};
 	return $elm$core$String$concat(
 		A2(

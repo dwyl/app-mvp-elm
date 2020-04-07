@@ -132,7 +132,10 @@ update msg model =
                         Http.BadStatus 401 ->
                             -- redirect to login page if not logged in anymore
                             ( { model | error = "Access not authorised" }
-                            , Route.replaceUrl (Session.navKey model.session) Route.Capture
+                            , Cmd.batch
+                                [ Session.logout
+                                , Route.replaceUrl (Session.navKey model.session) Route.Login
+                                ]
                             )
 
                         Http.BadStatus 404 ->
@@ -149,7 +152,12 @@ update msg model =
                 Err httpError ->
                     case httpError of
                         Http.BadStatus 401 ->
-                            ( { model | error = "Access not authorised" }, Cmd.none )
+                            ( { model | error = "Access not authorised" }
+                            , Cmd.batch
+                                [ Session.logout
+                                , Route.replaceUrl (Session.navKey model.session) Route.Login
+                                ]
+                            )
 
                         Http.BadStatus 404 ->
                             ( { model | error = "create capture endpoint not found" }, Cmd.none )
@@ -189,7 +197,12 @@ update msg model =
                 Err httpError ->
                     case httpError of
                         Http.BadStatus 401 ->
-                            ( { model | error = "Access not authorised" }, Cmd.none )
+                            ( { model | error = "Access not authorised" }
+                            , Cmd.batch
+                                [ Session.logout
+                                , Route.replaceUrl (Session.navKey model.session) Route.Login
+                                ]
+                            )
 
                         Http.BadStatus 404 ->
                             ( { model | error = "create timer endpoint not found" }, Cmd.none )

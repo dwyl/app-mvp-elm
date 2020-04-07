@@ -5175,22 +5175,22 @@ var $elm$core$Array$builderToArray = F2(
 		if (!builder.g) {
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.i),
+				$elm$core$Elm$JsArray$length(builder.j),
 				$elm$core$Array$shiftStep,
 				$elm$core$Elm$JsArray$empty,
-				builder.i);
+				builder.j);
 		} else {
 			var treeLen = builder.g * $elm$core$Array$branchFactor;
 			var depth = $elm$core$Basics$floor(
 				A2($elm$core$Basics$logBase, $elm$core$Array$branchFactor, treeLen - 1));
-			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.j) : builder.j;
+			var correctNodeList = reverseNodeList ? $elm$core$List$reverse(builder.k) : builder.k;
 			var tree = A2($elm$core$Array$treeFromBuilder, correctNodeList, builder.g);
 			return A4(
 				$elm$core$Array$Array_elm_builtin,
-				$elm$core$Elm$JsArray$length(builder.i) + treeLen,
+				$elm$core$Elm$JsArray$length(builder.j) + treeLen,
 				A2($elm$core$Basics$max, 5, depth * $elm$core$Array$shiftStep),
 				tree,
-				builder.i);
+				builder.j);
 		}
 	});
 var $elm$core$Basics$idiv = _Basics_idiv;
@@ -5203,7 +5203,7 @@ var $elm$core$Array$initializeHelp = F5(
 				return A2(
 					$elm$core$Array$builderToArray,
 					false,
-					{j: nodeList, g: (len / $elm$core$Array$branchFactor) | 0, i: tail});
+					{k: nodeList, g: (len / $elm$core$Array$branchFactor) | 0, j: tail});
 			} else {
 				var leaf = $elm$core$Array$Leaf(
 					A3($elm$core$Elm$JsArray$initialize, $elm$core$Array$branchFactor, fromIndex, fn));
@@ -7742,10 +7742,10 @@ var $elm$time$Time$utc = A2($elm$time$Time$Zone, 0, _List_Nil);
 var $author$project$Pages$Capture$initModel = function (session) {
 	return {
 		ad: _List_Nil,
-		l: '',
+		m: '',
 		N: $author$project$Capture$initCapture,
 		aM: 0,
-		n: session,
+		i: session,
 		ai: $author$project$Capture$InProgress,
 		Z: {
 			aN: $elm$time$Time$millisToPosix(0),
@@ -7808,7 +7808,7 @@ var $author$project$Pages$CaptureTimers$getCapture = F2(
 			});
 	});
 var $author$project$Pages$CaptureTimers$initModel = function (session) {
-	return {am: $author$project$Capture$initCapture, l: '', n: session, aR: $elm$time$Time$utc};
+	return {am: $author$project$Capture$initCapture, m: '', i: session, aR: $elm$time$Time$utc};
 };
 var $author$project$Pages$CaptureTimers$init = F2(
 	function (session, idCapture) {
@@ -7835,7 +7835,7 @@ var $author$project$Pages$Login$init = function (session) {
 };
 var $author$project$Pages$Session$Model = F3(
 	function (session, token, error) {
-		return {l: error, n: session, be: token};
+		return {m: error, i: session, be: token};
 	});
 var $author$project$Pages$Session$GotPersonInfo = function (a) {
 	return {$: 0, a: a};
@@ -7919,16 +7919,16 @@ var $author$project$Pages$Auth$toSession = function (model) {
 	return model;
 };
 var $author$project$Pages$Capture$toSession = function (model) {
-	return model.n;
+	return model.i;
 };
 var $author$project$Pages$CaptureTimers$toSession = function (model) {
-	return model.n;
+	return model.i;
 };
 var $author$project$Pages$Login$toSession = function (model) {
 	return model;
 };
 var $author$project$Pages$Session$toSession = function (model) {
-	return model.n;
+	return model.i;
 };
 var $author$project$Main$toSession = function (page) {
 	switch (page.$) {
@@ -8375,7 +8375,7 @@ var $author$project$Pages$Capture$subscriptions = function (model) {
 				A2(
 				$author$project$Session$changeSession,
 				$author$project$Pages$Capture$GotSession,
-				$author$project$Session$navKey(model.n))
+				$author$project$Session$navKey(model.i))
 			]));
 };
 var $author$project$Pages$CaptureTimers$GotSession = function (a) {
@@ -8385,7 +8385,7 @@ var $author$project$Pages$CaptureTimers$subscriptions = function (model) {
 	return A2(
 		$author$project$Session$changeSession,
 		$author$project$Pages$CaptureTimers$GotSession,
-		$author$project$Session$navKey(model.n));
+		$author$project$Session$navKey(model.i));
 };
 var $author$project$Pages$Login$GotSession = $elm$core$Basics$identity;
 var $author$project$Pages$Login$subscriptions = function (model) {
@@ -8401,7 +8401,7 @@ var $author$project$Pages$Session$subscriptions = function (model) {
 	return A2(
 		$author$project$Session$changeSession,
 		$author$project$Pages$Session$GotSession,
-		$author$project$Session$navKey(model.n));
+		$author$project$Session$navKey(model.i));
 };
 var $author$project$Main$subscriptions = function (model) {
 	switch (model.$) {
@@ -8493,7 +8493,12 @@ var $elm$url$Url$toString = function (url) {
 var $author$project$Pages$Auth$update = F2(
 	function (msg, _v0) {
 		var session = msg;
-		return _Utils_Tuple2(
+		return $author$project$Session$isGuest(session) ? _Utils_Tuple2(
+			session,
+			A2(
+				$author$project$Route$replaceUrl,
+				$author$project$Session$navKey(session),
+				$author$project$Route$Login)) : _Utils_Tuple2(
 			session,
 			A2(
 				$author$project$Route$replaceUrl,
@@ -8696,13 +8701,20 @@ var $author$project$Pages$Capture$update = F2(
 					$elm$core$Platform$Cmd$none);
 			case 0:
 				var session = msg.a;
-				return _Utils_Tuple2(
+				return $author$project$Session$isGuest(session) ? _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{n: session}),
+						{i: session}),
 					A2(
 						$author$project$Route$replaceUrl,
-						$author$project$Session$navKey(model.n),
+						$author$project$Session$navKey(model.i),
+						$author$project$Route$Login)) : _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{i: session}),
+					A2(
+						$author$project$Route$replaceUrl,
+						$author$project$Session$navKey(model.i),
 						$author$project$Route$Capture));
 			case 1:
 				var result = msg.a;
@@ -8711,7 +8723,7 @@ var $author$project$Pages$Capture$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{ad: captures, l: '', aM: 1}),
+							{ad: captures, m: '', aM: 1}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					var httpError = result.a;
@@ -8723,21 +8735,21 @@ var $author$project$Pages$Capture$update = F2(
 									return _Utils_Tuple2(
 										_Utils_update(
 											model,
-											{l: 'Access not authorised'}),
+											{m: 'Access not authorised'}),
 										$elm$core$Platform$Cmd$batch(
 											_List_fromArray(
 												[
 													$author$project$Session$logout,
 													A2(
 													$author$project$Route$replaceUrl,
-													$author$project$Session$navKey(model.n),
+													$author$project$Session$navKey(model.i),
 													$author$project$Route$Login)
 												])));
 								case 404:
 									return _Utils_Tuple2(
 										_Utils_update(
 											model,
-											{l: 'User information can\'t be retrieved'}),
+											{m: 'User information can\'t be retrieved'}),
 										$elm$core$Platform$Cmd$none);
 								default:
 									break _v2$2;
@@ -8749,7 +8761,7 @@ var $author$project$Pages$Capture$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{l: 'Error while getting the captures'}),
+							{m: 'Error while getting the captures'}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 2:
@@ -8758,9 +8770,9 @@ var $author$project$Pages$Capture$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{l: ''}),
+							{m: ''}),
 						$author$project$Pages$Capture$apiGetCaptures(
-							$author$project$Session$token(model.n)));
+							$author$project$Session$token(model.i)));
 				} else {
 					var httpError = result.a;
 					_v4$2:
@@ -8771,21 +8783,21 @@ var $author$project$Pages$Capture$update = F2(
 									return _Utils_Tuple2(
 										_Utils_update(
 											model,
-											{l: 'Access not authorised'}),
+											{m: 'Access not authorised'}),
 										$elm$core$Platform$Cmd$batch(
 											_List_fromArray(
 												[
 													$author$project$Session$logout,
 													A2(
 													$author$project$Route$replaceUrl,
-													$author$project$Session$navKey(model.n),
+													$author$project$Session$navKey(model.i),
 													$author$project$Route$Login)
 												])));
 								case 404:
 									return _Utils_Tuple2(
 										_Utils_update(
 											model,
-											{l: 'create capture endpoint not found'}),
+											{m: 'create capture endpoint not found'}),
 										$elm$core$Platform$Cmd$none);
 								default:
 									break _v4$2;
@@ -8797,7 +8809,7 @@ var $author$project$Pages$Capture$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{l: 'Error while creating the capture'}),
+							{m: 'Error while creating the capture'}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 3:
@@ -8818,7 +8830,7 @@ var $author$project$Pages$Capture$update = F2(
 						{N: $author$project$Capture$initCapture}),
 					A2(
 						$author$project$Pages$Capture$apiSaveCapture,
-						$author$project$Session$token(model.n),
+						$author$project$Session$token(model.i),
 						model.N));
 			case 5:
 				var idCapture = msg.a;
@@ -8829,7 +8841,7 @@ var $author$project$Pages$Capture$update = F2(
 						{ad: captures, ai: $author$project$Capture$InProgress}),
 					A2(
 						$author$project$Pages$Capture$startTimer,
-						$author$project$Session$token(model.n),
+						$author$project$Session$token(model.i),
 						idCapture));
 			case 6:
 				var idTimer = msg.a;
@@ -8838,7 +8850,7 @@ var $author$project$Pages$Capture$update = F2(
 					model,
 					A3(
 						$author$project$Pages$Capture$stopTimer,
-						$author$project$Session$token(model.n),
+						$author$project$Session$token(model.i),
 						idTimer,
 						idCapture));
 			case 7:
@@ -8847,9 +8859,9 @@ var $author$project$Pages$Capture$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{l: ''}),
+							{m: ''}),
 						$author$project$Pages$Capture$apiGetCaptures(
-							$author$project$Session$token(model.n)));
+							$author$project$Session$token(model.i)));
 				} else {
 					var httpError = result.a;
 					_v6$2:
@@ -8860,21 +8872,21 @@ var $author$project$Pages$Capture$update = F2(
 									return _Utils_Tuple2(
 										_Utils_update(
 											model,
-											{l: 'Access not authorised'}),
+											{m: 'Access not authorised'}),
 										$elm$core$Platform$Cmd$batch(
 											_List_fromArray(
 												[
 													$author$project$Session$logout,
 													A2(
 													$author$project$Route$replaceUrl,
-													$author$project$Session$navKey(model.n),
+													$author$project$Session$navKey(model.i),
 													$author$project$Route$Login)
 												])));
 								case 404:
 									return _Utils_Tuple2(
 										_Utils_update(
 											model,
-											{l: 'create timer endpoint not found'}),
+											{m: 'create timer endpoint not found'}),
 										$elm$core$Platform$Cmd$none);
 								default:
 									break _v6$2;
@@ -8886,7 +8898,7 @@ var $author$project$Pages$Capture$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{l: 'Error while starting the timer'}),
+							{m: 'Error while starting the timer'}),
 						$elm$core$Platform$Cmd$none);
 				}
 			case 11:
@@ -8897,7 +8909,7 @@ var $author$project$Pages$Capture$update = F2(
 						model,
 						A2(
 							$author$project$Pages$Capture$apiUpdateCapture,
-							$author$project$Session$token(model.n),
+							$author$project$Session$token(model.i),
 							_Utils_update(
 								capture,
 								{au: $author$project$Capture$ToDo})));
@@ -8906,7 +8918,7 @@ var $author$project$Pages$Capture$update = F2(
 						model,
 						A2(
 							$author$project$Pages$Capture$apiUpdateCapture,
-							$author$project$Session$token(model.n),
+							$author$project$Session$token(model.i),
 							_Utils_update(
 								capture,
 								{au: $author$project$Capture$Completed})));
@@ -8932,13 +8944,20 @@ var $author$project$Pages$CaptureTimers$update = F2(
 					$elm$core$Platform$Cmd$none);
 			case 0:
 				var session = msg.a;
-				return _Utils_Tuple2(
+				return $author$project$Session$isGuest(session) ? _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{n: session}),
+						{i: session}),
 					A2(
 						$author$project$Route$replaceUrl,
-						$author$project$Session$navKey(model.n),
+						$author$project$Session$navKey(model.i),
+						$author$project$Route$Login)) : _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{i: session}),
+					A2(
+						$author$project$Route$replaceUrl,
+						$author$project$Session$navKey(model.i),
 						$author$project$Route$Capture));
 			default:
 				var result = msg.a;
@@ -8947,7 +8966,7 @@ var $author$project$Pages$CaptureTimers$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{am: capture, l: ''}),
+							{am: capture, m: ''}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					var httpError = result.a;
@@ -8959,21 +8978,21 @@ var $author$project$Pages$CaptureTimers$update = F2(
 									return _Utils_Tuple2(
 										_Utils_update(
 											model,
-											{l: 'Access not authorised'}),
+											{m: 'Access not authorised'}),
 										$elm$core$Platform$Cmd$batch(
 											_List_fromArray(
 												[
 													$author$project$Session$logout,
 													A2(
 													$author$project$Route$replaceUrl,
-													$author$project$Session$navKey(model.n),
+													$author$project$Session$navKey(model.i),
 													$author$project$Route$Login)
 												])));
 								case 404:
 									return _Utils_Tuple2(
 										_Utils_update(
 											model,
-											{l: 'Capture information can\'t be retrieved'}),
+											{m: 'Capture information can\'t be retrieved'}),
 										$elm$core$Platform$Cmd$none);
 								default:
 									break _v2$2;
@@ -8985,7 +9004,7 @@ var $author$project$Pages$CaptureTimers$update = F2(
 					return _Utils_Tuple2(
 						_Utils_update(
 							model,
-							{l: 'Error while getting the captures'}),
+							{m: 'Error while getting the captures'}),
 						$elm$core$Platform$Cmd$none);
 				}
 		}
@@ -8993,12 +9012,17 @@ var $author$project$Pages$CaptureTimers$update = F2(
 var $author$project$Pages$Login$update = F2(
 	function (msg, _v0) {
 		var session = msg;
-		return _Utils_Tuple2(
+		return $author$project$Session$isGuest(session) ? _Utils_Tuple2(
 			session,
 			A2(
 				$author$project$Route$replaceUrl,
 				$author$project$Session$navKey(session),
-				$author$project$Route$Login));
+				$author$project$Route$Login)) : _Utils_Tuple2(
+			session,
+			A2(
+				$author$project$Route$replaceUrl,
+				$author$project$Session$navKey(session),
+				$author$project$Route$Capture));
 	});
 var $author$project$Session$encode = function (person) {
 	return $elm$json$Json$Encode$object(
@@ -9034,21 +9058,21 @@ var $author$project$Pages$Session$update = F2(
 								return _Utils_Tuple2(
 									_Utils_update(
 										model,
-										{l: 'Access not authorised'}),
+										{m: 'Access not authorised'}),
 									$elm$core$Platform$Cmd$batch(
 										_List_fromArray(
 											[
 												$author$project$Session$logout,
 												A2(
 												$author$project$Route$replaceUrl,
-												$author$project$Session$navKey(model.n),
+												$author$project$Session$navKey(model.i),
 												$author$project$Route$Login)
 											])));
 							case 404:
 								return _Utils_Tuple2(
 									_Utils_update(
 										model,
-										{l: 'User information can\'t be retrieved'}),
+										{m: 'User information can\'t be retrieved'}),
 									$elm$core$Platform$Cmd$none);
 							default:
 								break _v2$2;
@@ -9060,18 +9084,25 @@ var $author$project$Pages$Session$update = F2(
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{l: 'Error on authentication'}),
+						{m: 'Error on authentication'}),
 					$elm$core$Platform$Cmd$none);
 			}
 		} else {
 			var session = msg.a;
-			return _Utils_Tuple2(
+			return $author$project$Session$isGuest(session) ? _Utils_Tuple2(
 				_Utils_update(
 					model,
-					{n: session}),
+					{i: session}),
 				A2(
 					$author$project$Route$replaceUrl,
-					$author$project$Session$navKey(model.n),
+					$author$project$Session$navKey(model.i),
+					$author$project$Route$Login)) : _Utils_Tuple2(
+				_Utils_update(
+					model,
+					{i: session}),
+				A2(
+					$author$project$Route$replaceUrl,
+					$author$project$Session$navKey(model.i),
 					$author$project$Route$Capture));
 		}
 	});
@@ -16431,7 +16462,7 @@ var $mdgriffith$elm_ui$Element$Input$redistributeOver = F4(
 					els,
 					{
 						f: A2($elm$core$List$cons, attr, els.f),
-						m: A2($elm$core$List$cons, attr, els.m),
+						n: A2($elm$core$List$cons, attr, els.n),
 						b: A2($elm$core$List$cons, attr, els.b)
 					}) : (stacked ? _Utils_update(
 					els,
@@ -16483,7 +16514,7 @@ var $mdgriffith$elm_ui$Element$Input$redistributeOver = F4(
 							els,
 							{
 								f: A2($elm$core$List$cons, attr, els.f),
-								m: A2($elm$core$List$cons, attr, els.m),
+								n: A2($elm$core$List$cons, attr, els.n),
 								b: A2($elm$core$List$cons, attr, els.b),
 								ak: A2($elm$core$List$cons, attr, els.ak)
 							});
@@ -16526,10 +16557,10 @@ var $mdgriffith$elm_ui$Element$Input$redistributeOver = F4(
 								els,
 								{
 									u: A2($elm$core$List$cons, attr, els.u),
-									m: A2(
+									n: A2(
 										$elm$core$List$cons,
 										newHeight,
-										A2($elm$core$List$cons, newLineHeight, els.m)),
+										A2($elm$core$List$cons, newLineHeight, els.n)),
 									b: A2($elm$core$List$cons, reducedVerticalPadding, els.b)
 								});
 						}
@@ -16577,13 +16608,13 @@ var $mdgriffith$elm_ui$Element$Input$redistributeOver = F4(
 				return _Utils_update(
 					els,
 					{
-						m: A2($elm$core$List$cons, attr, els.m)
+						n: A2($elm$core$List$cons, attr, els.n)
 					});
 			case 2:
 				return _Utils_update(
 					els,
 					{
-						m: A2($elm$core$List$cons, attr, els.m)
+						n: A2($elm$core$List$cons, attr, els.n)
 					});
 			case 3:
 				return _Utils_update(
@@ -16595,7 +16626,7 @@ var $mdgriffith$elm_ui$Element$Input$redistributeOver = F4(
 				return _Utils_update(
 					els,
 					{
-						m: A2($elm$core$List$cons, attr, els.m)
+						n: A2($elm$core$List$cons, attr, els.n)
 					});
 		}
 	});
@@ -16605,7 +16636,7 @@ var $mdgriffith$elm_ui$Element$Input$redistribute = F3(
 			return {
 				u: $elm$core$List$reverse(redist.u),
 				f: $elm$core$List$reverse(redist.f),
-				m: $elm$core$List$reverse(redist.m),
+				n: $elm$core$List$reverse(redist.n),
 				b: $elm$core$List$reverse(redist.b),
 				ak: $elm$core$List$reverse(redist.ak)
 			};
@@ -16613,7 +16644,7 @@ var $mdgriffith$elm_ui$Element$Input$redistribute = F3(
 			A3(
 				$elm$core$List$foldl,
 				A2($mdgriffith$elm_ui$Element$Input$redistributeOver, isMultiline, stacked),
-				{u: _List_Nil, f: _List_Nil, m: _List_Nil, b: _List_Nil, ak: _List_Nil},
+				{u: _List_Nil, f: _List_Nil, n: _List_Nil, b: _List_Nil, ak: _List_Nil},
 				attrs));
 	});
 var $mdgriffith$elm_ui$Element$Input$renderBox = function (_v0) {
@@ -16804,7 +16835,7 @@ var $mdgriffith$elm_ui$Element$Input$textHelper = F3(
 							$mdgriffith$elm_ui$Internal$Model$NoAttribute,
 							A2($elm$core$Maybe$map, $mdgriffith$elm_ui$Element$Input$autofill, textInput.A))
 						]),
-					redistributed.m)),
+					redistributed.n)),
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(_List_Nil));
 		var wrappedInput = function () {
 			var _v0 = textInput.r;
@@ -16955,7 +16986,7 @@ var $author$project$Pages$Capture$view = function (model) {
 					_List_fromArray(
 						[
 							$author$project$UI$dwylLogo,
-							$elm$core$String$isEmpty(model.l) ? A2(
+							$elm$core$String$isEmpty(model.m) ? A2(
 							$mdgriffith$elm_ui$Element$column,
 							_List_fromArray(
 								[
@@ -17043,7 +17074,7 @@ var $author$project$Pages$Capture$view = function (model) {
 									$mdgriffith$elm_ui$Element$Font$color(
 									A3($mdgriffith$elm_ui$Element$rgb255, 255, 65, 54))
 								]),
-							$mdgriffith$elm_ui$Element$text(model.l))
+							$mdgriffith$elm_ui$Element$text(model.m))
 						])))
 			]),
 		cu: 'Capture'
@@ -17402,7 +17433,7 @@ var $author$project$Pages$Session$view = function (model) {
 									}),
 								aa: $author$project$Route$routeToString($author$project$Route$Capture)
 							}),
-							$elm$core$String$isEmpty(model.l) ? A2(
+							$elm$core$String$isEmpty(model.m) ? A2(
 							$mdgriffith$elm_ui$Element$el,
 							_List_fromArray(
 								[$mdgriffith$elm_ui$Element$centerX]),
@@ -17410,7 +17441,7 @@ var $author$project$Pages$Session$view = function (model) {
 							$mdgriffith$elm_ui$Element$el,
 							_List_fromArray(
 								[$mdgriffith$elm_ui$Element$centerX]),
-							$mdgriffith$elm_ui$Element$text(model.l))
+							$mdgriffith$elm_ui$Element$text(model.m))
 						])))
 			]),
 		cu: 'Auth'

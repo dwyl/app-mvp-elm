@@ -118,9 +118,15 @@ update msg model =
             ( { model | timer = newTimer }, Cmd.none )
 
         GotSession session ->
-            ( { model | session = session }
-            , Route.replaceUrl (Session.navKey model.session) Route.Capture
-            )
+            if Session.isGuest session then
+                ( { model | session = session }
+                , Route.replaceUrl (Session.navKey model.session) Route.Login
+                )
+
+            else
+                ( { model | session = session }
+                , Route.replaceUrl (Session.navKey model.session) Route.Capture
+                )
 
         GotCaptures result ->
             case result of

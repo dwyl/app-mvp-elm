@@ -52,7 +52,12 @@ update msg model =
                 Err httpError ->
                     case httpError of
                         Http.BadStatus 401 ->
-                            ( { model | error = "Access not authorised" }, Cmd.none )
+                            ( { model | error = "Access not authorised" }
+                            , Cmd.batch
+                                [ Session.logout
+                                , Route.replaceUrl (Session.navKey model.session) Route.Login
+                                ]
+                            )
 
                         Http.BadStatus 404 ->
                             ( { model | error = "User information can't be retrieved" }, Cmd.none )

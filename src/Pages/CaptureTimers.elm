@@ -1,6 +1,5 @@
 module Pages.CaptureTimers exposing (Model, Msg(..), init, subscriptions, toSession, update, view)
 
-import Asset
 import Capture exposing (..)
 import Element exposing (..)
 import Element.Font exposing (..)
@@ -76,7 +75,10 @@ update msg model =
                     case httpError of
                         Http.BadStatus 401 ->
                             ( { model | error = "Access not authorised" }
-                            , Route.replaceUrl (Session.navKey model.session) Route.Capture
+                            , Cmd.batch
+                                [ Session.logout
+                                , Route.replaceUrl (Session.navKey model.session) Route.Login
+                                ]
                             )
 
                         Http.BadStatus 404 ->

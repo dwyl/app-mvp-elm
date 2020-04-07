@@ -1,10 +1,10 @@
 module CaptureTests exposing (suite)
 
-import Capture exposing (Capture, CaptureStatus(..))
+import Capture exposing (Capture, CaptureStatus(..), compareCaptures)
 import Expect exposing (Expectation)
 import Fuzz exposing (Fuzzer, int, list, string)
 import Main exposing (..)
-import Pages.Capture exposing (SortCaptures(..), compareCaptures, sortCaptures)
+import Pages.Capture exposing (SortCaptures(..))
 import Test exposing (..)
 
 
@@ -37,7 +37,7 @@ suite =
                     ( capture1, capture2 ) =
                         capturesTest ToDo InProgress
                 in
-                compareCaptures (Status InProgress) capture1 capture2
+                compareCaptures InProgress capture1 capture2
                     |> Expect.equal GT
         , test "inPorgress: inProgress LT todo" <|
             \_ ->
@@ -45,7 +45,7 @@ suite =
                     ( capture1, capture2 ) =
                         capturesTest InProgress ToDo
                 in
-                compareCaptures (Status InProgress) capture1 capture2
+                compareCaptures InProgress capture1 capture2
                     |> Expect.equal LT
         , test "inPorgress: inProgress EQ InProgress" <|
             \_ ->
@@ -53,7 +53,7 @@ suite =
                     ( capture1, capture2 ) =
                         capturesTest InProgress InProgress
                 in
-                compareCaptures (Status InProgress) capture1 capture2
+                compareCaptures InProgress capture1 capture2
                     |> Expect.equal EQ
         , test "ToDo: inProgress GT ToDo" <|
             \_ ->
@@ -61,7 +61,7 @@ suite =
                     ( capture1, capture2 ) =
                         capturesTest InProgress ToDo
                 in
-                compareCaptures (Status ToDo) capture1 capture2
+                compareCaptures ToDo capture1 capture2
                     |> Expect.equal GT
         , test "ToDo: ToDo GT InProgress" <|
             \_ ->
@@ -69,7 +69,7 @@ suite =
                     ( capture1, capture2 ) =
                         capturesTest ToDo InProgress
                 in
-                compareCaptures (Status ToDo) capture1 capture2
+                compareCaptures ToDo capture1 capture2
                     |> Expect.equal LT
         , test "ToDo: ToDo EQ ToDo" <|
             \_ ->
@@ -77,7 +77,7 @@ suite =
                     ( capture1, capture2 ) =
                         capturesTest ToDo ToDo
                 in
-                compareCaptures (Status ToDo) capture1 capture2
+                compareCaptures ToDo capture1 capture2
                     |> Expect.equal EQ
         , test "Completed: ToDo GT Completed" <|
             \_ ->
@@ -85,7 +85,7 @@ suite =
                     ( capture1, capture2 ) =
                         capturesTest ToDo Completed
                 in
-                compareCaptures (Status Completed) capture1 capture2
+                compareCaptures Completed capture1 capture2
                     |> Expect.equal GT
         , test "Completed: Completed LT ToDo" <|
             \_ ->
@@ -93,7 +93,7 @@ suite =
                     ( capture1, capture2 ) =
                         capturesTest Completed ToDo
                 in
-                compareCaptures (Status Completed) capture1 capture2
+                compareCaptures Completed capture1 capture2
                     |> Expect.equal LT
         , test "Completed: Completed EQ Completed" <|
             \_ ->
@@ -101,6 +101,6 @@ suite =
                     ( capture1, capture2 ) =
                         capturesTest Completed Completed
                 in
-                compareCaptures (Status Completed) capture1 capture2
+                compareCaptures Completed capture1 capture2
                     |> Expect.equal EQ
         ]

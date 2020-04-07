@@ -1,4 +1,4 @@
-module Route exposing (Route(..), fromUrl, href, replaceUrl, routeParser, routeToString)
+module Route exposing (Route(..), fromUrl, href, isPrivate, replaceUrl, routeParser, routeToString)
 
 {-| Parse a url to a Route type
 see <https://guide.elm-lang.org/webapps/url_parsing.html>
@@ -66,3 +66,16 @@ routeToString route =
 replaceUrl : Nav.Key -> Route -> Cmd msg
 replaceUrl key route =
     Nav.replaceUrl key (routeToString route)
+
+
+isPrivate : Route -> Bool
+isPrivate route =
+    case route of
+        Login ->
+            False
+
+        Auth _ ->
+            False
+
+        _ ->
+            True

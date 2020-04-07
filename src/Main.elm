@@ -44,7 +44,7 @@ type Model
 
 
 -- flags will contain the session from local storage
--- init look at the url, parse it and load the Page (ie Home, Auth...)
+-- init look at the url, parse it and load the Page (ie Auth, Capture...)
 
 
 init : Maybe String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -136,53 +136,63 @@ loadRoute maybeRoute model =
     let
         session =
             toSession model
+
+        privateRoute =
+            Maybe.withDefault False <| Maybe.map Route.isPrivate maybeRoute
     in
-    case maybeRoute of
-        Nothing ->
-            ( NotFound session, Cmd.none )
+    -- redirect to login page if user attempt to access private page as guest
+    if Session.isGuest session && privateRoute then
+        ( model
+        , Route.replaceUrl (Session.navKey session) Route.Login
+        )
 
-        Just (Route.Auth Nothing) ->
-            let
-                ( subModel, subMsg ) =
-                    Auth.init session
-            in
-            ( Auth subModel, Cmd.map GotAuthMsg subMsg )
+    else
+        case maybeRoute of
+            Nothing ->
+                ( NotFound session, Cmd.none )
 
-        Just (Route.Auth (Just jwt)) ->
-            let
-                ( subModel, subMsg ) =
-                    PagesSession.init session jwt
-            in
-            ( Session subModel, Cmd.map GotPagesSessionMsg subMsg )
+            Just (Route.Auth Nothing) ->
+                let
+                    ( subModel, subMsg ) =
+                        Auth.init session
+                in
+                ( Auth subModel, Cmd.map GotAuthMsg subMsg )
 
-        Just Route.Logout ->
-            ( Logout session
-            , Cmd.batch
-                [ Session.logout
-                , Route.replaceUrl (Session.navKey session) Route.Login
-                ]
-            )
+            Just (Route.Auth (Just jwt)) ->
+                let
+                    ( subModel, subMsg ) =
+                        PagesSession.init session jwt
+                in
+                ( Session subModel, Cmd.map GotPagesSessionMsg subMsg )
 
-        Just Route.Login ->
-            let
-                ( subModel, subMsg ) =
-                    Login.init session
-            in
-            ( Login subModel, Cmd.map GotLoginMsg subMsg )
+            Just Route.Logout ->
+                ( Logout session
+                , Cmd.batch
+                    [ Session.logout
+                    , Route.replaceUrl (Session.navKey session) Route.Login
+                    ]
+                )
 
-        Just Route.Capture ->
-            let
-                ( subModel, subMsg ) =
-                    Capture.init session
-            in
-            ( Capture subModel, Cmd.map GotCaptureMsg subMsg )
+            Just Route.Login ->
+                let
+                    ( subModel, subMsg ) =
+                        Login.init session
+                in
+                ( Login subModel, Cmd.map GotLoginMsg subMsg )
 
-        Just (Route.CaptureTimers idCapture) ->
-            let
-                ( subModel, subMsg ) =
-                    CaptureTimers.init session idCapture
-            in
-            ( CaptureTimers subModel, Cmd.map GotCaptureTimersMsg subMsg )
+            Just Route.Capture ->
+                let
+                    ( subModel, subMsg ) =
+                        Capture.init session
+                in
+                ( Capture subModel, Cmd.map GotCaptureMsg subMsg )
+
+            Just (Route.CaptureTimers idCapture) ->
+                let
+                    ( subModel, subMsg ) =
+                        CaptureTimers.init session idCapture
+                in
+                ( CaptureTimers subModel, Cmd.map GotCaptureTimersMsg subMsg )
 
 
 subscriptions : Model -> Sub Msg

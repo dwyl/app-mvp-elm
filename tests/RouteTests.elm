@@ -130,4 +130,24 @@ suite =
                 in
                 Parser.parse Route.routeParser url
                     |> Expect.equal (Just (Route.CaptureTimers 1))
+        , test "isPrivate Auth route returns False" <|
+            \_ ->
+                Route.isPrivate (Route.Auth Nothing)
+                    |> Expect.equal False
+        , test "isPrivate Auth jwt route returns False" <|
+            \_ ->
+                Route.isPrivate (Route.Auth (Just ""))
+                    |> Expect.equal False
+        , test "isPrivate Login route returns False" <|
+            \_ ->
+                Route.isPrivate Route.Login
+                    |> Expect.equal False
+        , test "isPrivate Capture route returns True" <|
+            \_ ->
+                Route.isPrivate Route.Capture
+                    |> Expect.equal True
+        , test "isPrivate CaptureTimers route returns True" <|
+            \_ ->
+                Route.isPrivate (Route.CaptureTimers 1)
+                    |> Expect.equal True
         ]

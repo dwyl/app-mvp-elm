@@ -75,7 +75,9 @@ update msg model =
                 Err httpError ->
                     case httpError of
                         Http.BadStatus 401 ->
-                            ( { model | error = "Access not authorised" }, Cmd.none )
+                            ( { model | error = "Access not authorised" }
+                            , Route.replaceUrl (Session.navKey model.session) Route.Capture
+                            )
 
                         Http.BadStatus 404 ->
                             ( { model | error = "Capture information can't be retrieved" }, Cmd.none )

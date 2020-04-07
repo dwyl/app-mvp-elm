@@ -19,7 +19,13 @@ type alias Model =
 
 init : Session -> ( Model, Cmd Msg )
 init session =
-    ( session, Cmd.none )
+    if not (Session.isGuest session) then
+        ( session
+        , Route.replaceUrl (Session.navKey session) Route.Capture
+        )
+
+    else
+        ( session, Cmd.none )
 
 
 

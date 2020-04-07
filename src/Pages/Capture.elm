@@ -130,7 +130,10 @@ update msg model =
                 Err httpError ->
                     case httpError of
                         Http.BadStatus 401 ->
-                            ( { model | error = "Access not authorised" }, Cmd.none )
+                            -- redirect to login page if not logged in anymore
+                            ( { model | error = "Access not authorised" }
+                            , Route.replaceUrl (Session.navKey model.session) Route.Capture
+                            )
 
                         Http.BadStatus 404 ->
                             ( { model | error = "User information can't be retrieved" }, Cmd.none )

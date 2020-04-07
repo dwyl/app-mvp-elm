@@ -1,4 +1,4 @@
-module Pages.Capture exposing (Model, Msg(..), SortCaptures(..), compareCaptures, init, sortCaptures, subscriptions, toSession, update, view)
+module Pages.Capture exposing (Model, Msg(..), SortCaptures(..), init, sortCaptures, subscriptions, toSession, update, view)
 
 import Capture exposing (..)
 import Element exposing (..)
@@ -119,7 +119,7 @@ update msg model =
 
         GotSession session ->
             ( { model | session = session }
-            , Route.replaceUrl (Session.navKey model.session) Route.Home
+            , Route.replaceUrl (Session.navKey model.session) Route.Capture
             )
 
         GotCaptures result ->
@@ -130,7 +130,10 @@ update msg model =
                 Err httpError ->
                     case httpError of
                         Http.BadStatus 401 ->
-                            ( { model | error = "Access not authorised" }, Cmd.none )
+                            -- redirect to login page if not logged in anymore
+                            ( { model | error = "Access not authorised" }
+                            , Route.replaceUrl (Session.navKey model.session) Route.Capture
+                            )
 
                         Http.BadStatus 404 ->
                             ( { model | error = "User information can't be retrieved" }, Cmd.none )
@@ -221,57 +224,49 @@ view model =
         [ layout [ family [ typeface "Montserrat", sansSerif ] ] <|
             column [ width fill, height fill, spacing 30 ]
                 [ UI.dwylLogo
-                , case model.session of
-                    Session.Guest _ ->
-                        link [ centerX ]
-                            { url = Route.routeToString Route.Home
-                            , label = text "Not logged in yet!"
-                            }
+                , if String.isEmpty model.error then
+                    column [ width fill, height fill, spacing 50 ]
+                        [ column [ centerX, spacing 10 ]
+                            [ EltInput.text []
+                                { onChange = UpdateNewCapture
+                                , text = model.newCapture.text
+                                , placeholder = Just (EltInput.placeholder [] (text "capture text"))
+                                , label = EltInput.labelHidden "capture text"
+                                }
+                            , EltInput.button
+                                UI.mintButtonAttrs
+                                { onPress =
+                                    if String.isEmpty model.newCapture.text then
+                                        Nothing
 
-                    Session.Session _ _ ->
-                        if String.isEmpty model.error then
-                            column [ width fill, height fill, spacing 50 ]
-                                [ column [ centerX, spacing 10 ]
-                                    [ EltInput.text []
-                                        { onChange = UpdateNewCapture
-                                        , text = model.newCapture.text
-                                        , placeholder = Just (EltInput.placeholder [] (text "capture text"))
-                                        , label = EltInput.labelHidden "capture text"
-                                        }
-                                    , EltInput.button
-                                        UI.mintButtonAttrs
-                                        { onPress =
-                                            if String.isEmpty model.newCapture.text then
-                                                Nothing
-
-                                            else
-                                                Just AddCapture
-                                        , label = text "Add Capture"
-                                        }
+                                    else
+                                        Just AddCapture
+                                , label = text "Add Capture"
+                                }
+                            ]
+                        , if model.pageStatus == Ready then
+                            column [ width (fill |> maximum 1000), centerX ]
+                                [ showSortingOptions model.sortCaptures
+                                , column
+                                    [ width fill
+                                    , spacing 30
+                                    , padding 30
                                     ]
-                                , if model.pageStatus == Ready then
-                                    column [ width (fill |> maximum 1000), centerX ]
-                                        [ showSortingOptions model.sortCaptures
-                                        , column
-                                            [ width fill
-                                            , spacing 30
-                                            , padding 30
-                                            ]
-                                          <|
-                                            List.map
-                                                (\capture -> showCapture model.timer capture)
-                                                (sortCaptures model.sortCaptures model.captures)
-                                        ]
-
-                                  else
-                                    column [ centerX, spacing 20 ]
-                                        [ text "Loading captures"
-                                        , el [ centerX ] <| html UI.loaderHtml
-                                        ]
+                                  <|
+                                    List.map
+                                        (\capture -> showCapture model.timer capture)
+                                        (sortCaptures model.sortCaptures model.captures)
                                 ]
 
-                        else
-                            el [ color (rgb255 255 65 54) ] (text model.error)
+                          else
+                            column [ centerX, spacing 20 ]
+                                [ text "Loading captures"
+                                , el [ centerX ] <| html UI.loaderHtml
+                                ]
+                        ]
+
+                  else
+                    el [ color (rgb255 255 65 54) ] (text model.error)
                 ]
         ]
     }
@@ -295,42 +290,8 @@ subscriptions model =
 
 
 sortCaptures : SortCaptures -> List Capture -> List Capture
-sortCaptures sortBy =
+sortCaptures (Status sortBy) =
     List.sortWith (compareCaptures sortBy)
-
-
-compareCaptures : SortCaptures -> Capture -> Capture -> Order
-compareCaptures (Status sortBy) c1 c2 =
-    case ( sortBy, c1.status, c2.status ) of
-        ( InProgress, InProgress, InProgress ) ->
-            EQ
-
-        ( InProgress, _, InProgress ) ->
-            GT
-
-        ( InProgress, InProgress, _ ) ->
-            LT
-
-        ( ToDo, ToDo, ToDo ) ->
-            EQ
-
-        ( ToDo, _, ToDo ) ->
-            GT
-
-        ( ToDo, _, _ ) ->
-            LT
-
-        ( Completed, Completed, Completed ) ->
-            EQ
-
-        ( Completed, _, Completed ) ->
-            GT
-
-        ( Completed, _, _ ) ->
-            LT
-
-        _ ->
-            EQ
 
 
 startTimer : String -> Int -> Cmd Msg

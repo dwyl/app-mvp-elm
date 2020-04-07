@@ -11,7 +11,7 @@ import Url.Parser as Parser
 suite : Test
 suite =
     describe "Testing routes"
-        [ test "Test home page" <|
+        [ test "Test capture page" <|
             \_ ->
                 let
                     defaultUrl =
@@ -27,7 +27,7 @@ suite =
                         Maybe.withDefault defaultUrl (Url.fromString "http://localhost/")
                 in
                 Parser.parse Route.routeParser url
-                    |> Expect.equal (Just Route.Home)
+                    |> Expect.equal (Just Route.Capture)
         , test "Test auth page" <|
             \_ ->
                 let
@@ -96,7 +96,7 @@ suite =
                 in
                 Parser.parse Route.routeParser url
                     |> Expect.equal (Just Route.Logout)
-        , test "Test capture route" <|
+        , test "Test login route" <|
             \_ ->
                 let
                     defaultUrl =
@@ -109,10 +109,10 @@ suite =
                         }
 
                     url =
-                        Maybe.withDefault defaultUrl (Url.fromString "http://locahost/capture")
+                        Maybe.withDefault defaultUrl (Url.fromString "http://locahost/login")
                 in
                 Parser.parse Route.routeParser url
-                    |> Expect.equal (Just Route.Capture)
+                    |> Expect.equal (Just Route.Login)
         , test "Test capture timers route" <|
             \_ ->
                 let
@@ -130,4 +130,24 @@ suite =
                 in
                 Parser.parse Route.routeParser url
                     |> Expect.equal (Just (Route.CaptureTimers 1))
+        , test "isPrivate Auth route returns False" <|
+            \_ ->
+                Route.isPrivate (Route.Auth Nothing)
+                    |> Expect.equal False
+        , test "isPrivate Auth jwt route returns False" <|
+            \_ ->
+                Route.isPrivate (Route.Auth (Just ""))
+                    |> Expect.equal False
+        , test "isPrivate Login route returns False" <|
+            \_ ->
+                Route.isPrivate Route.Login
+                    |> Expect.equal False
+        , test "isPrivate Capture route returns True" <|
+            \_ ->
+                Route.isPrivate Route.Capture
+                    |> Expect.equal True
+        , test "isPrivate CaptureTimers route returns True" <|
+            \_ ->
+                Route.isPrivate (Route.CaptureTimers 1)
+                    |> Expect.equal True
         ]

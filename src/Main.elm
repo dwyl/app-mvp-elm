@@ -9,7 +9,7 @@ import Page
 import Pages.Auth as Auth
 import Pages.Capture as Capture
 import Pages.CaptureTimers as CaptureTimers
-import Pages.Home as Home
+import Pages.Login as Login
 import Pages.Session as PagesSession
 import Route
 import Session
@@ -33,18 +33,18 @@ main =
 
 
 type Model
-    = Home Home.Model
-    | Auth Auth.Model
+    = Auth Auth.Model
     | Session PagesSession.Model
     | NotFound Session.Session
     | Logout Session.Session
+    | Login Session.Session
     | Capture Capture.Model
     | CaptureTimers CaptureTimers.Model
 
 
 
 -- flags will contain the session from local storage
--- init look at the url, parse it and load the Page (ie Home, Auth...)
+-- init look at the url, parse it and load the Page (ie Auth, Capture...)
 
 
 init : Maybe String -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
@@ -68,11 +68,11 @@ init flags url navKey =
 type Msg
     = UrlChanged Url.Url
     | LinkClicked Browser.UrlRequest
-    | GotHomeMsg Home.Msg
     | GotAuthMsg Auth.Msg
     | GotPagesSessionMsg PagesSession.Msg
     | GotCaptureMsg Capture.Msg
     | GotCaptureTimersMsg CaptureTimers.Msg
+    | GotLoginMsg Login.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -88,13 +88,6 @@ update msg model =
 
         ( UrlChanged url, _ ) ->
             loadRoute (Route.fromUrl url) model
-
-        ( GotHomeMsg homeMsg, Home homeModel ) ->
-            let
-                ( subModel, subMsg ) =
-                    Home.update homeMsg homeModel
-            in
-            ( Home subModel, Cmd.map GotHomeMsg subMsg )
 
         ( GotAuthMsg authMsg, Auth authModel ) ->
             let
@@ -124,6 +117,13 @@ update msg model =
             in
             ( CaptureTimers subModel, Cmd.map GotCaptureTimersMsg subMsg )
 
+        ( GotLoginMsg loginMsg, Login loginModel ) ->
+            let
+                ( subModel, subMsg ) =
+                    Login.update loginMsg loginModel
+            in
+            ( Login subModel, Cmd.map GotLoginMsg subMsg )
+
         -- combining the msg and the model.page allow us to filter out
         -- messages coming from the wrong page
         ( _, _ ) ->
@@ -136,61 +136,68 @@ loadRoute maybeRoute model =
     let
         session =
             toSession model
+
+        privateRoute =
+            Maybe.withDefault False <| Maybe.map Route.isPrivate maybeRoute
     in
-    case maybeRoute of
-        Nothing ->
-            ( NotFound session, Cmd.none )
+    -- redirect to login page if user attempt to access private page as guest
+    if Session.isGuest session && privateRoute then
+        ( model
+        , Route.replaceUrl (Session.navKey session) Route.Login
+        )
 
-        Just Route.Home ->
-            let
-                ( subModel, subMsg ) =
-                    Home.init session
-            in
-            ( Home subModel, Cmd.map GotHomeMsg subMsg )
+    else
+        case maybeRoute of
+            Nothing ->
+                ( NotFound session, Cmd.none )
 
-        Just (Route.Auth Nothing) ->
-            let
-                ( subModel, subMsg ) =
-                    Auth.init session
-            in
-            ( Auth subModel, Cmd.map GotAuthMsg subMsg )
+            Just (Route.Auth Nothing) ->
+                let
+                    ( subModel, subMsg ) =
+                        Auth.init session
+                in
+                ( Auth subModel, Cmd.map GotAuthMsg subMsg )
 
-        Just (Route.Auth (Just jwt)) ->
-            let
-                ( subModel, subMsg ) =
-                    PagesSession.init session jwt
-            in
-            ( Session subModel, Cmd.map GotPagesSessionMsg subMsg )
+            Just (Route.Auth (Just jwt)) ->
+                let
+                    ( subModel, subMsg ) =
+                        PagesSession.init session jwt
+                in
+                ( Session subModel, Cmd.map GotPagesSessionMsg subMsg )
 
-        Just Route.Logout ->
-            ( Logout session
-            , Cmd.batch
-                [ Session.logout
-                , Route.replaceUrl (Session.navKey session) Route.Home
-                ]
-            )
+            Just Route.Logout ->
+                ( Logout session
+                , Cmd.batch
+                    [ Session.logout
+                    , Route.replaceUrl (Session.navKey session) Route.Login
+                    ]
+                )
 
-        Just Route.Capture ->
-            let
-                ( subModel, subMsg ) =
-                    Capture.init session
-            in
-            ( Capture subModel, Cmd.map GotCaptureMsg subMsg )
+            Just Route.Login ->
+                let
+                    ( subModel, subMsg ) =
+                        Login.init session
+                in
+                ( Login subModel, Cmd.map GotLoginMsg subMsg )
 
-        Just (Route.CaptureTimers idCapture) ->
-            let
-                ( subModel, subMsg ) =
-                    CaptureTimers.init session idCapture
-            in
-            ( CaptureTimers subModel, Cmd.map GotCaptureTimersMsg subMsg )
+            Just Route.Capture ->
+                let
+                    ( subModel, subMsg ) =
+                        Capture.init session
+                in
+                ( Capture subModel, Cmd.map GotCaptureMsg subMsg )
+
+            Just (Route.CaptureTimers idCapture) ->
+                let
+                    ( subModel, subMsg ) =
+                        CaptureTimers.init session idCapture
+                in
+                ( CaptureTimers subModel, Cmd.map GotCaptureTimersMsg subMsg )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model of
-        Home home ->
-            Sub.map GotHomeMsg (Home.subscriptions home)
-
         Auth authModel ->
             Sub.map GotAuthMsg (Auth.subscriptions authModel)
 
@@ -209,13 +216,13 @@ subscriptions model =
         CaptureTimers captureTimersModel ->
             Sub.map GotCaptureTimersMsg (CaptureTimers.subscriptions captureTimersModel)
 
+        Login loginModel ->
+            Sub.map GotLoginMsg (Login.subscriptions loginModel)
+
 
 view : Model -> Browser.Document Msg
 view model =
     case model of
-        Home home ->
-            Page.view GotHomeMsg (Home.view home)
-
         Auth authModel ->
             Page.view GotAuthMsg (Auth.view authModel)
 
@@ -225,7 +232,7 @@ view model =
         NotFound _ ->
             { title = "Not Found"
             , body =
-                [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+                [ a [ Route.href Route.Capture ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
                 , h1 [ class "tc" ] [ text "page not found" ]
                 ]
             }
@@ -233,10 +240,13 @@ view model =
         Logout _ ->
             { title = "Logout"
             , body =
-                [ a [ Route.href Route.Home ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
+                [ a [ Route.href Route.Capture ] [ img [ Asset.src Asset.logo, class "center db pt2" ] [] ]
                 , h1 [ class "tc" ] [ text "Logout" ]
                 ]
             }
+
+        Login loginModel ->
+            Page.view GotLoginMsg (Login.view loginModel)
 
         Capture captureModel ->
             Page.view GotCaptureMsg (Capture.view captureModel)
@@ -251,9 +261,6 @@ toSession page =
         NotFound session ->
             session
 
-        Home m ->
-            Home.toSession m
-
         Auth m ->
             Auth.toSession m
 
@@ -262,6 +269,9 @@ toSession page =
 
         Logout session ->
             session
+
+        Login m ->
+            Login.toSession m
 
         Capture m ->
             Capture.toSession m

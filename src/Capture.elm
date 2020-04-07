@@ -1,4 +1,4 @@
-module Capture exposing (Capture, CaptureStatus(..), captureDataDecoder, captureDecoder, captureEncode, captureStatusDecoder, captureStatusToString, capturesDataDecoder, completedToStatusDecoder, getCurrentTimer, getPreviousTimer, initCapture, savedCaptureDecoder, timersToStatusDecoder)
+module Capture exposing (Capture, CaptureStatus(..), captureDataDecoder, captureDecoder, captureEncode, captureStatusDecoder, captureStatusToString, capturesDataDecoder, compareCaptures, completedToStatusDecoder, getCurrentTimer, getPreviousTimer, initCapture, savedCaptureDecoder, timersToStatusDecoder)
 
 import Json.Decode as JD
 import Json.Encode as JE
@@ -123,3 +123,37 @@ captureStatusToString status =
 
         _ ->
             ""
+
+
+compareCaptures : CaptureStatus -> Capture -> Capture -> Order
+compareCaptures sortBy c1 c2 =
+    case ( sortBy, c1.status, c2.status ) of
+        ( InProgress, InProgress, InProgress ) ->
+            EQ
+
+        ( InProgress, _, InProgress ) ->
+            GT
+
+        ( InProgress, InProgress, _ ) ->
+            LT
+
+        ( ToDo, ToDo, ToDo ) ->
+            EQ
+
+        ( ToDo, _, ToDo ) ->
+            GT
+
+        ( ToDo, _, _ ) ->
+            LT
+
+        ( Completed, Completed, Completed ) ->
+            EQ
+
+        ( Completed, _, Completed ) ->
+            GT
+
+        ( Completed, _, _ ) ->
+            LT
+
+        _ ->
+            EQ

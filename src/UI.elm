@@ -18,7 +18,7 @@ dwylLogo : Elt.Element msg
 dwylLogo =
     Elt.el [ Elt.centerX, Elt.width (Elt.px 150), Elt.padding 10 ]
         (Elt.link []
-            { url = Route.routeToString Route.Home
+            { url = Route.routeToString Route.Capture
             , label = Elt.image [ Elt.centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
             }
         )

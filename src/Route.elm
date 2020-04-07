@@ -1,4 +1,4 @@
-module Route exposing (Route(..), fromUrl, href, replaceUrl, routeParser, routeToString)
+module Route exposing (Route(..), fromUrl, href, isPrivate, replaceUrl, routeParser, routeToString)
 
 {-| Parse a url to a Route type
 see <https://guide.elm-lang.org/webapps/url_parsing.html>
@@ -13,9 +13,9 @@ import Url.Parser.Query as Query
 
 
 type Route
-    = Home
-    | Auth (Maybe String)
+    = Auth (Maybe String)
     | Logout
+    | Login
     | Capture
     | CaptureTimers Int
 
@@ -23,11 +23,11 @@ type Route
 routeParser : Parser.Parser (Route -> a) a
 routeParser =
     Parser.oneOf
-        [ Parser.map Home Parser.top
+        [ Parser.map Capture Parser.top
         , Parser.map Auth (Parser.s "auth" <?> Query.string "jwt")
         , Parser.map Logout (Parser.s "logout")
+        , Parser.map Login (Parser.s "login")
         , Parser.map CaptureTimers (Parser.s "capture" </> Parser.int)
-        , Parser.map Capture (Parser.s "capture")
         ]
 
 
@@ -44,7 +44,7 @@ href targetRoute =
 routeToString : Route -> String
 routeToString route =
     case route of
-        Home ->
+        Capture ->
             "/"
 
         Auth Nothing ->
@@ -56,8 +56,8 @@ routeToString route =
         Logout ->
             "/logout"
 
-        Capture ->
-            "/capture"
+        Login ->
+            "/login"
 
         CaptureTimers idCapture ->
             "/capture/" ++ String.fromInt idCapture
@@ -66,3 +66,16 @@ routeToString route =
 replaceUrl : Nav.Key -> Route -> Cmd msg
 replaceUrl key route =
     Nav.replaceUrl key (routeToString route)
+
+
+isPrivate : Route -> Bool
+isPrivate route =
+    case route of
+        Login ->
+            False
+
+        Auth _ ->
+            False
+
+        _ ->
+            True

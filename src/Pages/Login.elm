@@ -1,10 +1,8 @@
-module Pages.Auth exposing (Model, Msg(..), init, subscriptions, toSession, update, view)
+module Pages.Login exposing (Model, Msg(..), init, subscriptions, toSession, update, view)
 
 import Asset exposing (..)
-import Browser.Navigation as Nav
 import Element exposing (..)
 import Element.Font exposing (..)
-import Endpoint
 import Page
 import Route
 import Session exposing (..)
@@ -27,7 +25,7 @@ init session =
         )
 
     else
-        ( session, Nav.load <| Endpoint.toString Endpoint.authUrls )
+        ( session, Cmd.none )
 
 
 
@@ -43,7 +41,7 @@ update msg _ =
     case msg of
         GotSession session ->
             ( session
-            , Route.replaceUrl (Session.navKey session) Route.Capture
+            , Route.replaceUrl (Session.navKey session) Route.Login
             )
 
 
@@ -53,13 +51,17 @@ update msg _ =
 
 view : Model -> Page.PageStructure Msg
 view _ =
-    { title = "Auth"
+    { title = "Login"
     , content =
         [ layout [ family [ typeface "Montserrat", sansSerif ] ] <|
             column [ centerX, spacing 20 ]
                 [ UI.dwylLogo
-                , text "Loading auth service page"
-                , el [ centerX ] <| html UI.loaderHtml
+                , text "It looks like you are not logged in yet!"
+                , link
+                    [ centerX, color UI.teal, bold ]
+                    { url = Route.routeToString (Route.Auth Nothing)
+                    , label = text "login/signup"
+                    }
                 ]
         ]
     }

@@ -1,4 +1,4 @@
-port module Session exposing (Person, Session(..), changeSession, decode, encode, logout, navKey, onSessionChange, storeSession, token)
+port module Session exposing (Person, Session(..), changeSession, decode, encode, isGuest, logout, navKey, onSessionChange, storeSession, token)
 
 {-| Represent the current user
 The user can be authenticated or a guest
@@ -104,3 +104,13 @@ decodeFromChange decoder val =
 logout : Cmd msg
 logout =
     storeSession Nothing
+
+
+isGuest : Session -> Bool
+isGuest session =
+    case session of
+        Guest _ ->
+            True
+
+        _ ->
+            False

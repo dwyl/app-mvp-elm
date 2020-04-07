@@ -70,6 +70,7 @@ update msg model =
                 ( { model | session = session }
                 , Route.replaceUrl (Session.navKey model.session) Route.Login
                 )
+
             else
                 ( { model | session = session }
                 , Route.replaceUrl (Session.navKey model.session) Route.Capture

@@ -46,6 +46,7 @@ update msg _ =
                 ( session
                 , Route.replaceUrl (Session.navKey session) Route.Login
                 )
+
             else
                 ( session
                 , Route.replaceUrl (Session.navKey session) Route.Capture

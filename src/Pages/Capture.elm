@@ -241,8 +241,31 @@ view model =
     { title = "Capture"
     , content =
         [ layout [ family [ typeface "Montserrat", sansSerif ] ] <|
-            column [ width fill, height fill, spacing 30 ]
-                [ UI.dwylLogo
+            column
+                [ width fill
+                , height fill
+                , spacing 30
+
+                -- , inFront (el [ height fill, width fill, explain Debug.todo, centerX, centerY, center ] (text "in front"))
+                ]
+                [ row [ width fill ]
+                    [ el [ width fill ] (text "profile img")
+                    , el [ width fill, center ] (text "list title")
+                    , el
+                        [ width fill
+                        , Element.Font.alignRight
+                        , below
+                            (el [ width fill, explain Debug.todo, Element.alignRight  ]
+                                (column [ spacing 20, padding 50 , width fill, Element.alignRight]
+                                    [ el [ center, width fill ] (text "menu item 1")
+                                    , el [ center, width fill ] (text "menu item 2")
+                                    , el [ center, width fill ] (text "menu item 3")
+                                    ]
+                                )
+                            )
+                        ]
+                        (text "...")
+                    ]
                 , if String.isEmpty model.error then
                     column [ width fill, height fill, spacing 50 ]
                         [ column [ centerX, spacing 10 ]

@@ -42,9 +42,15 @@ update : Msg -> Model -> ( Model, Cmd msg )
 update msg _ =
     case msg of
         GotSession session ->
-            ( session
-            , Route.replaceUrl (Session.navKey session) Route.Capture
-            )
+            if Session.isGuest session then
+                ( session
+                , Route.replaceUrl (Session.navKey session) Route.Login
+                )
+
+            else
+                ( session
+                , Route.replaceUrl (Session.navKey session) Route.Capture
+                )
 
 
 

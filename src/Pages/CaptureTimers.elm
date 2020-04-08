@@ -62,9 +62,15 @@ update msg model =
             ( { model | timeZone = zone }, Cmd.none )
 
         GotSession session ->
-            ( { model | session = session }
-            , Route.replaceUrl (Session.navKey model.session) Route.Capture
-            )
+            if Session.isGuest session then
+                ( { model | session = session }
+                , Route.replaceUrl (Session.navKey model.session) Route.Login
+                )
+
+            else
+                ( { model | session = session }
+                , Route.replaceUrl (Session.navKey model.session) Route.Capture
+                )
 
         GotCapture result ->
             case result of

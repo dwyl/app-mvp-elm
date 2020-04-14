@@ -8,7 +8,7 @@ import Endpoint
 import Page
 import Route
 import Session exposing (..)
-import UI
+import UI.UI as UI
 
 
 

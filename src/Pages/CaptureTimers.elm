@@ -1,7 +1,10 @@
 module Pages.CaptureTimers exposing (Model, Msg(..), init, subscriptions, toSession, update, view)
 
+import Asset
 import Capture exposing (..)
 import Element exposing (..)
+import Element.Background as EltBackground
+import Element.Events exposing (onClick)
 import Element.Font exposing (..)
 import Endpoint
 import Http
@@ -11,7 +14,8 @@ import Session exposing (..)
 import Task
 import Time
 import Timer exposing (..)
-import UI
+import UI.Nav
+import UI.UI as UI
 
 
 
@@ -20,6 +24,7 @@ import UI
 
 type alias Model =
     { capture : Capture
+    , nav : UI.Nav.State
     , session : Session
     , timeZone : Time.Zone
     , error : String
@@ -29,6 +34,7 @@ type alias Model =
 initModel : Session -> Model
 initModel session =
     { capture = initCapture
+    , nav = UI.Nav.init
     , session = session
     , timeZone = Time.utc
     , error = ""
@@ -53,6 +59,7 @@ type Msg
     = GotSession Session
     | GotCapture (Result Http.Error Capture)
     | AdjustTimeZone Time.Zone
+    | SetNavState UI.Nav.State
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -93,6 +100,9 @@ update msg model =
                         _ ->
                             ( { model | error = "Error while getting the captures" }, Cmd.none )
 
+        SetNavState navState ->
+            ( { model | nav = navState }, Cmd.none )
+
 
 
 -- View
@@ -102,9 +112,52 @@ view : Model -> Page.PageStructure Msg
 view model =
     { title = "Timers"
     , content =
-        [ layout [ family [ typeface "Montserrat", sansSerif ] ] <|
-            column [ width fill, height fill, spacing 30 ]
-                [ UI.dwylLogo
+        [ layout
+            [ family [ typeface "Montserrat", sansSerif ]
+            , if UI.Nav.isOpen model.nav then
+                inFront <| UI.Nav.view (UI.Nav.config { toMsg = SetNavState, session = model.session }) model.nav
+
+              else
+                inFront none
+            ]
+          <|
+            column
+                [ width fill
+                , height fill
+                , spacing 30
+                , if UI.Nav.isOpen model.nav then
+                    alpha 0.5
+
+                  else
+                    alpha 1
+                ]
+                [ row [ width fill, padding 20, EltBackground.color UI.lightGrey ]
+                    [ el [ width fill ]
+                        (el [ width (px 50) ]
+                            (link []
+                                { url = Route.routeToString Route.Capture
+                                , label = image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
+                                }
+                            )
+                        )
+                    , el [ width fill, center, bold ] (text "Items")
+                    , el
+                        [ width fill
+                        , Element.Font.alignRight
+                        ]
+                        (column
+                            [ width (fill |> maximum 40)
+                            , Element.alignRight
+                            , spacing 10
+                            , pointer
+                            , onClick (SetNavState <| UI.Nav.toggleNav model.nav)
+                            ]
+                            [ el [ width fill, centerX, EltBackground.color UI.mint, height (px 3) ] none
+                            , el [ width fill, centerX, EltBackground.color UI.mint, height (px 3) ] none
+                            , el [ width fill, centerX, EltBackground.color UI.mint, height (px 3) ] none
+                            ]
+                        )
+                    ]
                 , el [ centerX, width (fill |> maximum 800) ] (paragraph [] [ text model.capture.text ])
                 , showTimers model.timeZone model.capture.timers
                 ]

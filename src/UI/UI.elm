@@ -1,4 +1,4 @@
-module UI exposing (buttonAttrs, completedButtonAttrs, darkGrey, dwylLogo, lightGrey, loader, loaderHtml, mint, mintButtonAttrs, startButtonAttrs, stopButtonAttrs, teal)
+module UI.UI exposing (buttonAttrs, completedButtonAttrs, darkGrey, dwylLogo, lightGrey, loader, loaderHtml, mint, mintButtonAttrs, startButtonAttrs, stopButtonAttrs, teal)
 
 import Asset
 import Element as Elt

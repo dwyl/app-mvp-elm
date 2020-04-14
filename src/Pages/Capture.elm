@@ -1,8 +1,10 @@
 module Pages.Capture exposing (Model, Msg(..), SortCaptures(..), init, sortCaptures, subscriptions, toSession, update, view)
 
+import Asset
 import Capture exposing (..)
 import Element exposing (..)
 import Element.Background as EltBackground
+import Element.Events exposing (onClick)
 import Element.Font exposing (..)
 import Element.Input as EltInput
 import Endpoint
@@ -13,7 +15,8 @@ import Session exposing (..)
 import Task
 import Time
 import Timer exposing (..)
-import UI
+import UI.Nav
+import UI.UI as UI
 
 
 
@@ -22,6 +25,7 @@ import UI
 
 type alias Model =
     { session : Session
+    , nav : UI.Nav.State
     , captures : List Capture
     , sortCaptures : SortCaptures
     , pageStatus : PageStatus
@@ -49,6 +53,7 @@ type alias Clock =
 initModel : Session -> Model
 initModel session =
     { session = session
+    , nav = UI.Nav.init
     , captures = []
     , sortCaptures = Status InProgress
     , pageStatus = Loading
@@ -89,6 +94,7 @@ type Msg
     | Tick Time.Posix
     | ToggleCompleted Capture Bool
     | SortBy SortCaptures
+    | SetNavState UI.Nav.State
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -231,6 +237,9 @@ update msg model =
         SortBy status ->
             ( { model | sortCaptures = status }, Cmd.none )
 
+        SetNavState navState ->
+            ( { model | nav = navState }, Cmd.none )
+
 
 
 -- View
@@ -240,36 +249,59 @@ view : Model -> Page.PageStructure Msg
 view model =
     { title = "Capture"
     , content =
-        [ layout [ family [ typeface "Montserrat", sansSerif ] ] <|
+        [ layout
+            [ family
+                [ typeface "Montserrat"
+                , sansSerif
+                ]
+            , if UI.Nav.isOpen model.nav then
+                inFront <| UI.Nav.view (UI.Nav.config { toMsg = SetNavState, session = model.session }) model.nav
+
+              else
+                inFront none
+            ]
+          <|
             column
                 [ width fill
                 , height fill
                 , spacing 30
+                , if UI.Nav.isOpen model.nav then
+                    alpha 0.5
 
-                -- , inFront (el [ height fill, width fill, explain Debug.todo, centerX, centerY, center ] (text "in front"))
+                  else
+                    alpha 1
                 ]
-                [ row [ width fill ]
-                    [ el [ width fill ] (text "profile img")
-                    , el [ width fill, center ] (text "list title")
+                [ row [ width fill, padding 20, EltBackground.color UI.lightGrey ]
+                    [ el [ width fill ]
+                        (el [ width (px 50) ]
+                            (link []
+                                { url = Route.routeToString Route.Capture
+                                , label = image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
+                                }
+                            )
+                        )
+                    , el [ width fill, center, bold ] (text "Items")
                     , el
                         [ width fill
                         , Element.Font.alignRight
-                        , below
-                            (el [ width fill, explain Debug.todo, Element.alignRight  ]
-                                (column [ spacing 20, padding 50 , width fill, Element.alignRight]
-                                    [ el [ center, width fill ] (text "menu item 1")
-                                    , el [ center, width fill ] (text "menu item 2")
-                                    , el [ center, width fill ] (text "menu item 3")
-                                    ]
-                                )
-                            )
                         ]
-                        (text "...")
+                        (column
+                            [ width (fill |> maximum 40)
+                            , Element.alignRight
+                            , spacing 10
+                            , pointer
+                            , onClick (SetNavState <| UI.Nav.toggleNav model.nav)
+                            ]
+                            [ el [ width fill, centerX, EltBackground.color UI.mint, height (px 3) ] none
+                            , el [ width fill, centerX, EltBackground.color UI.mint, height (px 3) ] none
+                            , el [ width fill, centerX, EltBackground.color UI.mint, height (px 3) ] none
+                            ]
+                        )
                     ]
                 , if String.isEmpty model.error then
                     column [ width fill, height fill, spacing 50 ]
                         [ column [ centerX, spacing 10 ]
-                            [ EltInput.text []
+                            [ EltInput.text [ EltInput.focusedOnLoad ]
                                 { onChange = UpdateNewCapture
                                 , text = model.newCapture.text
                                 , placeholder = Just (EltInput.placeholder [] (text "capture text"))

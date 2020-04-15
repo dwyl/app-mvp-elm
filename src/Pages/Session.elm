@@ -20,6 +20,7 @@ type alias Model =
 type alias PersonInfo =
     { email : String
     , name : String
+    , avatar : String
     }
 
 
@@ -45,7 +46,7 @@ update msg model =
                 Ok person ->
                     let
                         session =
-                            { email = person.email, token = model.token }
+                            { email = person.email, token = model.token, avatar = person.avatar }
                     in
                     ( model, Session.storeSession (Just <| Session.encode session) )
 
@@ -93,9 +94,10 @@ getPersonInfo token =
 personDecoder : JD.Decoder PersonInfo
 personDecoder =
     JD.field "data"
-        (JD.map2 PersonInfo
+        (JD.map3 PersonInfo
             (JD.field "email" JD.string)
             (JD.field "name" JD.string)
+            (JD.field "avatar" JD.string)
         )
 
 

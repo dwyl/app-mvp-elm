@@ -1,4 +1,4 @@
-port module Session exposing (Person, Session(..), changeSession, decode, encode, isGuest, logout, navKey, onSessionChange, storeSession, token)
+port module Session exposing (Person, Session(..), avatar, changeSession, decode, encode, isGuest, logout, navKey, onSessionChange, storeSession, token)
 
 {-| Represent the current user
 The user can be authenticated or a guest
@@ -17,12 +17,13 @@ type Session
 type alias Person =
     { email : String
     , token : String
+    , avatar : String
     }
 
 
 decode : Nav.Key -> String -> Session
 decode key str =
-    case JD.decodeString (JD.map2 Person (JD.field "email" JD.string) (JD.field "token" JD.string)) str of
+    case JD.decodeString (JD.map3 Person (JD.field "email" JD.string) (JD.field "token" JD.string) (JD.field "avatar" JD.string)) str of
         Ok p ->
             Session key p
 
@@ -35,6 +36,7 @@ encode person =
     JE.object
         [ ( "email", JE.string person.email )
         , ( "token", JE.string person.token )
+        , ( "avatar", JE.string person.avatar )
         ]
 
 
@@ -56,6 +58,16 @@ token session =
 
         Session _ person ->
             person.token
+
+
+avatar : Session -> String
+avatar session =
+    case session of
+        Guest _ ->
+            ""
+
+        Session _ person ->
+            person.avatar
 
 
 port storeSession : Maybe JD.Value -> Cmd msg
@@ -86,9 +98,10 @@ sessionFromPerson maybePerson key =
 
 personDecoder : JD.Decoder Person
 personDecoder =
-    JD.map2 Person
+    JD.map3 Person
         (JD.field "email" JD.string)
         (JD.field "token" JD.string)
+        (JD.field "avatar" JD.string)
 
 
 decodeFromChange : JD.Decoder Person -> JD.Value -> Maybe Person

@@ -136,7 +136,16 @@ view model =
                         (el [ width (px 50) ]
                             (link []
                                 { url = Route.routeToString Route.Capture
-                                , label = image [ centerX ] { src = Asset.imagePath Asset.logo, description = "DWYL Logo" }
+                                , label =
+                                    image [ centerX ]
+                                        { src =
+                                            if String.isEmpty (Session.avatar model.session) then
+                                                Asset.imagePath Asset.logo
+
+                                            else
+                                                Session.avatar model.session
+                                        , description = "User Avatar"
+                                        }
                                 }
                             )
                         )

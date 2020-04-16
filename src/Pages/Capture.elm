@@ -8,6 +8,7 @@ import Element.Events exposing (onClick)
 import Element.Font exposing (..)
 import Element.Input as EltInput
 import Endpoint
+import Html.Attributes exposing (id)
 import Http
 import Page
 import Route
@@ -17,7 +18,7 @@ import Time
 import Timer exposing (..)
 import UI.Nav
 import UI.UI as UI
-
+import Browser.Dom as Dom
 
 
 -- Model
@@ -72,6 +73,7 @@ init session =
     , Cmd.batch
         [ apiGetCaptures (token session)
         , Task.perform AdjustTimeZone Time.here
+        , Task.attempt (\_ -> None) (Dom.focus "capture-text")
         ]
     )
 
@@ -310,7 +312,7 @@ view model =
                 , if String.isEmpty model.error then
                     column [ width fill, height fill, spacing 50 ]
                         [ column [ centerX, spacing 10 ]
-                            [ EltInput.text [ EltInput.focusedOnLoad ]
+                            [ EltInput.text [ EltInput.focusedOnLoad, htmlAttribute <| id "capture-text" ]
                                 { onChange = UpdateNewCapture
                                 , text = model.newCapture.text
                                 , placeholder = Just (EltInput.placeholder [] (text "capture text"))

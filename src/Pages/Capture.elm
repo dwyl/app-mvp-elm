@@ -1,6 +1,7 @@
 module Pages.Capture exposing (Model, Msg(..), SortCaptures(..), init, sortCaptures, subscriptions, toSession, update, view)
 
 import Asset
+import Browser.Dom as Dom
 import Capture exposing (..)
 import Element exposing (..)
 import Element.Background as EltBackground
@@ -8,6 +9,7 @@ import Element.Events exposing (onClick)
 import Element.Font exposing (..)
 import Element.Input as EltInput
 import Endpoint
+import Html.Attributes exposing (id)
 import Http
 import Page
 import Route
@@ -72,6 +74,7 @@ init session =
     , Cmd.batch
         [ apiGetCaptures (token session)
         , Task.perform AdjustTimeZone Time.here
+        , Task.attempt (\_ -> None) (Dom.focus "capture-text")
         ]
     )
 
@@ -310,7 +313,7 @@ view model =
                 , if String.isEmpty model.error then
                     column [ width fill, height fill, spacing 50 ]
                         [ column [ centerX, spacing 10 ]
-                            [ EltInput.text [ EltInput.focusedOnLoad ]
+                            [ EltInput.text [ EltInput.focusedOnLoad, htmlAttribute <| id "capture-text" ]
                                 { onChange = UpdateNewCapture
                                 , text = model.newCapture.text
                                 , placeholder = Just (EltInput.placeholder [] (text "capture text"))

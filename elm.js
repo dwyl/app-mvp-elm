@@ -6579,6 +6579,7 @@ var $author$project$Pages$Auth$init = function (session) {
 var $author$project$Pages$Capture$AdjustTimeZone = function (a) {
 	return {$: 9, a: a};
 };
+var $author$project$Pages$Capture$None = {$: 8};
 var $author$project$Pages$Capture$GotCaptures = function (a) {
 	return {$: 1, a: a};
 };
@@ -7725,6 +7726,30 @@ var $author$project$Pages$Capture$apiGetCaptures = function (token) {
 			S: $author$project$Endpoint$toString($author$project$Endpoint$captures)
 		});
 };
+var $elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
+var $elm$core$Task$onError = _Scheduler_onError;
+var $elm$core$Task$attempt = F2(
+	function (resultToMessage, task) {
+		return $elm$core$Task$command(
+			A2(
+				$elm$core$Task$onError,
+				A2(
+					$elm$core$Basics$composeL,
+					A2($elm$core$Basics$composeL, $elm$core$Task$succeed, resultToMessage),
+					$elm$core$Result$Err),
+				A2(
+					$elm$core$Task$andThen,
+					A2(
+						$elm$core$Basics$composeL,
+						A2($elm$core$Basics$composeL, $elm$core$Task$succeed, resultToMessage),
+						$elm$core$Result$Ok),
+					task)));
+	});
+var $elm$browser$Browser$Dom$focus = _Browser_call('focus');
 var $elm$time$Time$Name = function (a) {
 	return {$: 0, a: a};
 };
@@ -7774,7 +7799,13 @@ var $author$project$Pages$Capture$init = function (session) {
 				[
 					$author$project$Pages$Capture$apiGetCaptures(
 					$author$project$Session$token(session)),
-					A2($elm$core$Task$perform, $author$project$Pages$Capture$AdjustTimeZone, $elm$time$Time$here)
+					A2($elm$core$Task$perform, $author$project$Pages$Capture$AdjustTimeZone, $elm$time$Time$here),
+					A2(
+					$elm$core$Task$attempt,
+					function (_v0) {
+						return $author$project$Pages$Capture$None;
+					},
+					$elm$browser$Browser$Dom$focus('capture-text'))
 				])));
 };
 var $author$project$Pages$CaptureTimers$AdjustTimeZone = function (a) {
@@ -8352,11 +8383,6 @@ var $elm$time$Time$onSelfMsg = F3(
 				},
 				A2($elm$core$Task$andThen, tellTaggers, $elm$time$Time$now));
 		}
-	});
-var $elm$core$Basics$composeL = F3(
-	function (g, f, x) {
-		return g(
-			f(x));
 	});
 var $elm$time$Time$subMap = F2(
 	function (f, _v0) {
@@ -15334,6 +15360,8 @@ var $mdgriffith$elm_ui$Element$fill = $mdgriffith$elm_ui$Internal$Model$Fill(1);
 var $elm$html$Html$Attributes$autofocus = $elm$html$Html$Attributes$boolProperty('autofocus');
 var $mdgriffith$elm_ui$Element$Input$focusedOnLoad = $mdgriffith$elm_ui$Internal$Model$Attr(
 	$elm$html$Html$Attributes$autofocus(true));
+var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
+var $elm$html$Html$Attributes$id = $elm$html$Html$Attributes$stringProperty('id');
 var $mdgriffith$elm_ui$Internal$Model$InFront = 4;
 var $mdgriffith$elm_ui$Internal$Model$Nearby = F2(
 	function (a, b) {
@@ -15419,7 +15447,6 @@ var $mdgriffith$elm_ui$Element$row = F2(
 						attrs))),
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
-var $author$project$Pages$Capture$None = {$: 8};
 var $author$project$Pages$Capture$StartTimer = function (a) {
 	return {$: 5, a: a};
 };
@@ -16468,7 +16495,6 @@ var $mdgriffith$elm_ui$Element$paddingEach = function (_v0) {
 			bottom,
 			left));
 };
-var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
 var $mdgriffith$elm_ui$Element$Input$isFill = function (len) {
 	isFill:
 	while (true) {
@@ -17264,7 +17290,11 @@ var $author$project$Pages$Capture$view = function (model) {
 											A2(
 											$mdgriffith$elm_ui$Element$Input$text,
 											_List_fromArray(
-												[$mdgriffith$elm_ui$Element$Input$focusedOnLoad]),
+												[
+													$mdgriffith$elm_ui$Element$Input$focusedOnLoad,
+													$mdgriffith$elm_ui$Element$htmlAttribute(
+													$elm$html$Html$Attributes$id('capture-text'))
+												]),
 											{
 												M: $mdgriffith$elm_ui$Element$Input$labelHidden('capture text'),
 												b0: $author$project$Pages$Capture$UpdateNewCapture,

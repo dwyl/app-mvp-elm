@@ -1,6 +1,7 @@
 module Pages.Capture exposing (Model, Msg(..), SortCaptures(..), init, sortCaptures, subscriptions, toSession, update, view)
 
 import Asset
+import Browser.Dom as Dom
 import Capture exposing (..)
 import Element exposing (..)
 import Element.Background as EltBackground
@@ -18,7 +19,7 @@ import Time
 import Timer exposing (..)
 import UI.Nav
 import UI.UI as UI
-import Browser.Dom as Dom
+
 
 
 -- Model

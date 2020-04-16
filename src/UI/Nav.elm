@@ -1,4 +1,4 @@
-module UI.Nav exposing (..)
+module UI.Nav exposing (Config(..), State(..), config, init, isOpen, toggleNav, view)
 
 import Element exposing (..)
 import Element.Background as EltBackground

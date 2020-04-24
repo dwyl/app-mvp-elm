@@ -8,6 +8,7 @@ import Html.Attributes exposing (..)
 import Page
 import Pages.Auth as Auth
 import Pages.Capture as Capture
+import Pages.CaptureEdit as CaptureEdit
 import Pages.CaptureTimers as CaptureTimers
 import Pages.Login as Login
 import Pages.Session as PagesSession
@@ -39,6 +40,7 @@ type Model
     | Logout Session.Session
     | Login Session.Session
     | Capture Capture.Model
+    | CaptureEdit CaptureEdit.Model
     | CaptureTimers CaptureTimers.Model
 
 
@@ -71,6 +73,7 @@ type Msg
     | GotAuthMsg Auth.Msg
     | GotPagesSessionMsg PagesSession.Msg
     | GotCaptureMsg Capture.Msg
+    | GotCaptureEditMsg CaptureEdit.Msg
     | GotCaptureTimersMsg CaptureTimers.Msg
     | GotLoginMsg Login.Msg
 
@@ -109,6 +112,13 @@ update msg model =
                     Capture.update captureMsg captureModel
             in
             ( Capture subModel, Cmd.map GotCaptureMsg subMsg )
+
+        ( GotCaptureEditMsg captureEditMsg, CaptureEdit captureEditModel ) ->
+            let
+                ( subModel, subMsg ) =
+                    CaptureEdit.update captureEditMsg captureEditModel
+            in
+            ( CaptureEdit subModel, Cmd.map GotCaptureEditMsg subMsg )
 
         ( GotCaptureTimersMsg captureTimersMsg, CaptureTimers captureTimersModel ) ->
             let
@@ -194,6 +204,12 @@ loadRoute maybeRoute model =
                 in
                 ( CaptureTimers subModel, Cmd.map GotCaptureTimersMsg subMsg )
 
+            Just (Route.CaptureEdit idCapture) ->
+                let
+                    ( subModel, subMsg ) =
+                        CaptureEdit.init session idCapture
+                in
+                ( CaptureEdit subModel, Cmd.map GotCaptureEditMsg subMsg )
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -212,6 +228,9 @@ subscriptions model =
 
         Capture captureModel ->
             Sub.map GotCaptureMsg (Capture.subscriptions captureModel)
+
+        CaptureEdit captureEditModel ->
+            Sub.map GotCaptureEditMsg (CaptureEdit.subscriptions captureEditModel)
 
         CaptureTimers captureTimersModel ->
             Sub.map GotCaptureTimersMsg (CaptureTimers.subscriptions captureTimersModel)
@@ -251,6 +270,9 @@ view model =
         Capture captureModel ->
             Page.view GotCaptureMsg (Capture.view captureModel)
 
+        CaptureEdit captureEditModel ->
+            Page.view GotCaptureEditMsg (CaptureEdit.view captureEditModel)
+
         CaptureTimers captureTimersModel ->
             Page.view GotCaptureTimersMsg (CaptureTimers.view captureTimersModel)
 
@@ -275,6 +297,9 @@ toSession page =
 
         Capture m ->
             Capture.toSession m
+
+        CaptureEdit m ->
+            CaptureEdit.toSession m
 
         CaptureTimers m ->
             CaptureTimers.toSession m

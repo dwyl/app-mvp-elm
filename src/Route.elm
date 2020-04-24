@@ -18,6 +18,7 @@ type Route
     | Login
     | Capture
     | CaptureTimers Int
+    | CaptureEdit Int
 
 
 routeParser : Parser.Parser (Route -> a) a
@@ -27,7 +28,8 @@ routeParser =
         , Parser.map Auth (Parser.s "auth" <?> Query.string "jwt")
         , Parser.map Logout (Parser.s "logout")
         , Parser.map Login (Parser.s "login")
-        , Parser.map CaptureTimers (Parser.s "capture" </> Parser.int)
+        , Parser.map CaptureTimers (Parser.s "timers" </> Parser.int)
+        , Parser.map CaptureEdit (Parser.s "capture" </> Parser.int </> Parser.s "edit")
         ]
 
 
@@ -60,7 +62,10 @@ routeToString route =
             "/login"
 
         CaptureTimers idCapture ->
-            "/capture/" ++ String.fromInt idCapture
+            "/timers/" ++ String.fromInt idCapture
+
+        CaptureEdit idCapture ->
+            "/capture/" ++ String.fromInt idCapture ++ "/edit"
 
 
 replaceUrl : Nav.Key -> Route -> Cmd msg

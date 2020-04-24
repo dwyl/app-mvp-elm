@@ -481,6 +481,12 @@ showCapture clock capture =
                 Error e ->
                     showTimerButton [] e None
             ]
+        , el [ padding 5 ] (text <| String.join ", " capture.tags)
+        , link
+            [ color UI.teal ]
+            { url = Route.routeToString (Route.CaptureEdit capture.idCapture)
+            , label = text "edit"
+            }
         , el [ width (fill |> maximum 1000), centerX, EltBackground.color UI.lightGrey, height (px 1) ] none
         ]
 

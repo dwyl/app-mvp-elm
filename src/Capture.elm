@@ -10,6 +10,7 @@ type alias Capture =
     , text : String
     , timers : List Timer
     , status : CaptureStatus
+    , tags : List String
     }
 
 
@@ -27,6 +28,7 @@ initCapture =
     , text = ""
     , timers = []
     , status = ToDo
+    , tags = []
     }
 
 
@@ -47,11 +49,12 @@ savedCaptureDecoder =
 
 captureDecoder : JD.Decoder Capture
 captureDecoder =
-    JD.map4 Capture
+    JD.map5 Capture
         (JD.field "capture_id" JD.int)
         (JD.field "text" JD.string)
         (JD.field "timers" (JD.list timerDecoder))
         (JD.field "completed" JD.bool |> JD.andThen captureStatusDecoder)
+        (JD.field "tags" (JD.list (JD.field "text" JD.string)))
 
 
 captureStatusDecoder : Bool -> JD.Decoder CaptureStatus
@@ -92,6 +95,7 @@ captureEncode capture =
     JE.object
         [ ( "text", JE.string capture.text )
         , ( "completed", JE.bool (capture.status == Completed) )
+        , ( "tags", JE.string (String.join ", " capture.tags) )
         ]
 
 

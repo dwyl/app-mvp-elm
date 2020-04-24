@@ -211,6 +211,7 @@ loadRoute maybeRoute model =
                 in
                 ( CaptureEdit subModel, Cmd.map GotCaptureEditMsg subMsg )
 
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model of

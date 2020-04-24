@@ -16,6 +16,7 @@ capturesTest status1 status2 =
             , text = ""
             , timers = []
             , status = status1
+            , tags = []
             }
 
         capture2 =
@@ -23,6 +24,7 @@ capturesTest status1 status2 =
             , text = ""
             , timers = []
             , status = status2
+            , tags = []
             }
     in
     ( capture1, capture2 )

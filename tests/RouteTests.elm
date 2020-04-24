@@ -126,10 +126,27 @@ suite =
                         }
 
                     url =
-                        Maybe.withDefault defaultUrl (Url.fromString "http://locahost/capture/1")
+                        Maybe.withDefault defaultUrl (Url.fromString "http://locahost/timers/1")
                 in
                 Parser.parse Route.routeParser url
                     |> Expect.equal (Just (Route.CaptureTimers 1))
+        , test "Test capture edit route" <|
+            \_ ->
+                let
+                    defaultUrl =
+                        { protocol = Url.Https
+                        , host = "dwyl.com"
+                        , port_ = Just 443
+                        , path = "/"
+                        , query = Nothing
+                        , fragment = Nothing
+                        }
+
+                    url =
+                        Maybe.withDefault defaultUrl (Url.fromString "http://locahost/capture/1/edit")
+                in
+                Parser.parse Route.routeParser url
+                    |> Expect.equal (Just (Route.CaptureEdit 1))
         , test "isPrivate Auth route returns False" <|
             \_ ->
                 Route.isPrivate (Route.Auth Nothing)
@@ -149,5 +166,9 @@ suite =
         , test "isPrivate CaptureTimers route returns True" <|
             \_ ->
                 Route.isPrivate (Route.CaptureTimers 1)
+                    |> Expect.equal True
+        , test "isPrivate CaptureEdit route returns True" <|
+            \_ ->
+                Route.isPrivate (Route.CaptureEdit 1)
                     |> Expect.equal True
         ]
